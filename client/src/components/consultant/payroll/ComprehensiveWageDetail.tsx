@@ -33,48 +33,48 @@ export default function ComprehensiveWageDetail({
     hours: 209,
     rate: hourlyRate,
     multiplier: 1.0,
-    amount: hourlyRate * 209,
+    amount: Math.round(hourlyRate * 209),
     note: "주 40시간 기준 (주휴 포함)"
   };
 
-  // 2. 고정 연장수당
+  // 2. 고정 연장수당 (1.5배)
   const overtimeComponent: WageComponent = {
     name: "고정 연장수당",
     hours: fixedOvertimeHours,
     rate: hourlyRate,
     multiplier: 1.5,
     amount: Math.round(hourlyRate * fixedOvertimeHours * 1.5),
-    note: `월 ${fixedOvertimeHours}시간 × 1.5배`
+    note: `월 ${fixedOvertimeHours.toFixed(1)}시간 × 1.5배`
   };
 
-  // 3. 고정 야간수당
+  // 3. 고정 야간수당 (0.5배 가산)
   const nightComponent: WageComponent = {
     name: "고정 야간수당",
     hours: fixedNightHours,
     rate: hourlyRate,
     multiplier: 0.5,
     amount: Math.round(hourlyRate * fixedNightHours * 0.5),
-    note: `월 ${fixedNightHours}시간 × 0.5배 (가산분)`
+    note: `월 ${fixedNightHours.toFixed(1)}시간 × 0.5배 (가산분)`
   };
 
-  // 4. 고정 휴일수당
+  // 4. 고정 휴일수당 (1.5배)
   const holidayComponent: WageComponent = {
     name: "고정 휴일수당",
     hours: fixedHolidayHours,
     rate: hourlyRate,
     multiplier: 1.5,
     amount: Math.round(hourlyRate * fixedHolidayHours * 1.5),
-    note: `월 ${fixedHolidayHours}시간 × 1.5배`
+    note: `월 ${fixedHolidayHours.toFixed(1)}시간 × 1.5배`
   };
 
-  const components = [baseComponent, overtimeComponent, nightComponent, holidayComponent].filter(c => c.amount > 0);
+  const components = [baseComponent, overtimeComponent, nightComponent, holidayComponent].filter(c => c.amount > 0 || c.hours > 0);
   const totalAmount = components.reduce((sum, c) => sum + c.amount, 0);
 
   return (
     <Card className="border shadow-sm bg-white dark:bg-slate-900">
       <CardHeader className="pb-3">
         <CardTitle className="text-base font-bold flex items-center justify-between">
-          <span>포괄임금 구성 상세</span>
+          <span>포괄임금 구성 상세 (세분화)</span>
           <Badge variant="outline" className="font-normal">통상시급: {hourlyRate.toLocaleString()}원</Badge>
         </CardTitle>
       </CardHeader>
@@ -93,7 +93,7 @@ export default function ComprehensiveWageDetail({
             {components.map((comp, idx) => (
               <TableRow key={idx}>
                 <TableCell className="font-medium">{comp.name}</TableCell>
-                <TableCell className="text-right">{comp.hours}h</TableCell>
+                <TableCell className="text-right">{comp.hours.toFixed(1)}h</TableCell>
                 <TableCell className="text-right">×{comp.multiplier}</TableCell>
                 <TableCell className="text-right font-bold">{comp.amount.toLocaleString()}원</TableCell>
                 <TableCell className="text-xs text-muted-foreground">{comp.note}</TableCell>
@@ -113,6 +113,7 @@ export default function ComprehensiveWageDetail({
           <p>• <strong>기본급:</strong> 209시간 = (주 40시간 + 주휴 8시간) × 4.345주</p>
           <p>• <strong>연장근로:</strong> 통상임금의 1.5배 가산 적용 (근로기준법 제56조)</p>
           <p>• <strong>야간근로:</strong> 22:00~06:00 근로 시 통상임금의 0.5배 추가 가산</p>
+          <p>• <strong>휴일근로:</strong> 8시간 이내 1.5배, 8시간 초과 2.0배 (본 계산식은 1.5배 기준)</p>
         </div>
       </CardContent>
     </Card>

@@ -5,6 +5,8 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight, Calendar, Clock, Coffee, LogIn, LogOut, Users } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AttendanceCorrection from "@/components/admin/AttendanceCorrection";
 
 export default function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -89,8 +91,15 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <Tabs defaultValue="dashboard" className="space-y-6">
+        <TabsList className="bg-white p-1 rounded-xl shadow-sm w-full md:w-auto grid grid-cols-2 md:inline-flex">
+          <TabsTrigger value="dashboard" className="rounded-lg">대시보드</TabsTrigger>
+          <TabsTrigger value="correction" className="rounded-lg">근태 수정/보완</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="dashboard" className="space-y-6">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
           { title: "총 직원", value: "142명", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
           { title: "정상 출근", value: "128명", icon: Clock, color: "text-green-500", bg: "bg-green-50" },
@@ -187,6 +196,12 @@ export default function Home() {
           </CardContent>
         </Card>
       </div>
+        </TabsContent>
+
+        <TabsContent value="correction">
+          <AttendanceCorrection />
+        </TabsContent>
+      </Tabs>
     </Layout>
   );
 }

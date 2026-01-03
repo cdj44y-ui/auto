@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, X } from "lucide-react";
 import { toast } from "sonner";
+import SignupApproval from "@/components/admin/SignupApproval";
 
 const pendingCompanies = [
   { id: 1, name: "(주)테크스타트", admin: "김대표", email: "ceo@techstart.com", date: "2026-01-03" },
@@ -40,46 +41,7 @@ export default function Approvals() {
         </TabsList>
 
         <TabsContent value="employees">
-          <Card className="border-none shadow-sm">
-            <CardHeader>
-              <CardTitle>승인 대기 중인 직원 ({pendingEmployees.length}명)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {pendingEmployees.map((employee) => (
-                  <div key={employee.id} className="flex items-center justify-between p-4 bg-secondary/30 rounded-xl">
-                    <div className="flex items-center gap-4">
-                      <Avatar>
-                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${employee.id}`} />
-                        <AvatarFallback>{employee.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-semibold">{employee.name}</p>
-                        <p className="text-sm text-muted-foreground">{employee.email} • {employee.department}</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="text-red-500 hover:text-red-600 hover:bg-red-50 border-red-200"
-                        onClick={() => handleReject(employee.name, "가입")}
-                      >
-                        <X className="w-4 h-4 mr-1" /> 거절
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        className="bg-green-500 hover:bg-green-600 text-white"
-                        onClick={() => handleApprove(employee.name, "가입")}
-                      >
-                        <Check className="w-4 h-4 mr-1" /> 승인
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <SignupApproval />
         </TabsContent>
 
         <TabsContent value="companies">

@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
+import { useLocation } from "wouter";
 import { Building2, Code2, User, ShieldCheck, Briefcase } from "lucide-react";
 
 export default function LoginGateway() {
   const { login } = useAuth();
+  const [, setLocation] = useLocation();
 
   const handleRoleSelect = (role: UserRole) => {
     if (role) login(role);
@@ -36,6 +38,13 @@ export default function LoginGateway() {
                 <li>연차 사용 내역 조회</li>
               </ul>
               <Button className="w-full mt-6 bg-blue-600 hover:bg-blue-700">직원 로그인</Button>
+              <Button 
+                variant="outline" 
+                className="w-full mt-2 border-blue-200 text-blue-700 hover:bg-blue-50"
+                onClick={(e) => { e.stopPropagation(); setLocation("/employee-signup"); }}
+              >
+                신규 입사자 회원가입
+              </Button>
             </CardContent>
           </Card>
 
