@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { useLocation } from "wouter";
 
-export type UserRole = "employee" | "admin" | "developer" | null;
+export type UserRole = "employee" | "admin" | "consultant" | "developer" | null;
 
 interface User {
   id: number;
@@ -43,6 +43,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       case "admin":
         mockUser = { id: 2, name: "김관리", role: "admin", department: "인사팀", position: "팀장" };
         break;
+      case "consultant":
+        mockUser = { id: 3, name: "박노무", role: "consultant", department: "노무법인", position: "대표노무사" };
+        break;
       case "developer":
         mockUser = { id: 999, name: "최개발", role: "developer" };
         break;
@@ -55,8 +58,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     // 로그인 후 역할에 맞는 대시보드로 이동
     if (role === "employee") setLocation("/employee-dashboard");
+    else if (role === "consultant") setLocation("/consultant-dashboard");
     else if (role === "developer") setLocation("/developer-dashboard");
-    else setLocation("/"); // 관리자는 기존 대시보드 사용
+    else if (role === "admin") setLocation("/admin-dashboard"); // 관리자 경로 명시적 분리
   };
 
   const logout = () => {

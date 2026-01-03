@@ -11,7 +11,10 @@ import {
   ShieldAlert, 
   CheckCircle2,
   XCircle,
-  Terminal
+  Terminal,
+  Building2,
+  ShieldCheck,
+  UserPlus
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -102,6 +105,7 @@ export default function DeveloperDashboard() {
       <Tabs defaultValue="companies" className="space-y-6">
         <TabsList className="bg-slate-900 border border-slate-800">
           <TabsTrigger value="companies" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">회사 승인 관리</TabsTrigger>
+          <TabsTrigger value="consultants" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">자문사 권한 관리</TabsTrigger>
           <TabsTrigger value="system" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">시스템 모니터링</TabsTrigger>
           <TabsTrigger value="logs" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">오류 로그</TabsTrigger>
         </TabsList>
@@ -157,6 +161,51 @@ export default function DeveloperDashboard() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="consultants">
+          <Card className="bg-slate-900 border-slate-800 text-slate-50">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>자문사(Consultant) 계정 관리</CardTitle>
+                  <CardDescription className="text-slate-400">노무법인 및 세무사 파트너 계정을 생성하고 권한을 부여합니다.</CardDescription>
+                </div>
+                <Button className="bg-indigo-600 hover:bg-indigo-700">
+                  <UserPlus className="w-4 h-4 mr-2" /> 신규 자문사 등록
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {[
+                  { id: 1, name: "노무법인 정성", rep: "박노무", clients: 12, status: "active" },
+                  { id: 2, name: "세무회계 더함", rep: "김세무", clients: 8, status: "active" },
+                  { id: 3, name: "HR컨설팅 그룹", rep: "이컨설", clients: 0, status: "pending" },
+                ].map((consultant) => (
+                  <div key={consultant.id} className="flex items-center justify-between p-4 border border-slate-800 rounded-lg bg-slate-950/50">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-indigo-900/30 rounded-full flex items-center justify-center">
+                        <ShieldCheck className="w-5 h-5 text-indigo-400" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-200">{consultant.name}</h3>
+                        <p className="text-sm text-slate-400">대표: {consultant.rep} | 관리 고객사: {consultant.clients}개</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {consultant.status === 'active' ? (
+                        <Badge className="bg-green-900/30 text-green-400 hover:bg-green-900/30 border-green-900">활동중</Badge>
+                      ) : (
+                        <Badge className="bg-yellow-900/30 text-yellow-400 hover:bg-yellow-900/30 border-yellow-900">승인 대기</Badge>
+                      )}
+                      <Button variant="outline" size="sm" className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white">권한 설정</Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="system">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="bg-slate-900 border-slate-800 text-slate-50">
@@ -169,15 +218,15 @@ export default function DeveloperDashboard() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span>Instance #1 (ap-northeast-2a)</span>
-                    <Badge className="bg-green-900 text-green-400">Healthy</Badge>
+                    <Badge className="bg-green-900 text-green-400 border-green-900">Healthy</Badge>
                   </div>
                   <div className="flex justify-between items-center">
                     <span>Instance #2 (ap-northeast-2c)</span>
-                    <Badge className="bg-green-900 text-green-400">Healthy</Badge>
+                    <Badge className="bg-green-900 text-green-400 border-green-900">Healthy</Badge>
                   </div>
                   <div className="flex justify-between items-center">
                     <span>Worker Node #1</span>
-                    <Badge className="bg-green-900 text-green-400">Processing</Badge>
+                    <Badge className="bg-green-900 text-green-400 border-green-900">Processing</Badge>
                   </div>
                 </div>
               </CardContent>
@@ -217,5 +266,3 @@ export default function DeveloperDashboard() {
     </DeveloperLayout>
   );
 }
-
-import { Building2 } from "lucide-react";

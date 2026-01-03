@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
-import { Building2, Code2, User, ShieldCheck } from "lucide-react";
+import { Building2, Code2, User, ShieldCheck, Briefcase } from "lucide-react";
 
 export default function LoginGateway() {
   const { login } = useAuth();
@@ -12,13 +12,13 @@ export default function LoginGateway() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="max-w-4xl w-full space-y-8">
+      <div className="max-w-7xl w-full space-y-8">
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold tracking-tight text-slate-900">근태관리 시스템 접속</h1>
           <p className="text-lg text-muted-foreground">접속하실 역할을 선택해주세요.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* 직원용 */}
           <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-blue-500 group" onClick={() => handleRoleSelect("employee")}>
             <CardHeader className="text-center pb-2">
@@ -59,6 +59,26 @@ export default function LoginGateway() {
             </CardContent>
           </Card>
 
+          {/* 자문사용 */}
+          <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-indigo-500 group" onClick={() => handleRoleSelect("consultant")}>
+            <CardHeader className="text-center pb-2">
+              <div className="mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
+                <Briefcase className="w-8 h-8 text-indigo-600 group-hover:text-white" />
+              </div>
+              <CardTitle>자문사용</CardTitle>
+              <CardDescription>노무법인/세무사 접속</CardDescription>
+            </CardHeader>
+            <CardContent className="text-center text-sm text-muted-foreground">
+              <ul className="space-y-1">
+                <li>고객사 급여/4대보험 대행</li>
+                <li>취업규칙/계약서 컨설팅</li>
+                <li>노무 리스크 모니터링</li>
+                <li>법정 의무 교육 관리</li>
+              </ul>
+              <Button className="w-full mt-6 bg-indigo-600 hover:bg-indigo-700">자문사 로그인</Button>
+            </CardContent>
+          </Card>
+
           {/* 개발자용 */}
           <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-purple-500 group" onClick={() => handleRoleSelect("developer")}>
             <CardHeader className="text-center pb-2">
@@ -71,7 +91,7 @@ export default function LoginGateway() {
             <CardContent className="text-center text-sm text-muted-foreground">
               <ul className="space-y-1">
                 <li>전체 회사 승인/관리</li>
-                <li>시스템 환경 설정</li>
+                <li>자문사 권한 관리</li>
                 <li>데이터베이스 관리</li>
                 <li>오류 로그 모니터링</li>
               </ul>
