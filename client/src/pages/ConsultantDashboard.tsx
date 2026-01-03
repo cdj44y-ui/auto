@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   LogOut, 
   Briefcase, 
@@ -14,19 +13,24 @@ import {
   Users, 
   Building, 
   ShieldCheck,
-  Download,
   Upload,
   CheckCircle2,
   AlertCircle,
   Moon,
-  Sun
+  Sun,
+  MessageSquare,
+  Bell,
+  Download
 } from "lucide-react";
 import { toast } from "sonner";
+import ConsultationChat from "@/components/consultant/ConsultationChat";
+import BulkContractManager from "@/components/consultant/BulkContractManager";
+import LegalAlertSystem from "@/components/consultant/LegalAlertSystem";
 
 export default function ConsultantDashboard() {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const [activeTab, setActiveTab] = useState("clients");
+  const [activeTab, setActiveTab] = useState("dashboard");
 
   // 모의 고객사 데이터
   const clients = [
@@ -120,12 +124,26 @@ export default function ConsultantDashboard() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-[600px] bg-white dark:bg-slate-900">
+          <TabsList className="grid w-full grid-cols-5 lg:w-[800px] bg-white dark:bg-slate-900">
+            <TabsTrigger value="dashboard">통합 대시보드</TabsTrigger>
             <TabsTrigger value="clients">고객사 관리</TabsTrigger>
             <TabsTrigger value="payroll">전문가 급여정산</TabsTrigger>
             <TabsTrigger value="insurance">4대보험 신고</TabsTrigger>
             <TabsTrigger value="documents">규정/서식 관리</TabsTrigger>
           </TabsList>
+
+          {/* 통합 대시보드 탭 (신규 기능 통합) */}
+          <TabsContent value="dashboard" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-6">
+                <LegalAlertSystem />
+                <BulkContractManager />
+              </div>
+              <div className="lg:col-span-1">
+                <ConsultationChat />
+              </div>
+            </div>
+          </TabsContent>
 
           {/* 고객사 관리 탭 */}
           <TabsContent value="clients">
