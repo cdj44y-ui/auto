@@ -95,6 +95,13 @@ export default function Settings() {
                 </div>
                 <Switch />
               </div>
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div className="space-y-0.5">
+                  <Label className="text-base">5인 미만 사업장</Label>
+                  <p className="text-sm text-muted-foreground">체크 시 연장/야간/휴일 가산수당이 적용되지 않습니다.</p>
+                </div>
+                <Switch id="small-business-toggle" />
+              </div>
               <div className="flex justify-end">
                 <Button onClick={handleSave} className="rounded-xl shadow-lg shadow-primary/20">
                   <Save className="w-4 h-4 mr-2" /> 저장하기

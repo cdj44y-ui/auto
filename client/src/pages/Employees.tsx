@@ -223,6 +223,11 @@ export default function Employees() {
                               <Input type="number" placeholder="200000" />
                             </div>
                             <div className="space-y-2">
+                              <Label>주 소정 근로시간 (시간)</Label>
+                              <Input type="number" placeholder="40" defaultValue="40" />
+                              <p className="text-xs text-muted-foreground">주 15시간 미만인 경우 주휴수당이 발생하지 않습니다.</p>
+                            </div>
+                            <div className="space-y-2">
                               <Label>초과근무 수당 (시급)</Label>
                               <Input type="number" placeholder="15000" />
                             </div>

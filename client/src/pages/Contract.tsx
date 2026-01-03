@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Check, Download, PenTool, Send, Edit2, Save } from "lucide-react";
-import { useRef, useState } from "react";
+import { Check, Download, PenTool, Send, Edit2, Save, DollarSign } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { calculateMonthlyEstimatedSalary } from "@/lib/salaryCalculator";
 
 export default function Contract() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -32,7 +33,34 @@ export default function Contract() {
     overtimeAllowance: 431788,
     totalSalary: 3200000,
     payDay: "10",
+    hourlyRate: 15000, // 시급 추가
+    isSmallBusiness: false, // 5인 미만 여부
+    weeklyWorkHours: 40, // 주 소정 근로시간
   });
+
+  const handleCalculateSalary = () => {
+    const result = calculateMonthlyEstimatedSalary(
+      {
+        startTime: contractData.workTimeStart,
+        endTime: contractData.workTimeEnd,
+        breakStartTime: contractData.breakTimeStart,
+        breakEndTime: contractData.breakTimeEnd,
+      },
+      {
+        hourlyRate: contractData.hourlyRate,
+        isSmallBusiness: contractData.isSmallBusiness,
+        weeklyWorkHours: contractData.weeklyWorkHours,
+      }
+    );
+
+    setContractData(prev => ({
+      ...prev,
+      baseSalary: result.basePay,
+      overtimeAllowance: result.overtimePay + result.nightPay + result.holidayPay, // 각종 수당 합산
+    }));
+    
+    toast.success("근무 조건에 따른 예상 급여가 계산되었습니다.");
+  };
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -176,6 +204,44 @@ export default function Contract() {
 
               <h3 className="font-bold mt-6 mb-2">제5조 【임금】</h3>
               <div className="border rounded-lg p-4 bg-gray-50 my-2">
+                {isEditing && (
+                  <div className="mb-4 p-4 bg-white rounded-lg border border-blue-100">
+                    <h4 className="font-semibold mb-2 text-blue-800">급여 자동 계산 설정</h4>
+                    <div className="grid grid-cols-2 gap-4 mb-2">
+                      <div className="space-y-1">
+                        <Label className="text-xs">시급 (원)</Label>
+                        <Input 
+                          type="number" 
+                          value={contractData.hourlyRate}
+                          onChange={(e) => setContractData({...contractData, hourlyRate: parseInt(e.target.value)})}
+                          className="h-8"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">주 소정 근로시간</Label>
+                        <Input 
+                          type="number" 
+                          value={contractData.weeklyWorkHours}
+                          onChange={(e) => setContractData({...contractData, weeklyWorkHours: parseInt(e.target.value)})}
+                          className="h-8"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2 mb-3">
+                      <input 
+                        type="checkbox" 
+                        id="smallBusiness"
+                        checked={contractData.isSmallBusiness}
+                        onChange={(e) => setContractData({...contractData, isSmallBusiness: e.target.checked})}
+                        className="rounded border-gray-300"
+                      />
+                      <Label htmlFor="smallBusiness" className="text-xs">5인 미만 사업장 (가산수당 미적용)</Label>
+                    </div>
+                    <Button onClick={handleCalculateSalary} size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                      <DollarSign className="w-3 h-3 mr-1" /> 예상 급여 자동 계산
+                    </Button>
+                  </div>
+                )}
                 <div className="grid grid-cols-2 gap-2 mb-2">
                   <span>기본급</span>
                   <span className="text-right font-medium">
