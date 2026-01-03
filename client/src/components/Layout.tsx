@@ -23,11 +23,11 @@ export default function Layout({ children }: LayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { icon: Clock, label: "Dashboard", path: "/" },
-    { icon: Calendar, label: "Attendance", path: "/attendance" },
-    { icon: Users, label: "Employees", path: "/employees" },
-    { icon: BarChart3, label: "Reports", path: "/reports" },
-    { icon: Settings, label: "Settings", path: "/settings" },
+    { icon: Clock, label: "대시보드", path: "/" },
+    { icon: Calendar, label: "근태 관리", path: "/attendance" },
+    { icon: Users, label: "직원 관리", path: "/employees" },
+    { icon: BarChart3, label: "통계 보고서", path: "/reports" },
+    { icon: Settings, label: "설정", path: "/settings" },
   ];
 
   return (
@@ -38,7 +38,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg shadow-lg shadow-primary/20">
             A
           </div>
-          <span className="font-bold text-xl tracking-tight">Attendance</span>
+          <span className="font-bold text-xl tracking-tight">근태관리 시스템</span>
         </div>
 
         <ScrollArea className="flex-1 px-4 py-2">
@@ -72,8 +72,8 @@ export default function Layout({ children }: LayoutProps) {
               />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">Alex Morgan</p>
-              <p className="text-xs text-muted-foreground truncate">Admin</p>
+              <p className="text-sm font-semibold truncate">김관리</p>
+              <p className="text-xs text-muted-foreground truncate">관리자</p>
             </div>
             <LogOut className="w-4 h-4 text-muted-foreground group-hover:text-destructive transition-colors" />
           </div>
@@ -86,7 +86,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold shadow-md">
             A
           </div>
-          <span className="font-bold text-lg">Attendance</span>
+          <span className="font-bold text-lg">근태관리 시스템</span>
         </div>
         <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
           <Menu className="w-6 h-6" />
@@ -97,7 +97,7 @@ export default function Layout({ children }: LayoutProps) {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-50 bg-background md:hidden flex flex-col animate-in slide-in-from-top-10 duration-200">
           <div className="h-16 flex items-center justify-between px-4 border-b border-border">
-            <span className="font-bold text-lg">Menu</span>
+            <span className="font-bold text-lg">메뉴</span>
             <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
               <LogOut className="w-6 h-6 rotate-45" /> {/* Close icon hack */}
             </Button>

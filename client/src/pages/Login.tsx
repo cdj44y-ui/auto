@@ -36,13 +36,13 @@ export default function Login() {
             <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-bold text-2xl shadow-lg shadow-primary/30 mb-4">
               A
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-center">Welcome Back</h1>
-            <p className="text-muted-foreground text-center">Sign in to your workspace</p>
+            <h1 className="text-2xl font-bold tracking-tight text-center">환영합니다</h1>
+            <p className="text-muted-foreground text-center">워크스페이스에 로그인하세요</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">이메일</Label>
               <Input 
                 id="email" 
                 type="email" 
@@ -53,8 +53,8 @@ export default function Login() {
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <a href="#" className="text-xs text-primary hover:underline font-medium">Forgot password?</a>
+                <Label htmlFor="password">비밀번호</Label>
+                <a href="#" className="text-xs text-primary hover:underline font-medium">비밀번호 찾기</a>
               </div>
               <Input 
                 id="password" 
@@ -70,18 +70,18 @@ export default function Login() {
               className="w-full h-12 rounded-xl text-base font-semibold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]" 
               disabled={isLoading}
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? "로그인 중..." : "로그인"}
             </Button>
           </form>
 
           <div className="mt-8 pt-6 border-t border-border/50">
-            <p className="text-center text-sm text-muted-foreground mb-4">Quick Login</p>
+            <p className="text-center text-sm text-muted-foreground mb-4">빠른 로그인</p>
             <div className="grid grid-cols-2 gap-4">
               <Button variant="outline" className="h-10 rounded-xl hover:bg-white hover:shadow-md transition-all" onClick={() => setLocation("/")}>
-                Admin
+                관리자
               </Button>
               <Button variant="outline" className="h-10 rounded-xl hover:bg-white hover:shadow-md transition-all" onClick={() => setLocation("/")}>
-                Employee
+                직원
               </Button>
             </div>
           </div>

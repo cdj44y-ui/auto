@@ -16,7 +16,7 @@ export default function Home() {
   }, []);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
+    return date.toLocaleTimeString("ko-KR", {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
@@ -25,8 +25,9 @@ export default function Home() {
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString("ko-KR", {
       weekday: "long",
+      year: "numeric",
       month: "long",
       day: "numeric",
     });
@@ -47,7 +48,7 @@ export default function Home() {
         <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-4 text-center md:text-left">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-              Good Morning, Alex
+              안녕하세요, 김관리님
             </h1>
             <p className="text-lg text-muted-foreground font-medium">
               {formatDate(currentTime)}
@@ -70,18 +71,18 @@ export default function Home() {
             >
               {isCheckedIn ? (
                 <>
-                  <LogOut className="mr-3 w-6 h-6" /> Check Out
+                  <LogOut className="mr-3 w-6 h-6" /> 퇴근하기
                 </>
               ) : (
                 <>
-                  <LogIn className="mr-3 w-6 h-6" /> Check In
+                  <LogIn className="mr-3 w-6 h-6" /> 출근하기
                 </>
               )}
             </Button>
             
             {isCheckedIn && (
               <Button variant="outline" size="lg" className="h-14 rounded-2xl border-2 hover:bg-secondary/50">
-                <Coffee className="mr-2 w-5 h-5 text-orange-500" /> Start Break
+                <Coffee className="mr-2 w-5 h-5 text-orange-500" /> 휴식 시작
               </Button>
             )}
           </div>
@@ -91,10 +92,10 @@ export default function Home() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
-          { title: "Total Employees", value: "142", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
-          { title: "On Time", value: "128", icon: Clock, color: "text-green-500", bg: "bg-green-50" },
-          { title: "Late Arrival", value: "12", icon: ArrowUpRight, color: "text-orange-500", bg: "bg-orange-50" },
-          { title: "Absent", value: "2", icon: LogOut, color: "text-red-500", bg: "bg-red-50" },
+          { title: "총 직원", value: "142명", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
+          { title: "정상 출근", value: "128명", icon: Clock, color: "text-green-500", bg: "bg-green-50" },
+          { title: "지각", value: "12명", icon: ArrowUpRight, color: "text-orange-500", bg: "bg-orange-50" },
+          { title: "결근", value: "2명", icon: LogOut, color: "text-red-500", bg: "bg-red-50" },
         ].map((stat, index) => (
           <Card key={index} className="border-none shadow-sm hover:shadow-md transition-shadow duration-200">
             <CardContent className="p-6 flex items-center justify-between">
@@ -115,15 +116,15 @@ export default function Home() {
         {/* Recent Activity */}
         <Card className="lg:col-span-2 border-none shadow-sm">
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle>최근 활동</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
               {[
-                { name: "Sarah Connor", action: "Checked In", time: "08:58 AM", status: "On Time", img: "bg-pink-100" },
-                { name: "John Doe", action: "Checked In", time: "09:02 AM", status: "Late", img: "bg-blue-100" },
-                { name: "Jane Smith", action: "Break Start", time: "10:30 AM", status: "Break", img: "bg-green-100" },
-                { name: "Mike Johnson", action: "Checked Out", time: "06:00 PM", status: "Overtime", img: "bg-yellow-100" },
+                { name: "이영희", action: "출근 완료", time: "08:58", status: "정상", img: "bg-pink-100" },
+                { name: "김철수", action: "출근 완료", time: "09:02", status: "지각", img: "bg-blue-100" },
+                { name: "박지민", action: "휴식 시작", time: "10:30", status: "휴식", img: "bg-green-100" },
+                { name: "최민수", action: "퇴근 완료", time: "18:00", status: "초과근무", img: "bg-yellow-100" },
               ].map((item, i) => (
                 <div key={i} className="flex items-center justify-between group hover:bg-secondary/50 p-2 rounded-xl transition-colors -mx-2">
                   <div className="flex items-center gap-4">
@@ -139,8 +140,8 @@ export default function Home() {
                     <p className="font-medium tabular-nums">{item.time}</p>
                     <span className={cn(
                       "text-xs px-2 py-1 rounded-full font-medium",
-                      item.status === "On Time" ? "bg-green-100 text-green-700" :
-                      item.status === "Late" ? "bg-orange-100 text-orange-700" :
+                      item.status === "정상" ? "bg-green-100 text-green-700" :
+                      item.status === "지각" ? "bg-orange-100 text-orange-700" :
                       "bg-gray-100 text-gray-700"
                     )}>
                       {item.status}
@@ -155,12 +156,12 @@ export default function Home() {
         {/* Weekly Summary */}
         <Card className="border-none shadow-sm bg-primary/5">
           <CardHeader>
-            <CardTitle>Weekly Summary</CardTitle>
+            <CardTitle>주간 요약</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="font-medium">Attendance Rate</span>
+                <span className="font-medium">출석률</span>
                 <span className="font-bold">94%</span>
               </div>
               <Progress value={94} className="h-2" />
@@ -168,7 +169,7 @@ export default function Home() {
             
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="font-medium">On-Time Rate</span>
+                <span className="font-medium">정시 출근율</span>
                 <span className="font-bold">88%</span>
               </div>
               <Progress value={88} className="h-2 bg-secondary [&>div]:bg-green-500" />
@@ -176,10 +177,10 @@ export default function Home() {
 
             <div className="pt-6">
               <div className="p-4 rounded-2xl bg-white shadow-sm border border-white/50">
-                <h4 className="font-semibold mb-2">Upcoming Holiday</h4>
+                <h4 className="font-semibold mb-2">다가오는 휴일</h4>
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Calendar className="w-5 h-5 text-primary" />
-                  <span>New Year's Day - Jan 1</span>
+                  <span>신정 - 1월 1일</span>
                 </div>
               </div>
             </div>
