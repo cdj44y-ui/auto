@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ConsultantPayrollManager from "@/components/consultant/ConsultantPayrollManager";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
@@ -143,6 +144,11 @@ export default function ConsultantDashboard() {
                 <ConsultationChat />
               </div>
             </div>
+          </TabsContent>
+
+          {/* 전문가 급여정산 탭 */}
+          <TabsContent value="payroll">
+            <ConsultantPayrollManager />
           </TabsContent>
 
           {/* 고객사 관리 탭 */}
