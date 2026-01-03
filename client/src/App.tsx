@@ -9,6 +9,8 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Approvals from "./pages/Approvals";
 import Contract from "./pages/Contract";
+import Workflow from "./pages/Workflow";
+import Payroll from "./pages/Payroll";
 import Reports from "./pages/Reports";
 import Employees from "./pages/Employees";
 import Settings from "./pages/Settings";
@@ -24,6 +26,8 @@ function Router() {
       <Route path={"/signup"} component={Signup} />
       <Route path={"/approvals"} component={Approvals} />
       <Route path={"/contract"} component={Contract} />
+      <Route path={"/workflow"} component={Workflow} />
+      <Route path={"/payroll"} component={Payroll} />
       <Route path={"/reports"} component={Reports} />
       <Route path={"/employees"} component={Employees} />
       <Route path={"/settings"} component={Settings} />
