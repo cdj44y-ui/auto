@@ -26,6 +26,7 @@ import {
 import NotificationCenter from "@/components/NotificationCenter";
 import RequestCenter from "@/components/employee/RequestCenter";
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { toast } from "sonner";
 
 // 직원용 레이아웃 컴포넌트
@@ -85,6 +86,7 @@ function EmployeeLayout({ children }: { children: React.ReactNode }) {
 export default function EmployeeDashboard() {
   const [activeTab, setActiveTab] = useState("attendance");
   const { user } = useAuth();
+  const [, setLocation] = useLocation();
   const [currentTime, setCurrentTime] = useState(new Date());
   
   // 근무 기록 상태
@@ -314,15 +316,33 @@ export default function EmployeeDashboard() {
               <CardTitle className="dark:text-slate-100">전자 근로계약서</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="p-6 border rounded-lg bg-slate-50 dark:bg-slate-800 dark:border-slate-700 text-center space-y-4">
-                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-                <div>
-                  <h3 className="text-lg font-bold dark:text-slate-200">서명 완료된 계약서가 있습니다</h3>
-                  <p className="text-muted-foreground">2026년 연봉계약서 (2026.01.02 서명)</p>
+              <div className="grid gap-6">
+                {/* 서명 대기 중인 계약서 */}
+                <div className="p-6 border-2 border-indigo-100 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-950/20 rounded-lg text-center space-y-4">
+                  <AlertCircle className="w-12 h-12 text-indigo-500 mx-auto" />
+                  <div>
+                    <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-300">서명이 필요한 계약서가 있습니다</h3>
+                    <p className="text-indigo-600 dark:text-indigo-400">2026년 연봉계약서 (미서명)</p>
+                  </div>
+                  <Button 
+                    className="bg-indigo-600 hover:bg-indigo-700"
+                    onClick={() => setLocation("/contract-signing")}
+                  >
+                    <FileText className="w-4 h-4 mr-2" /> 계약서 확인 및 서명하기
+                  </Button>
                 </div>
-                <Button>
-                  <FileText className="w-4 h-4 mr-2" /> 계약서 보기 (PDF)
-                </Button>
+
+                {/* 지난 계약서 내역 */}
+                <div className="p-6 border rounded-lg bg-slate-50 dark:bg-slate-800 dark:border-slate-700 text-center space-y-4 opacity-60">
+                  <CheckCircle2 className="w-12 h-12 text-slate-400 mx-auto" />
+                  <div>
+                    <h3 className="text-lg font-bold dark:text-slate-200">2025년 근로계약서</h3>
+                    <p className="text-muted-foreground">2025.01.02 서명 완료</p>
+                  </div>
+                  <Button variant="outline" disabled>
+                    <FileText className="w-4 h-4 mr-2" /> 보기 (만료됨)
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import LoginGateway from "@/pages/LoginGateway";
 import EmployeeSignup from "@/pages/EmployeeSignup";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
+import ContractSigning from "@/pages/ContractSigning";
 import DeveloperDashboard from "./pages/DeveloperDashboard";
 import ConsultantDashboard from "./pages/ConsultantDashboard";
 import Approvals from "./pages/Approvals";
@@ -27,17 +28,24 @@ import Attendance from "./pages/Attendance";
 function Router() {
   return (
     <Switch>
-      {/* 공통 진입점 */}      <Route path="/login-gateway" component={LoginGateway} />
+      {/* 공통 진입점 */}
+      <Route path="/login-gateway" component={LoginGateway} />
       <Route path="/employee-signup" component={EmployeeSignup} />
+      
       {/* 루트 경로 접속 시 로그인 페이지로 리다이렉트 (보안 강화) */}
       <Route path="/">
-        <Redirect to="/login" />
+        <Redirect to="/login-gateway" />
       </Route>
 
       {/* 직원 전용 대시보드 (직원만 접근 가능) */}
       <ProtectedRoute 
         path="/employee-dashboard" 
         component={EmployeeDashboard} 
+        allowedRoles={["employee"]} 
+      />
+      <ProtectedRoute 
+        path="/contract-signing" 
+        component={ContractSigning} 
         allowedRoles={["employee"]} 
       />
 
