@@ -7,6 +7,7 @@ import { Check, Download, PenTool, Send, Edit2, Save, DollarSign } from "lucide-
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { calculateMonthlyEstimatedSalary } from "@/lib/salaryCalculator";
+import { calculateComprehensiveSalary } from "@/lib/comprehensiveSalary";
 
 export default function Contract() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -36,30 +37,55 @@ export default function Contract() {
     hourlyRate: 15000, // 시급 추가
     isSmallBusiness: false, // 5인 미만 여부
     weeklyWorkHours: 40, // 주 소정 근로시간
+    calculationMethod: "auto", // 'auto' | 'comprehensive'
+    includedOvertimeHours: 0,
+    includedNightHours: 0,
+    includedHolidayHours: 0,
   });
 
   const handleCalculateSalary = () => {
-    const result = calculateMonthlyEstimatedSalary(
-      {
-        startTime: contractData.workTimeStart,
-        endTime: contractData.workTimeEnd,
-        breakStartTime: contractData.breakTimeStart,
-        breakEndTime: contractData.breakTimeEnd,
-      },
-      {
-        hourlyRate: contractData.hourlyRate,
-        isSmallBusiness: contractData.isSmallBusiness,
+    if (contractData.calculationMethod === "comprehensive") {
+      // 포괄임금제 역산
+      const result = calculateComprehensiveSalary({
+        totalSalary: contractData.totalSalary,
+        nonTaxableAmount: contractData.mealAllowance, // 식대 등 비과세
         weeklyWorkHours: contractData.weeklyWorkHours,
-      }
-    );
+        includedOvertimeHours: contractData.includedOvertimeHours,
+        includedNightHours: contractData.includedNightHours,
+        includedHolidayHours: contractData.includedHolidayHours,
+        isSmallBusiness: contractData.isSmallBusiness,
+      });
 
-    setContractData(prev => ({
-      ...prev,
-      baseSalary: result.basePay,
-      overtimeAllowance: result.overtimePay + result.nightPay + result.holidayPay, // 각종 수당 합산
-    }));
-    
-    toast.success("근무 조건에 따른 예상 급여가 계산되었습니다.");
+      setContractData(prev => ({
+        ...prev,
+        hourlyRate: result.hourlyRate,
+        baseSalary: result.baseSalary,
+        overtimeAllowance: result.overtimeAllowance + result.nightAllowance + result.holidayAllowance,
+      }));
+      toast.success(`포괄임금 역산 완료: 시급 ${result.hourlyRate.toLocaleString()}원`);
+    } else {
+      // 기존 자동 계산 (시급 기준)
+      const result = calculateMonthlyEstimatedSalary(
+        {
+          startTime: contractData.workTimeStart,
+          endTime: contractData.workTimeEnd,
+          breakStartTime: contractData.breakTimeStart,
+          breakEndTime: contractData.breakTimeEnd,
+        },
+        {
+          hourlyRate: contractData.hourlyRate,
+          isSmallBusiness: contractData.isSmallBusiness,
+          weeklyWorkHours: contractData.weeklyWorkHours,
+        }
+      );
+
+      setContractData(prev => ({
+        ...prev,
+        baseSalary: result.basePay,
+        overtimeAllowance: result.overtimePay + result.nightPay + result.holidayPay,
+      }));
+      toast.success("근무 조건에 따른 예상 급여가 계산되었습니다.");
+    }
   };
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -206,27 +232,106 @@ export default function Contract() {
               <div className="border rounded-lg p-4 bg-gray-50 my-2">
                 {isEditing && (
                   <div className="mb-4 p-4 bg-white rounded-lg border border-blue-100">
-                    <h4 className="font-semibold mb-2 text-blue-800">급여 자동 계산 설정</h4>
-                    <div className="grid grid-cols-2 gap-4 mb-2">
-                      <div className="space-y-1">
-                        <Label className="text-xs">시급 (원)</Label>
-                        <Input 
-                          type="number" 
-                          value={contractData.hourlyRate}
-                          onChange={(e) => setContractData({...contractData, hourlyRate: parseInt(e.target.value)})}
-                          className="h-8"
+                    <h4 className="font-semibold mb-2 text-blue-800">급여 계산 방식 설정</h4>
+                    
+                    <div className="flex space-x-4 mb-4">
+                      <div className="flex items-center space-x-2">
+                        <input 
+                          type="radio" 
+                          id="calc-auto" 
+                          name="calcMethod"
+                          checked={contractData.calculationMethod === "auto"}
+                          onChange={() => setContractData({...contractData, calculationMethod: "auto"})}
                         />
+                        <Label htmlFor="calc-auto" className="text-sm">시급 기준 계산</Label>
                       </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs">주 소정 근로시간</Label>
-                        <Input 
-                          type="number" 
-                          value={contractData.weeklyWorkHours}
-                          onChange={(e) => setContractData({...contractData, weeklyWorkHours: parseInt(e.target.value)})}
-                          className="h-8"
+                      <div className="flex items-center space-x-2">
+                        <input 
+                          type="radio" 
+                          id="calc-comp" 
+                          name="calcMethod"
+                          checked={contractData.calculationMethod === "comprehensive"}
+                          onChange={() => setContractData({...contractData, calculationMethod: "comprehensive"})}
                         />
+                        <Label htmlFor="calc-comp" className="text-sm">포괄임금 역산 (총액 기준)</Label>
                       </div>
                     </div>
+
+                    {contractData.calculationMethod === "comprehensive" ? (
+                      <div className="space-y-3 mb-3">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <Label className="text-xs">월 총 급여 (원)</Label>
+                            <Input 
+                              type="number" 
+                              value={contractData.totalSalary}
+                              onChange={(e) => setContractData({...contractData, totalSalary: parseInt(e.target.value)})}
+                              className="h-8"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs">비과세 수당 (식대 등)</Label>
+                            <Input 
+                              type="number" 
+                              value={contractData.mealAllowance}
+                              onChange={(e) => setContractData({...contractData, mealAllowance: parseInt(e.target.value)})}
+                              className="h-8"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="space-y-1">
+                            <Label className="text-xs">포함 연장(시간)</Label>
+                            <Input 
+                              type="number" 
+                              value={contractData.includedOvertimeHours}
+                              onChange={(e) => setContractData({...contractData, includedOvertimeHours: Number(e.target.value)})}
+                              className="h-8"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs">포함 야간(시간)</Label>
+                            <Input 
+                              type="number" 
+                              value={contractData.includedNightHours}
+                              onChange={(e) => setContractData({...contractData, includedNightHours: Number(e.target.value)})}
+                              className="h-8"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs">포함 휴일(시간)</Label>
+                            <Input 
+                              type="number" 
+                              value={contractData.includedHolidayHours}
+                              onChange={(e) => setContractData({...contractData, includedHolidayHours: Number(e.target.value)})}
+                              className="h-8"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-4 mb-2">
+                        <div className="space-y-1">
+                          <Label className="text-xs">시급 (원)</Label>
+                          <Input 
+                            type="number" 
+                            value={contractData.hourlyRate}
+                            onChange={(e) => setContractData({...contractData, hourlyRate: parseInt(e.target.value)})}
+                            className="h-8"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">주 소정 근로시간</Label>
+                          <Input 
+                            type="number" 
+                            value={contractData.weeklyWorkHours}
+                            onChange={(e) => setContractData({...contractData, weeklyWorkHours: parseInt(e.target.value)})}
+                            className="h-8"
+                          />
+                        </div>
+                      </div>
+                    )}
+
                     <div className="flex items-center space-x-2 mb-3">
                       <input 
                         type="checkbox" 
@@ -238,7 +343,7 @@ export default function Contract() {
                       <Label htmlFor="smallBusiness" className="text-xs">5인 미만 사업장 (가산수당 미적용)</Label>
                     </div>
                     <Button onClick={handleCalculateSalary} size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                      <DollarSign className="w-3 h-3 mr-1" /> 예상 급여 자동 계산
+                      <DollarSign className="w-3 h-3 mr-1" /> {contractData.calculationMethod === "comprehensive" ? "포괄임금 역산 실행" : "예상 급여 자동 계산"}
                     </Button>
                   </div>
                 )}

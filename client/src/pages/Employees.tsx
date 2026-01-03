@@ -27,11 +27,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { DollarSign } from "lucide-react";
+import { DollarSign, Upload, FileText } from "lucide-react";
 import { Download, MoreHorizontal, Plus, Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { toast } from "sonner";
 
-const employeesData = [
+const initialEmployeesData = [
   {
     id: 1,
     name: "김철수",
@@ -85,10 +86,12 @@ const employeesData = [
 ];
 
 export default function Employees() {
+  const [employees, setEmployees] = useState(initialEmployeesData);
   const [searchTerm, setSearchTerm] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("all");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const filteredEmployees = employeesData.filter((employee) => {
+  const filteredEmployees = employees.filter((employee) => {
     const matchesSearch =
       employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       employee.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -96,6 +99,67 @@ export default function Employees() {
       departmentFilter === "all" || employee.department === departmentFilter;
     return matchesSearch && matchesDepartment;
   });
+
+  // 엑셀 업로드 핸들러
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        // 실제 구현 시에는 xlsx 라이브러리로 파싱
+        // const workbook = XLSX.read(evt.target?.result, { type: 'binary' });
+        
+        // 시뮬레이션: 파일 업로드 성공 시 더미 데이터 추가
+        toast.success(`${file.name} 파일에서 3명의 직원 정보를 불러왔습니다.`);
+        
+        const newEmployees = [
+          {
+            id: employees.length + 1,
+            name: "신규입사자1",
+            email: "new1@company.com",
+            department: "영업팀",
+            role: "사원",
+            status: "대기",
+            checkIn: "-",
+            workTime: "-",
+          },
+          {
+            id: employees.length + 2,
+            name: "신규입사자2",
+            email: "new2@company.com",
+            department: "영업팀",
+            role: "대리",
+            status: "대기",
+            checkIn: "-",
+            workTime: "-",
+          },
+          {
+            id: employees.length + 3,
+            name: "신규입사자3",
+            email: "new3@company.com",
+            department: "인사팀",
+            role: "사원",
+            status: "대기",
+            checkIn: "-",
+            workTime: "-",
+          }
+        ];
+        setEmployees([...employees, ...newEmployees]);
+      } catch (error) {
+        toast.error("엑셀 파일 처리 중 오류가 발생했습니다.");
+      }
+    };
+    reader.readAsBinaryString(file);
+    
+    // 입력 초기화
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleDownloadTemplate = () => {
+    toast.success("직원 일괄 등록 템플릿이 다운로드되었습니다.");
+  };
 
   return (
     <Layout>
@@ -105,11 +169,21 @@ export default function Employees() {
           <p className="text-muted-foreground">직원 목록을 조회하고 근태 현황을 관리합니다.</p>
         </div>
         <div className="flex items-center gap-3">
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            className="hidden" 
+            accept=".xlsx, .xls" 
+            onChange={handleFileUpload}
+          />
+          <Button variant="outline" onClick={handleDownloadTemplate} className="rounded-xl bg-white border-none shadow-sm hover:bg-gray-50">
+            <FileText className="w-4 h-4 mr-2" /> 템플릿
+          </Button>
+          <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="rounded-xl bg-white border-none shadow-sm hover:bg-gray-50">
+            <Upload className="w-4 h-4 mr-2" /> 엑셀 업로드
+          </Button>
           <Button className="rounded-xl shadow-lg shadow-primary/20">
             <Plus className="w-4 h-4 mr-2" /> 직원 추가
-          </Button>
-          <Button variant="outline" className="rounded-xl bg-white border-none shadow-sm hover:bg-gray-50">
-            <Download className="w-4 h-4 mr-2" /> 엑셀 다운로드
           </Button>
         </div>
       </div>
@@ -138,6 +212,7 @@ export default function Employees() {
                   <SelectItem value="디자인팀">디자인팀</SelectItem>
                   <SelectItem value="마케팅팀">마케팅팀</SelectItem>
                   <SelectItem value="인사팀">인사팀</SelectItem>
+                  <SelectItem value="영업팀">영업팀</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -187,7 +262,9 @@ export default function Employees() {
                             ? "bg-orange-100 text-orange-700 hover:bg-orange-100"
                             : employee.status === "퇴근"
                             ? "bg-gray-100 text-gray-700 hover:bg-gray-100"
-                            : "bg-red-100 text-red-700 hover:bg-red-100"
+                            : employee.status === "결근"
+                            ? "bg-red-100 text-red-700 hover:bg-red-100"
+                            : "bg-gray-100 text-gray-700"
                         }
                       >
                         {employee.status}
@@ -212,10 +289,11 @@ export default function Employees() {
                               <select className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                                 <option value="salary">연봉제</option>
                                 <option value="hourly">시급제</option>
+                                <option value="comprehensive">포괄임금제</option>
                               </select>
                             </div>
                             <div className="space-y-2">
-                              <Label>기본급 (원)</Label>
+                              <Label>기본급/총액 (원)</Label>
                               <Input type="number" placeholder="3000000" />
                             </div>
                             <div className="space-y-2">
@@ -226,10 +304,6 @@ export default function Employees() {
                               <Label>주 소정 근로시간 (시간)</Label>
                               <Input type="number" placeholder="40" defaultValue="40" />
                               <p className="text-xs text-muted-foreground">주 15시간 미만인 경우 주휴수당이 발생하지 않습니다.</p>
-                            </div>
-                            <div className="space-y-2">
-                              <Label>초과근무 수당 (시급)</Label>
-                              <Input type="number" placeholder="15000" />
                             </div>
                             <Button className="w-full mt-4">저장하기</Button>
                           </div>
