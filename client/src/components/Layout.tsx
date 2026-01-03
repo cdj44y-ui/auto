@@ -14,7 +14,8 @@ import {
   FileText,
   DollarSign,
   Bell,
-  CheckCircle2
+  CheckCircle2,
+  BrainCircuit
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -45,6 +46,7 @@ export default function Layout({ children }: LayoutProps) {
     { icon: FileText, label: "전자 결재", path: "/workflow" },
     { icon: DollarSign, label: "급여 관리", path: "/payroll" },
     { icon: BarChart3, label: "통계 보고서", path: "/reports" },
+    { icon: BrainCircuit, label: "AI 인사이트", path: "/insights" },
     { icon: Settings, label: "설정", path: "/settings" },
   ];
 

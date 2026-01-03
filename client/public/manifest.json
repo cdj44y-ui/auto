@@ -1,0 +1,21 @@
+{
+  "name": "근태관리 시스템",
+  "short_name": "근태관리",
+  "description": "스마트한 근태관리 및 급여 정산 시스템",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F5F7",
+  "theme_color": "#007AFF",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
