@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { calculateComprehensiveSalary } from "@/lib/comprehensiveSalary";
-import { Send, Settings } from "lucide-react";
+import { Send, Settings, Briefcase } from "lucide-react";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import ExcelPayrollUpload from "@/components/payroll/ExcelPayrollUpload";
 import ManualWorkLogCalculator from "@/components/payroll/ManualWorkLogCalculator";
 import PayrollSettings from "@/components/payroll/PayrollSettings";
 import VirtualPayrollTable from "@/components/payroll/VirtualPayrollTable";
+import SeveranceAndTransfer from "@/components/payroll/SeveranceAndTransfer";
 import { calculateTaxes } from "@/lib/taxEngine";
 
 // 대용량 데이터 생성 (시뮬레이션: 10,000명)
@@ -75,10 +76,13 @@ export default function Payroll() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-8">
-          <TabsTrigger value="system">시스템 정산 (대용량)</TabsTrigger>
-          <TabsTrigger value="excel">엑셀 일괄 계산</TabsTrigger>
-          <TabsTrigger value="manual">간편 수동 계산</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsTrigger value="system">시스템 정산</TabsTrigger>
+          <TabsTrigger value="excel">엑셀 일괄</TabsTrigger>
+          <TabsTrigger value="manual">간편 수동</TabsTrigger>
+          <TabsTrigger value="severance" className="flex items-center gap-2">
+            <Briefcase className="w-4 h-4" /> 퇴직금/이체
+          </TabsTrigger>
           <TabsTrigger value="settings" className="flex items-center gap-2">
             <Settings className="w-4 h-4" /> 환경 설정
           </TabsTrigger>
@@ -132,6 +136,10 @@ export default function Payroll() {
 
         <TabsContent value="manual">
           <ManualWorkLogCalculator />
+        </TabsContent>
+
+        <TabsContent value="severance">
+          <SeveranceAndTransfer />
         </TabsContent>
 
         <TabsContent value="settings">
