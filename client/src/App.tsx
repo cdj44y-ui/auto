@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import LoginGateway from "./pages/LoginGateway";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import DeveloperDashboard from "./pages/DeveloperDashboard";
+import ConsultantDashboard from "./pages/ConsultantDashboard";
 import Approvals from "./pages/Approvals";
 import Contract from "./pages/Contract";
 import Workflow from "./pages/Workflow";
@@ -46,9 +47,16 @@ function Router() {
         component={DeveloperDashboard} 
         allowedRoles={["developer"]} 
       />
+
+      {/* 자문사 전용 대시보드 (자문사만 접근 가능) */}
+      <ProtectedRoute 
+        path="/consultant-dashboard" 
+        component={ConsultantDashboard} 
+        allowedRoles={["consultant"]} 
+      />
       
       {/* 관리자용 라우트 (관리자만 접근 가능) */}
-      <ProtectedRoute path="/admin" component={Home} allowedRoles={["admin"]} />
+      <ProtectedRoute path="/admin-dashboard" component={Home} allowedRoles={["admin"]} />
       <ProtectedRoute path="/attendance" component={Attendance} allowedRoles={["admin"]} />
       <ProtectedRoute path="/approvals" component={Approvals} allowedRoles={["admin"]} />
       <ProtectedRoute path="/contract" component={Contract} allowedRoles={["admin"]} />
