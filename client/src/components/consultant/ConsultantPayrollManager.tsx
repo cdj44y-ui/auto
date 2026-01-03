@@ -23,6 +23,7 @@ import ConsultantWorkerSettings from "./payroll/ConsultantWorkerSettings";
 import ConsultantWorkRecordGrid from "./payroll/ConsultantWorkRecordGrid";
 import ConsultantPayrollRegister from "./payroll/ConsultantPayrollRegister";
 import ConsultantBulkUpload from "./payroll/ConsultantBulkUpload";
+import InsuranceRateManager from "./payroll/InsuranceRateManager";
 
 // 모의 데이터: 관리 중인 회사 목록
 const managedCompanies = [
@@ -133,6 +134,9 @@ export default function ConsultantPayrollManager() {
           <TabsTrigger value="upload" className="data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 h-10">
             <FileSpreadsheet className="w-4 h-4 mr-2" /> 엑셀 일괄처리
           </TabsTrigger>
+          <TabsTrigger value="rates" className="data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 h-10">
+            <Settings className="w-4 h-4 mr-2" /> 4대보험 요율
+          </TabsTrigger>
         </TabsList>
 
         <div className="min-h-[600px]">
@@ -150,6 +154,10 @@ export default function ConsultantPayrollManager() {
           
           <TabsContent value="upload" className="mt-0">
             <ConsultantBulkUpload companyId={selectedCompanyId} />
+          </TabsContent>
+          
+          <TabsContent value="rates" className="mt-0">
+            <InsuranceRateManager />
           </TabsContent>
         </div>
       </Tabs>

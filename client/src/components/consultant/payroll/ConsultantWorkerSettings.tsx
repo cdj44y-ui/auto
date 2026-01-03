@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Plus, Search, Edit2, Calculator, Save } from "lucide-react";
 import { toast } from "sonner";
+import ComprehensiveWageDetail from "./ComprehensiveWageDetail";
 
 // 포괄임금제 역산 계산 로직 (간소화 버전)
 const calculateReverseSalary = (totalSalary: number, weeklyHours: number = 40, overtimeHours: number = 0) => {
@@ -224,19 +225,12 @@ export default function ConsultantWorkerSettings({ companyId }: { companyId: str
               </Button>
 
               {simResult && (
-                <div className="mt-4 space-y-2 text-sm border-t pt-2">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">통상시급</span>
-                    <span className="font-bold">{simResult.hourlyRate.toLocaleString()}원</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">기본급(209h)</span>
-                    <span>{simResult.baseSalary.toLocaleString()}원</span>
-                  </div>
-                  <div className="flex justify-between text-blue-600">
-                    <span className="text-muted-foreground">고정연장수당</span>
-                    <span>{simResult.fixedOvertimeAllowance.toLocaleString()}원</span>
-                  </div>
+                <div className="mt-4">
+                  <ComprehensiveWageDetail 
+                    baseSalary={simResult.baseSalary}
+                    fixedOvertimeHours={simOvertimeHours * 4.345}
+                    hourlyRate={simResult.hourlyRate}
+                  />
                   {simResult.isMinWageViolation && (
                     <div className="text-red-500 text-xs font-bold mt-2 flex items-center gap-1">
                       <AlertCircle className="w-3 h-3" /> 최저임금 미달 (2026년 10,350원)

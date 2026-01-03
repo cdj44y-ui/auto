@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Download, Send, Printer, FileText } from "lucide-react";
+import DeductionDetailPopup from "./DeductionDetailPopup";
 
 // 모의 급여대장 데이터
 const payrollData = [
@@ -84,7 +85,23 @@ export default function ConsultantPayrollRegister({ companyId }: { companyId: st
                   <TableCell className="text-right">{(item.overtimePay + item.nightPay + item.holidayPay).toLocaleString()}</TableCell>
                   <TableCell className="text-right">{item.mealAllowance.toLocaleString()}</TableCell>
                   <TableCell className="text-right font-bold text-blue-600">{item.totalPay.toLocaleString()}</TableCell>
-                  <TableCell className="text-right text-red-600">{(item.tax + item.insurance).toLocaleString()}</TableCell>
+                  <TableCell className="text-right text-red-600">
+                    <div className="flex flex-col items-end gap-1">
+                      <span>{(item.tax + item.insurance).toLocaleString()}</span>
+                      <DeductionDetailPopup 
+                        workerName={item.name}
+                        totalSalary={item.totalPay}
+                        deductions={{
+                          pension: Math.round(item.insurance * 0.45),
+                          health: Math.round(item.insurance * 0.35),
+                          care: Math.round(item.insurance * 0.05),
+                          employment: Math.round(item.insurance * 0.15),
+                          incomeTax: Math.round(item.tax * 0.9),
+                          localTax: Math.round(item.tax * 0.1)
+                        }}
+                      />
+                    </div>
+                  </TableCell>
                   <TableCell className="text-right font-bold text-indigo-600">{item.netPay.toLocaleString()}</TableCell>
                   <TableCell className="text-center">
                     <Badge variant={item.status === 'completed' ? 'default' : 'secondary'} className={item.status === 'completed' ? 'bg-green-100 text-green-700 hover:bg-green-100' : ''}>
