@@ -6,6 +6,9 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Approvals from "./pages/Approvals";
+import Contract from "./pages/Contract";
 import Reports from "./pages/Reports";
 import Employees from "./pages/Employees";
 import Settings from "./pages/Settings";
@@ -18,6 +21,9 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/attendance"} component={Attendance} />
       <Route path={"/login"} component={Login} />
+      <Route path={"/signup"} component={Signup} />
+      <Route path={"/approvals"} component={Approvals} />
+      <Route path={"/contract"} component={Contract} />
       <Route path={"/reports"} component={Reports} />
       <Route path={"/employees"} component={Employees} />
       <Route path={"/settings"} component={Settings} />

@@ -19,6 +19,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { DollarSign } from "lucide-react";
 import { Download, MoreHorizontal, Plus, Search } from "lucide-react";
 import { useState } from "react";
 
@@ -187,9 +196,40 @@ export default function Employees() {
                     <TableCell className="font-medium tabular-nums">{employee.checkIn}</TableCell>
                     <TableCell className="font-medium tabular-nums">{employee.workTime}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="mr-2">
+                            <DollarSign className="w-4 h-4 mr-1" /> 급여 설정
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>{employee.name}님의 급여 정보 설정</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4 py-4">
+                            <div className="space-y-2">
+                              <Label>계약 형태</Label>
+                              <select className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                                <option value="salary">연봉제</option>
+                                <option value="hourly">시급제</option>
+                              </select>
+                            </div>
+                            <div className="space-y-2">
+                              <Label>기본급 (원)</Label>
+                              <Input type="number" placeholder="3000000" />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>식대 (원)</Label>
+                              <Input type="number" placeholder="200000" />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>초과근무 수당 (시급)</Label>
+                              <Input type="number" placeholder="15000" />
+                            </div>
+                            <Button className="w-full mt-4">저장하기</Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </TableCell>
                   </TableRow>
                 ))}

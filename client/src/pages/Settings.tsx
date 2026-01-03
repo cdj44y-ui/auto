@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, MapPin, Save } from "lucide-react";
+import { Clock, MapPin, Save, Mail } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -37,6 +37,9 @@ export default function Settings() {
           </TabsTrigger>
           <TabsTrigger value="location" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <MapPin className="w-4 h-4 mr-2" /> 위치 설정
+          </TabsTrigger>
+          <TabsTrigger value="notifications" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <Mail className="w-4 h-4 mr-2" /> 알림 설정
           </TabsTrigger>
         </TabsList>
 
@@ -95,6 +98,33 @@ export default function Settings() {
               <div className="flex justify-end">
                 <Button onClick={handleSave} className="rounded-xl shadow-lg shadow-primary/20">
                   <Save className="w-4 h-4 mr-2" /> 저장하기
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="notifications">
+          <Card className="border-none shadow-sm">
+            <CardHeader>
+              <CardTitle>이메일 리포팅 설정</CardTitle>
+              <CardDescription>근무 리포트 자동 전송 설정을 관리합니다.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">일일 근무 리포트 전송</Label>
+                  <p className="text-sm text-muted-foreground">매일 퇴근 시 관리자에게 근무 요약 리포트를 전송합니다.</p>
+                </div>
+                <Switch defaultChecked />
+              </div>
+              <div className="space-y-2">
+                <Label>수신 이메일 주소</Label>
+                <Input defaultValue="admin@company.com" className="rounded-xl" />
+              </div>
+              <div className="flex justify-end">
+                <Button onClick={handleSave} className="rounded-xl shadow-lg shadow-primary/20">
+                  <Save className="w-4 h-4 mr-2" /> 설정 저장
                 </Button>
               </div>
             </CardContent>

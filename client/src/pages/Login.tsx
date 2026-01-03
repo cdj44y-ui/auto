@@ -38,6 +38,15 @@ export default function Login() {
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-center">환영합니다</h1>
             <p className="text-muted-foreground text-center">워크스페이스에 로그인하세요</p>
+            <p className="text-sm text-center mt-2">
+              계정이 없으신가요?{" "}
+              <span 
+                className="text-primary font-medium cursor-pointer hover:underline"
+                onClick={() => setLocation("/signup")}
+              >
+                회원가입
+              </span>
+            </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
