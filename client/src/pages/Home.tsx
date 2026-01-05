@@ -3,14 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight, Calendar, Clock, Coffee, LogIn, LogOut, Users } from "lucide-react";
+import { ArrowUpRight, Calendar, Clock, Coffee, LogIn, LogOut, Users, Briefcase } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import AttendanceCorrection from "@/components/admin/AttendanceCorrection";
+import FlexibleWorkApplicationWizard from "@/components/flexible-work/FlexibleWorkApplicationWizard";
+import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isCheckedIn, setIsCheckedIn] = useState(false);
+  const [isFlexibleWorkDialogOpen, setIsFlexibleWorkDialogOpen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -58,6 +62,11 @@ export default function Home() {
             <div className="text-6xl md:text-7xl font-bold text-primary tracking-tighter tabular-nums my-4">
               {formatTime(currentTime)}
             </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="bg-white/50 backdrop-blur-sm border-indigo-200 text-indigo-700">
+                현재 근무제: 시차출퇴근제 (A조 08:00-17:00)
+              </Badge>
+            </div>
           </div>
 
           <div className="flex flex-col gap-4 w-full md:w-auto">
@@ -92,10 +101,23 @@ export default function Home() {
       </div>
 
       <Tabs defaultValue="dashboard" className="space-y-6">
-        <TabsList className="bg-white p-1 rounded-xl shadow-sm w-full md:w-auto grid grid-cols-2 md:inline-flex">
-          <TabsTrigger value="dashboard" className="rounded-lg">대시보드</TabsTrigger>
-          <TabsTrigger value="correction" className="rounded-lg">근태 수정/보완</TabsTrigger>
-        </TabsList>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <TabsList className="bg-white p-1 rounded-xl shadow-sm w-full md:w-auto grid grid-cols-2 md:inline-flex">
+            <TabsTrigger value="dashboard" className="rounded-lg">대시보드</TabsTrigger>
+            <TabsTrigger value="correction" className="rounded-lg">근태 수정/보완</TabsTrigger>
+          </TabsList>
+
+          <Dialog open={isFlexibleWorkDialogOpen} onOpenChange={setIsFlexibleWorkDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="bg-white hover:bg-slate-50 border-indigo-200 text-indigo-700">
+                <Briefcase className="w-4 h-4 mr-2" /> 유연근무제 신청
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl p-0 bg-transparent border-none shadow-none">
+              <FlexibleWorkApplicationWizard />
+            </DialogContent>
+          </Dialog>
+        </div>
 
         <TabsContent value="dashboard" className="space-y-6">
           {/* Stats Grid */}
