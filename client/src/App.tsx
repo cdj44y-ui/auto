@@ -38,42 +38,54 @@ function Router() {
       </Route>
 
       {/* 직원 전용 대시보드 (직원만 접근 가능) */}
-      <ProtectedRoute 
-        path="/employee-dashboard" 
-        component={EmployeeDashboard} 
-        allowedRoles={["employee"]} 
-      />
-      <ProtectedRoute 
-        path="/contract-signing" 
-        component={ContractSigning} 
-        allowedRoles={["employee"]} 
-      />
+      <Route path="/employee-dashboard">
+        <ProtectedRoute allowedRoles={["employee"]} component={EmployeeDashboard} />
+      </Route>
+      <Route path="/contract-signing">
+        <ProtectedRoute allowedRoles={["employee"]} component={ContractSigning} />
+      </Route>
 
       {/* 개발자 전용 대시보드 (개발자만 접근 가능) */}
-      <ProtectedRoute 
-        path="/developer-dashboard" 
-        component={DeveloperDashboard} 
-        allowedRoles={["developer"]} 
-      />
+      <Route path="/developer-dashboard">
+        <ProtectedRoute allowedRoles={["developer"]} component={DeveloperDashboard} />
+      </Route>
 
       {/* 자문사 전용 대시보드 (자문사만 접근 가능) */}
-      <ProtectedRoute 
-        path="/consultant-dashboard" 
-        component={ConsultantDashboard} 
-        allowedRoles={["consultant"]} 
-      />
+      <Route path="/consultant-dashboard">
+        <ProtectedRoute allowedRoles={["consultant"]} component={ConsultantDashboard} />
+      </Route>
       
       {/* 관리자용 라우트 (관리자만 접근 가능) */}
-      <ProtectedRoute path="/admin-dashboard" component={Home} allowedRoles={["admin"]} />
-      <ProtectedRoute path="/attendance" component={Attendance} allowedRoles={["admin"]} />
-      <ProtectedRoute path="/approvals" component={Approvals} allowedRoles={["admin"]} />
-      <ProtectedRoute path="/contract" component={Contract} allowedRoles={["admin"]} />
-      <ProtectedRoute path="/workflow" component={Workflow} allowedRoles={["admin"]} />
-      <ProtectedRoute path="/payroll" component={Payroll} allowedRoles={["admin"]} />
-      <ProtectedRoute path="/reports" component={Reports} allowedRoles={["admin"]} />
-      <ProtectedRoute path="/employees" component={Employees} allowedRoles={["admin"]} />
-      <ProtectedRoute path="/settings" component={Settings} allowedRoles={["admin"]} />
-      <ProtectedRoute path="/insights" component={Insights} allowedRoles={["admin"]} />
+      <Route path="/admin-dashboard">
+        <ProtectedRoute allowedRoles={["admin"]} component={Home} />
+      </Route>
+      <Route path="/attendance">
+        <ProtectedRoute allowedRoles={["admin"]} component={Attendance} />
+      </Route>
+      <Route path="/approvals">
+        <ProtectedRoute allowedRoles={["admin"]} component={Approvals} />
+      </Route>
+      <Route path="/contract">
+        <ProtectedRoute allowedRoles={["admin"]} component={Contract} />
+      </Route>
+      <Route path="/workflow">
+        <ProtectedRoute allowedRoles={["admin"]} component={Workflow} />
+      </Route>
+      <Route path="/payroll">
+        <ProtectedRoute allowedRoles={["admin"]} component={Payroll} />
+      </Route>
+      <Route path="/reports">
+        <ProtectedRoute allowedRoles={["admin"]} component={Reports} />
+      </Route>
+      <Route path="/employees">
+        <ProtectedRoute allowedRoles={["admin"]} component={Employees} />
+      </Route>
+      <Route path="/settings">
+        <ProtectedRoute allowedRoles={["admin"]} component={Settings} />
+      </Route>
+      <Route path="/insights">
+        <ProtectedRoute allowedRoles={["admin"]} component={Insights} />
+      </Route>
       
       <Route component={NotFound} />
     </Switch>

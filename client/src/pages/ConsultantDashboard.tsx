@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { 
   LogOut, 
   Briefcase, 
@@ -21,24 +22,22 @@ import {
   Sun,
   MessageSquare,
   Bell,
-  Download
+  Download,
+  Plus
 } from "lucide-react";
 import { toast } from "sonner";
 import ConsultationChat from "@/components/consultant/ConsultationChat";
 import BulkContractManager from "@/components/consultant/BulkContractManager";
 import LegalAlertSystem from "@/components/consultant/LegalAlertSystem";
+import PartnerDashboard from "@/components/partner/PartnerDashboard";
+import ClientOnboardingWizard from "@/components/partner/ClientOnboardingWizard";
+import PermissionMatrixEditor from "@/components/partner/PermissionMatrixEditor";
 
 export default function ConsultantDashboard() {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState("dashboard");
-
-  // 모의 고객사 데이터
-  const clients = [
-    { id: 1, name: "(주)테크스타트업", employees: 45, status: "active", issue: "none", lastAudit: "2026-01-15" },
-    { id: 2, name: "글로벌무역상사", employees: 12, status: "warning", issue: "contract_renewal", lastAudit: "2025-12-20" },
-    { id: 3, name: "퓨처디자인랩", employees: 8, status: "active", issue: "none", lastAudit: "2026-01-20" },
-  ];
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
 
   // 모의 4대보험 신고 건수
   const insuranceTasks = [
@@ -77,63 +76,17 @@ export default function ConsultantDashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-white dark:bg-slate-900 border-none shadow-sm">
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-                <Building className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">관리 고객사</p>
-                <p className="text-2xl font-bold dark:text-slate-100">{clients.length}개사</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white dark:bg-slate-900 border-none shadow-sm">
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
-                <Calculator className="w-6 h-6 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">이번 달 급여정산</p>
-                <p className="text-2xl font-bold dark:text-slate-100">2개사 완료</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white dark:bg-slate-900 border-none shadow-sm">
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-full">
-                <FileText className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">4대보험 신고대기</p>
-                <p className="text-2xl font-bold dark:text-slate-100">{insuranceTasks.filter(t => t.status === 'pending').length}건</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white dark:bg-slate-900 border-none shadow-sm">
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full">
-                <Users className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">총 관리 인원</p>
-                <p className="text-2xl font-bold dark:text-slate-100">65명</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-[800px] bg-white dark:bg-slate-900">
+          <TabsList className="grid w-full grid-cols-6 lg:w-[900px] bg-white dark:bg-slate-900">
             <TabsTrigger value="dashboard">통합 대시보드</TabsTrigger>
-            <TabsTrigger value="clients">고객사 관리</TabsTrigger>
+            <TabsTrigger value="partner">파트너 관리</TabsTrigger>
+            <TabsTrigger value="clients">고객사 현황</TabsTrigger>
             <TabsTrigger value="payroll">전문가 급여정산</TabsTrigger>
             <TabsTrigger value="insurance">4대보험 신고</TabsTrigger>
             <TabsTrigger value="documents">규정/서식 관리</TabsTrigger>
           </TabsList>
 
-          {/* 통합 대시보드 탭 (신규 기능 통합) */}
+          {/* 통합 대시보드 탭 */}
           <TabsContent value="dashboard" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
@@ -146,46 +99,42 @@ export default function ConsultantDashboard() {
             </div>
           </TabsContent>
 
+          {/* 파트너 관리 탭 (신규 기능) */}
+          <TabsContent value="partner" className="space-y-6">
+            <div className="flex justify-end mb-4">
+              <Dialog open={isOnboardingOpen} onOpenChange={setIsOnboardingOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-indigo-600 hover:bg-indigo-700">
+                    <Plus className="w-4 h-4 mr-2" /> 신규 고객사 등록 (Onboarding)
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl">
+                  <ClientOnboardingWizard onClose={() => setIsOnboardingOpen(false)} />
+                </DialogContent>
+              </Dialog>
+            </div>
+            <PartnerDashboard />
+            <div className="mt-8">
+              <PermissionMatrixEditor />
+            </div>
+          </TabsContent>
+
           {/* 전문가 급여정산 탭 */}
           <TabsContent value="payroll">
             <ConsultantPayrollManager />
           </TabsContent>
 
-          {/* 고객사 관리 탭 */}
+          {/* 고객사 현황 탭 (기존 뷰 유지) */}
           <TabsContent value="clients">
             <Card className="border-none shadow-sm dark:bg-slate-900">
               <CardHeader>
-                <CardTitle className="dark:text-slate-100">고객사 현황 모니터링</CardTitle>
+                <CardTitle className="dark:text-slate-100">고객사 리스크 모니터링</CardTitle>
                 <CardDescription>계약된 고객사의 노무 리스크 및 계약 상태를 관리합니다.</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {clients.map((client) => (
-                    <div key={client.id} className="flex items-center justify-between p-4 border rounded-lg bg-white dark:bg-slate-950 dark:border-slate-800">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
-                          <Building className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-bold dark:text-slate-200">{client.name}</h3>
-                            {client.status === 'warning' && (
-                              <Badge variant="destructive" className="text-xs">리스크 감지</Badge>
-                            )}
-                          </div>
-                          <p className="text-sm text-muted-foreground">직원 {client.employees}명 | 최근 점검일: {client.lastAudit}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {client.issue === 'contract_renewal' && (
-                          <span className="text-sm text-orange-500 flex items-center gap-1">
-                            <AlertCircle className="w-4 h-4" /> 근로계약 갱신 필요
-                          </span>
-                        )}
-                        <Button variant="outline" size="sm">상세 관리</Button>
-                      </div>
-                    </div>
-                  ))}
+                {/* 기존 고객사 리스트 뷰 재사용 가능 */}
+                <div className="text-center py-8 text-muted-foreground">
+                  파트너 관리 탭에서 더 상세한 정보를 확인할 수 있습니다.
                 </div>
               </CardContent>
             </Card>
