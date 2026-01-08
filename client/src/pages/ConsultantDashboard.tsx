@@ -145,7 +145,8 @@ export default function ConsultantDashboard() {
                   </p>
                 </div>
               </div>
-              <AnnualLeaveLedger />
+              {/* 자문사 모드 활성화 (isConsultant=true) */}
+              <AnnualLeaveLedger isConsultant={true} />
             </div>
           </TabsContent>
 

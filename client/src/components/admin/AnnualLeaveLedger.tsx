@@ -8,16 +8,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { calculateFiscalYearLeave, calculateJoinDateLeave, LeaveCalculationMethod } from "@/lib/annual-leave";
-import { Download, Search, Calendar, Calculator, Mail, AlertCircle } from "lucide-react";
+import { Download, Search, Calendar, Calculator, Mail, AlertCircle, Building2 } from "lucide-react";
 import * as XLSX from 'xlsx';
 
-// Mock Employee Data
+// Mock Client Companies (자문사용)
+const MOCK_CLIENTS = [
+  { id: "all", name: "전체 고객사" },
+  { id: "C001", name: "(주)테크스타트업" },
+  { id: "C002", name: "글로벌무역상사" },
+  { id: "C003", name: "퓨처디자인랩" },
+];
+
+// Mock Employee Data with Company ID
 const MOCK_EMPLOYEES = [
-  { id: "EMP001", name: "김철수", department: "개발팀", joinDate: "2020-03-01", position: "과장", email: "kim@company.com" },
-  { id: "EMP002", name: "이영희", department: "디자인팀", joinDate: "2023-07-15", position: "대리", email: "lee@company.com" },
-  { id: "EMP003", name: "박지민", department: "마케팅팀", joinDate: "2025-01-01", position: "사원", email: "park@company.com" },
-  { id: "EMP004", name: "최민수", department: "영업팀", joinDate: "2018-11-20", position: "차장", email: "choi@company.com" },
-  { id: "EMP005", name: "정수진", department: "인사팀", joinDate: "2024-05-10", position: "사원", email: "jung@company.com" },
+  { id: "EMP001", companyId: "C001", name: "김철수", department: "개발팀", joinDate: "2020-03-01", position: "과장", email: "kim@tech.com" },
+  { id: "EMP002", companyId: "C001", name: "이영희", department: "디자인팀", joinDate: "2023-07-15", position: "대리", email: "lee@tech.com" },
+  { id: "EMP003", companyId: "C002", name: "박지민", department: "마케팅팀", joinDate: "2025-01-01", position: "사원", email: "park@global.com" },
+  { id: "EMP004", companyId: "C002", name: "최민수", department: "영업팀", joinDate: "2018-11-20", position: "차장", email: "choi@global.com" },
+  { id: "EMP005", companyId: "C003", name: "정수진", department: "인사팀", joinDate: "2024-05-10", position: "사원", email: "jung@future.com" },
 ];
 
 // Mock Usage Data (월별 사용일수 - 소수점 지원)
@@ -35,15 +43,27 @@ const MOCK_SUBSTITUTE = {
   "EMP004": 2.0,
 };
 
-export default function AnnualLeaveLedger() {
+interface AnnualLeaveLedgerProps {
+  isConsultant?: boolean; // 자문사 모드 여부
+}
+
+export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveLedgerProps) {
   const [method, setMethod] = useState<LeaveCalculationMethod>('fiscal_year');
   const [baseDate, setBaseDate] = useState(`${new Date().getFullYear()}-12-31`);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCompany, setSelectedCompany] = useState("all");
   const [promotionDialogOpen, setPromotionDialogOpen] = useState(false);
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
 
   const ledgerData = useMemo(() => {
-    return MOCK_EMPLOYEES.map((emp, index) => {
+    let filteredEmployees = MOCK_EMPLOYEES;
+
+    // 자문사 모드일 경우 고객사 필터링 적용
+    if (isConsultant && selectedCompany !== "all") {
+      filteredEmployees = filteredEmployees.filter(emp => emp.companyId === selectedCompany);
+    }
+
+    return filteredEmployees.map((emp, index) => {
       let leaveInfo;
       if (method === 'fiscal_year') {
         leaveInfo = calculateFiscalYearLeave(emp.joinDate, baseDate);
@@ -73,11 +93,12 @@ export default function AnnualLeaveLedger() {
       emp.name.includes(searchTerm) || 
       emp.department.includes(searchTerm)
     );
-  }, [method, baseDate, searchTerm]);
+  }, [method, baseDate, searchTerm, selectedCompany, isConsultant]);
 
   const handleExportExcel = () => {
     const ws = XLSX.utils.json_to_sheet(ledgerData.map(item => ({
       "연번": item.no,
+      "고객사": MOCK_CLIENTS.find(c => c.id === item.companyId)?.name || "-",
       "성명": item.name,
       "부서": item.department,
       "직급": item.position,
@@ -97,7 +118,6 @@ export default function AnnualLeaveLedger() {
   };
 
   const handlePromotion = () => {
-    // 실제로는 이메일 발송 API 호출
     alert(`${selectedEmployees.length}명에게 연차 사용 촉진 통지서를 발송했습니다.`);
     setPromotionDialogOpen(false);
     setSelectedEmployees([]);
@@ -110,7 +130,7 @@ export default function AnnualLeaveLedger() {
           <div>
             <CardTitle className="text-2xl font-bold">연차유급휴가 관리대장</CardTitle>
             <CardDescription>
-              전 직원의 연차 발생, 사용(반차/반반차 포함), 잔여 현황을 통합 관리합니다.
+              {isConsultant ? "고객사별" : "전 직원"} 연차 발생, 사용(반차/반반차 포함), 잔여 현황을 통합 관리합니다.
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
@@ -137,7 +157,10 @@ export default function AnnualLeaveLedger() {
                     <div className="max-h-40 overflow-y-auto space-y-1">
                       {ledgerData.filter(emp => emp.remaining > 0).map(emp => (
                         <div key={emp.id} className="flex items-center justify-between text-sm p-2 bg-white rounded border">
-                          <span>{emp.name} ({emp.department})</span>
+                          <span>
+                            {isConsultant && <span className="text-xs text-muted-foreground mr-2">[{MOCK_CLIENTS.find(c => c.id === emp.companyId)?.name}]</span>}
+                            {emp.name} ({emp.department})
+                          </span>
                           <span className="font-medium text-orange-600">잔여: {emp.remaining}일</span>
                         </div>
                       ))}
@@ -167,6 +190,24 @@ export default function AnnualLeaveLedger() {
         <div className="space-y-6">
           {/* Controls */}
           <div className="flex flex-col md:flex-row gap-4 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border">
+            {isConsultant && (
+              <div className="w-full md:w-64 space-y-2">
+                <label className="text-sm font-medium flex items-center gap-1 text-indigo-600">
+                  <Building2 className="w-4 h-4" /> 고객사 선택
+                </label>
+                <Select value={selectedCompany} onValueChange={setSelectedCompany}>
+                  <SelectTrigger className="bg-white dark:bg-slate-950 border-indigo-200">
+                    <SelectValue placeholder="고객사 선택" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MOCK_CLIENTS.map(client => (
+                      <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             <div className="flex-1 space-y-2">
               <label className="text-sm font-medium">계산 기준 선택</label>
               <Tabs value={method} onValueChange={(v) => setMethod(v as LeaveCalculationMethod)} className="w-full">
@@ -202,6 +243,7 @@ export default function AnnualLeaveLedger() {
               <TableHeader className="bg-slate-100 dark:bg-slate-800">
                 <TableRow>
                   <TableHead className="w-[50px] text-center fixed-col bg-slate-100 dark:bg-slate-800 z-10">No</TableHead>
+                  {isConsultant && <TableHead className="w-[120px] text-center">고객사</TableHead>}
                   <TableHead className="w-[100px] text-center fixed-col-2 bg-slate-100 dark:bg-slate-800 z-10">성명</TableHead>
                   <TableHead className="w-[100px] text-center">입사일</TableHead>
                   <TableHead className="w-[80px] text-center">근속년수</TableHead>
@@ -216,34 +258,47 @@ export default function AnnualLeaveLedger() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {ledgerData.map((row) => (
-                  <TableRow key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-900">
-                    <TableCell className="text-center font-medium fixed-col bg-white dark:bg-slate-950">{row.no}</TableCell>
-                    <TableCell className="text-center font-medium fixed-col-2 bg-white dark:bg-slate-950">
-                      <div>{row.name}</div>
-                      <div className="text-xs text-muted-foreground">{row.position}</div>
-                    </TableCell>
-                    <TableCell className="text-center text-sm text-muted-foreground">{row.joinDate}</TableCell>
-                    <TableCell className="text-center">{row.yearsOfService}년</TableCell>
-                    <TableCell className="text-center text-blue-600 dark:text-blue-400 bg-blue-50/30">{row.generated}</TableCell>
-                    <TableCell className="text-center text-purple-600 dark:text-purple-400 bg-purple-50/30">
-                      {row.substitute > 0 ? `+${row.substitute}` : '-'}
-                    </TableCell>
-                    <TableCell className="text-center font-bold bg-blue-100/30">{row.total}</TableCell>
-                    
-                    {/* Monthly Usage */}
-                    {Array.from({ length: 12 }, (_, i) => (
-                      <TableCell key={i} className="text-center text-xs text-muted-foreground">
-                        {row.usage[i + 1] > 0 ? (
-                          <span className="text-slate-900 dark:text-slate-100 font-medium">{row.usage[i + 1]}</span>
-                        ) : "-"}
+                {ledgerData.length > 0 ? (
+                  ledgerData.map((row) => (
+                    <TableRow key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-900">
+                      <TableCell className="text-center font-medium fixed-col bg-white dark:bg-slate-950">{row.no}</TableCell>
+                      {isConsultant && (
+                        <TableCell className="text-center text-xs text-muted-foreground">
+                          {MOCK_CLIENTS.find(c => c.id === row.companyId)?.name}
+                        </TableCell>
+                      )}
+                      <TableCell className="text-center font-medium fixed-col-2 bg-white dark:bg-slate-950">
+                        <div>{row.name}</div>
+                        <div className="text-xs text-muted-foreground">{row.position}</div>
                       </TableCell>
-                    ))}
+                      <TableCell className="text-center text-sm text-muted-foreground">{row.joinDate}</TableCell>
+                      <TableCell className="text-center">{row.yearsOfService}년</TableCell>
+                      <TableCell className="text-center text-blue-600 dark:text-blue-400 bg-blue-50/30">{row.generated}</TableCell>
+                      <TableCell className="text-center text-purple-600 dark:text-purple-400 bg-purple-50/30">
+                        {row.substitute > 0 ? `+${row.substitute}` : '-'}
+                      </TableCell>
+                      <TableCell className="text-center font-bold bg-blue-100/30">{row.total}</TableCell>
+                      
+                      {/* Monthly Usage */}
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <TableCell key={i} className="text-center text-xs text-muted-foreground">
+                          {row.usage[i + 1] > 0 ? (
+                            <span className="text-slate-900 dark:text-slate-100 font-medium">{row.usage[i + 1]}</span>
+                          ) : "-"}
+                        </TableCell>
+                      ))}
 
-                    <TableCell className="text-center font-bold text-orange-600 dark:text-orange-400 bg-orange-50/30">{row.totalUsed}</TableCell>
-                    <TableCell className="text-center font-bold text-green-600 dark:text-green-400 bg-green-50/30">{row.remaining}</TableCell>
+                      <TableCell className="text-center font-bold text-orange-600 dark:text-orange-400 bg-orange-50/30">{row.totalUsed}</TableCell>
+                      <TableCell className="text-center font-bold text-green-600 dark:text-green-400 bg-green-50/30">{row.remaining}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={isConsultant ? 21 : 20} className="text-center py-8 text-muted-foreground">
+                      데이터가 없습니다.
+                    </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </div>
