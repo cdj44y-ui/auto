@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, MapPin, Save, Mail, Palette } from "lucide-react";
 import BrandingSettings from "@/components/admin/BrandingSettings";
+import NotificationSettings from "@/components/admin/NotificationSettings";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -120,30 +121,7 @@ export default function Settings() {
         </TabsContent>
 
         <TabsContent value="notifications">
-          <Card className="border-none shadow-sm">
-            <CardHeader>
-              <CardTitle>이메일 리포팅 설정</CardTitle>
-              <CardDescription>근무 리포트 자동 전송 설정을 관리합니다.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label className="text-base">일일 근무 리포트 전송</Label>
-                  <p className="text-sm text-muted-foreground">매일 퇴근 시 관리자에게 근무 요약 리포트를 전송합니다.</p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              <div className="space-y-2">
-                <Label>수신 이메일 주소</Label>
-                <Input defaultValue="admin@company.com" className="rounded-xl" />
-              </div>
-              <div className="flex justify-end">
-                <Button onClick={handleSave} className="rounded-xl shadow-lg shadow-primary/20">
-                  <Save className="w-4 h-4 mr-2" /> 설정 저장
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <NotificationSettings />
         </TabsContent>
 
         <TabsContent value="location">
