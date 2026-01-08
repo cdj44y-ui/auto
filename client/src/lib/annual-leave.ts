@@ -2,6 +2,8 @@ import { differenceInMonths, differenceInYears, parseISO, startOfYear, endOfYear
 
 export type LeaveCalculationMethod = 'fiscal_year' | 'join_date';
 
+export type LeaveUnit = 'day' | 'half' | 'quarter'; // 1일, 0.5일(반차), 0.25일(반반차)
+
 export interface AnnualLeaveResult {
   userId: string;
   joinDate: string;
@@ -14,6 +16,7 @@ export interface AnnualLeaveResult {
     annual: number; // 기본 연차 (15일~)
     monthly: number; // 1년 미만 월차 (최대 11일)
     longService: number; // 근속 가산 연차
+    substitute: number; // 대체휴무 적립
     total: number; // 합계
   };
   

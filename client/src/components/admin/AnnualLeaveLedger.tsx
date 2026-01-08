@@ -6,32 +6,41 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { calculateFiscalYearLeave, calculateJoinDateLeave, LeaveCalculationMethod } from "@/lib/annual-leave";
-import { Download, Search, Calendar, Calculator } from "lucide-react";
+import { Download, Search, Calendar, Calculator, Mail, AlertCircle } from "lucide-react";
 import * as XLSX from 'xlsx';
 
 // Mock Employee Data
 const MOCK_EMPLOYEES = [
-  { id: "EMP001", name: "김철수", department: "개발팀", joinDate: "2020-03-01", position: "과장" },
-  { id: "EMP002", name: "이영희", department: "디자인팀", joinDate: "2023-07-15", position: "대리" },
-  { id: "EMP003", name: "박지민", department: "마케팅팀", joinDate: "2025-01-01", position: "사원" },
-  { id: "EMP004", name: "최민수", department: "영업팀", joinDate: "2018-11-20", position: "차장" },
-  { id: "EMP005", name: "정수진", department: "인사팀", joinDate: "2024-05-10", position: "사원" },
+  { id: "EMP001", name: "김철수", department: "개발팀", joinDate: "2020-03-01", position: "과장", email: "kim@company.com" },
+  { id: "EMP002", name: "이영희", department: "디자인팀", joinDate: "2023-07-15", position: "대리", email: "lee@company.com" },
+  { id: "EMP003", name: "박지민", department: "마케팅팀", joinDate: "2025-01-01", position: "사원", email: "park@company.com" },
+  { id: "EMP004", name: "최민수", department: "영업팀", joinDate: "2018-11-20", position: "차장", email: "choi@company.com" },
+  { id: "EMP005", name: "정수진", department: "인사팀", joinDate: "2024-05-10", position: "사원", email: "jung@company.com" },
 ];
 
-// Mock Usage Data (월별 사용일수)
+// Mock Usage Data (월별 사용일수 - 소수점 지원)
 const MOCK_USAGE = {
-  "EMP001": { 1: 1, 2: 0, 3: 2, 4: 1, 5: 0, 6: 3, 7: 2, 8: 5, 9: 0, 10: 1, 11: 0, 12: 2 },
-  "EMP002": { 1: 0, 2: 1, 3: 0, 4: 0, 5: 1, 6: 0, 7: 2, 8: 3, 9: 1, 10: 0, 11: 0, 12: 1 },
+  "EMP001": { 1: 1.5, 2: 0, 3: 2.25, 4: 1, 5: 0, 6: 3, 7: 2, 8: 5, 9: 0, 10: 1, 11: 0, 12: 2 },
+  "EMP002": { 1: 0, 2: 1, 3: 0, 4: 0.5, 5: 1, 6: 0, 7: 2, 8: 3, 9: 1, 10: 0, 11: 0, 12: 1 },
   "EMP003": { 1: 0, 2: 1, 3: 1, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 }, // 1년 미만
   "EMP004": { 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2, 10: 2, 11: 2, 12: 2 },
   "EMP005": { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 1, 7: 1, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 },
+};
+
+// Mock Substitute Holiday Data (대체휴무 적립)
+const MOCK_SUBSTITUTE = {
+  "EMP001": 1.5,
+  "EMP004": 2.0,
 };
 
 export default function AnnualLeaveLedger() {
   const [method, setMethod] = useState<LeaveCalculationMethod>('fiscal_year');
   const [baseDate, setBaseDate] = useState(`${new Date().getFullYear()}-12-31`);
   const [searchTerm, setSearchTerm] = useState("");
+  const [promotionDialogOpen, setPromotionDialogOpen] = useState(false);
+  const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
 
   const ledgerData = useMemo(() => {
     return MOCK_EMPLOYEES.map((emp, index) => {
@@ -42,7 +51,8 @@ export default function AnnualLeaveLedger() {
         leaveInfo = calculateJoinDateLeave(emp.joinDate, baseDate);
       }
 
-      const totalGenerated = leaveInfo.annual + leaveInfo.monthly;
+      const substitute = MOCK_SUBSTITUTE[emp.id as keyof typeof MOCK_SUBSTITUTE] || 0;
+      const totalGenerated = leaveInfo.annual + leaveInfo.monthly + substitute;
       const usage = MOCK_USAGE[emp.id as keyof typeof MOCK_USAGE] || {};
       const totalUsed = Object.values(usage).reduce((a, b) => a + b, 0);
       const remaining = totalGenerated - totalUsed;
@@ -52,7 +62,8 @@ export default function AnnualLeaveLedger() {
         ...emp,
         yearsOfService: leaveInfo.years,
         prevRemaining: 0, // 전년도 잔여 (Mock)
-        generated: totalGenerated,
+        generated: leaveInfo.annual + leaveInfo.monthly,
+        substitute,
         total: totalGenerated, // + 전년도 잔여
         usage,
         totalUsed,
@@ -73,6 +84,8 @@ export default function AnnualLeaveLedger() {
       "입사일": item.joinDate,
       "근속년수": item.yearsOfService,
       "발생연차": item.generated,
+      "대체휴무": item.substitute,
+      "총발생": item.total,
       "총사용일수": item.totalUsed,
       "잔여일수": item.remaining,
       ...Object.fromEntries(Object.entries(item.usage).map(([k, v]) => [`${k}월`, v]))
@@ -83,6 +96,13 @@ export default function AnnualLeaveLedger() {
     XLSX.writeFile(wb, `연차관리대장_${method === 'fiscal_year' ? '회계연도' : '입사일'}_${baseDate}.xlsx`);
   };
 
+  const handlePromotion = () => {
+    // 실제로는 이메일 발송 API 호출
+    alert(`${selectedEmployees.length}명에게 연차 사용 촉진 통지서를 발송했습니다.`);
+    setPromotionDialogOpen(false);
+    setSelectedEmployees([]);
+  };
+
   return (
     <Card className="border-none shadow-sm">
       <CardHeader>
@@ -90,10 +110,53 @@ export default function AnnualLeaveLedger() {
           <div>
             <CardTitle className="text-2xl font-bold">연차유급휴가 관리대장</CardTitle>
             <CardDescription>
-              전 직원의 연차 발생, 사용, 잔여 현황을 통합 관리합니다.
+              전 직원의 연차 발생, 사용(반차/반반차 포함), 잔여 현황을 통합 관리합니다.
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
+            <Dialog open={promotionDialogOpen} onOpenChange={setPromotionDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="text-orange-600 border-orange-200 hover:bg-orange-50">
+                  <Mail className="w-4 h-4 mr-2" /> 연차 촉진 통지
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>연차 사용 촉진 통지서 발송</DialogTitle>
+                  <DialogDescription>
+                    근로기준법 제61조에 의거하여 미사용 연차에 대한 사용 촉진 통지서를 발송합니다.
+                    <br />
+                    대상자는 잔여 연차가 남아있는 직원들입니다.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="py-4">
+                  <div className="bg-slate-50 p-4 rounded-lg border mb-4">
+                    <h4 className="font-semibold mb-2 flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-orange-500" /> 발송 대상자 (잔여 연차 보유자)
+                    </h4>
+                    <div className="max-h-40 overflow-y-auto space-y-1">
+                      {ledgerData.filter(emp => emp.remaining > 0).map(emp => (
+                        <div key={emp.id} className="flex items-center justify-between text-sm p-2 bg-white rounded border">
+                          <span>{emp.name} ({emp.department})</span>
+                          <span className="font-medium text-orange-600">잔여: {emp.remaining}일</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    * 통지서는 이메일과 카카오 알림톡으로 동시 발송됩니다.
+                    <br />
+                    * 직원은 수신 후 10일 이내에 사용 시기를 지정하여 회신해야 합니다.
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setPromotionDialogOpen(false)}>취소</Button>
+                  <Button onClick={handlePromotion} className="bg-orange-600 hover:bg-orange-700">
+                    일괄 발송하기
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             <Button variant="outline" onClick={handleExportExcel}>
               <Download className="w-4 h-4 mr-2" /> 엑셀 다운로드
             </Button>
@@ -142,8 +205,9 @@ export default function AnnualLeaveLedger() {
                   <TableHead className="w-[100px] text-center fixed-col-2 bg-slate-100 dark:bg-slate-800 z-10">성명</TableHead>
                   <TableHead className="w-[100px] text-center">입사일</TableHead>
                   <TableHead className="w-[80px] text-center">근속년수</TableHead>
-                  <TableHead className="w-[80px] text-center bg-blue-50 dark:bg-blue-900/20">발생연차</TableHead>
-                  <TableHead className="w-[80px] text-center bg-blue-50 dark:bg-blue-900/20">총계</TableHead>
+                  <TableHead className="w-[80px] text-center bg-blue-50 dark:bg-blue-900/20">기본발생</TableHead>
+                  <TableHead className="w-[80px] text-center bg-purple-50 dark:bg-purple-900/20">대체휴무</TableHead>
+                  <TableHead className="w-[80px] text-center bg-blue-100 dark:bg-blue-900/40 font-bold">총계</TableHead>
                   {Array.from({ length: 12 }, (_, i) => (
                     <TableHead key={i} className="w-[50px] text-center text-xs text-muted-foreground">{i + 1}월</TableHead>
                   ))}
@@ -161,8 +225,11 @@ export default function AnnualLeaveLedger() {
                     </TableCell>
                     <TableCell className="text-center text-sm text-muted-foreground">{row.joinDate}</TableCell>
                     <TableCell className="text-center">{row.yearsOfService}년</TableCell>
-                    <TableCell className="text-center font-bold text-blue-600 dark:text-blue-400 bg-blue-50/30">{row.generated}</TableCell>
-                    <TableCell className="text-center font-bold bg-blue-50/30">{row.total}</TableCell>
+                    <TableCell className="text-center text-blue-600 dark:text-blue-400 bg-blue-50/30">{row.generated}</TableCell>
+                    <TableCell className="text-center text-purple-600 dark:text-purple-400 bg-purple-50/30">
+                      {row.substitute > 0 ? `+${row.substitute}` : '-'}
+                    </TableCell>
+                    <TableCell className="text-center font-bold bg-blue-100/30">{row.total}</TableCell>
                     
                     {/* Monthly Usage */}
                     {Array.from({ length: 12 }, (_, i) => (
@@ -188,6 +255,8 @@ export default function AnnualLeaveLedger() {
               {method === 'fiscal_year' 
                 ? " 회계연도 기준은 매년 1월 1일 기준으로 근속년수를 산정하며, 1년 미만자는 입사일로부터 12월 31일까지의 기간에 비례하여 연차를 부여합니다." 
                 : " 입사일 기준은 직원의 개별 입사일로부터 1년이 되는 시점마다 법정 연차가 발생합니다."}
+              <br />
+              * 반차(0.5일), 반반차(0.25일) 사용 및 대체휴무 적립분이 포함된 내역입니다.
             </span>
           </div>
         </div>

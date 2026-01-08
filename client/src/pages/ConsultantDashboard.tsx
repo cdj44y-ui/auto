@@ -32,6 +32,8 @@ import LegalAlertSystem from "@/components/consultant/LegalAlertSystem";
 import PartnerDashboard from "@/components/partner/PartnerDashboard";
 import ClientOnboardingWizard from "@/components/partner/ClientOnboardingWizard";
 import PermissionMatrixEditor from "@/components/partner/PermissionMatrixEditor";
+import FlexibleWorkPolicyManager from "@/components/flexible-work/FlexibleWorkPolicyManager";
+import AnnualLeaveLedger from "@/components/admin/AnnualLeaveLedger";
 
 export default function ConsultantDashboard() {
   const { user, logout } = useAuth();
@@ -77,13 +79,14 @@ export default function ConsultantDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 lg:w-[900px] bg-white dark:bg-slate-900">
-            <TabsTrigger value="dashboard">통합 대시보드</TabsTrigger>
-            <TabsTrigger value="partner">파트너 관리</TabsTrigger>
-            <TabsTrigger value="clients">고객사 현황</TabsTrigger>
-            <TabsTrigger value="payroll">전문가 급여정산</TabsTrigger>
-            <TabsTrigger value="insurance">4대보험 신고</TabsTrigger>
-            <TabsTrigger value="documents">규정/서식 관리</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 lg:w-[1000px] bg-white dark:bg-slate-900 h-auto p-1">
+            <TabsTrigger value="dashboard" className="py-2">통합 대시보드</TabsTrigger>
+            <TabsTrigger value="partner" className="py-2">파트너 관리</TabsTrigger>
+            <TabsTrigger value="clients" className="py-2">고객사 현황</TabsTrigger>
+            <TabsTrigger value="payroll" className="py-2">전문가 급여정산</TabsTrigger>
+            <TabsTrigger value="flexible" className="py-2">유연근무 컨설팅</TabsTrigger>
+            <TabsTrigger value="leave" className="py-2">연차 관리</TabsTrigger>
+            <TabsTrigger value="insurance" className="py-2">4대보험 신고</TabsTrigger>
           </TabsList>
 
           {/* 통합 대시보드 탭 */}
@@ -99,7 +102,7 @@ export default function ConsultantDashboard() {
             </div>
           </TabsContent>
 
-          {/* 파트너 관리 탭 (신규 기능) */}
+          {/* 파트너 관리 탭 */}
           <TabsContent value="partner" className="space-y-6">
             <div className="flex justify-end mb-4">
               <Dialog open={isOnboardingOpen} onOpenChange={setIsOnboardingOpen}>
@@ -124,7 +127,29 @@ export default function ConsultantDashboard() {
             <ConsultantPayrollManager />
           </TabsContent>
 
-          {/* 고객사 현황 탭 (기존 뷰 유지) */}
+          {/* 유연근무 컨설팅 탭 */}
+          <TabsContent value="flexible">
+            <FlexibleWorkPolicyManager />
+          </TabsContent>
+
+          {/* 연차 관리 탭 */}
+          <TabsContent value="leave">
+            <div className="space-y-4">
+              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-100 dark:border-purple-800 flex items-start gap-3">
+                <Calculator className="w-5 h-5 text-purple-600 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold text-purple-900 dark:text-purple-100">연차 관리 서비스 가이드</h4>
+                  <p className="text-sm text-purple-700 dark:text-purple-300 mt-1">
+                    고객사의 연차 발생 및 사용 내역을 모니터링하고, 법적 분쟁 예방을 위해 연차 사용 촉진 제도를 적시에 안내하세요.
+                    회계연도 기준과 입사일 기준을 모두 지원하며, 대체휴무 적립 내역도 통합 관리됩니다.
+                  </p>
+                </div>
+              </div>
+              <AnnualLeaveLedger />
+            </div>
+          </TabsContent>
+
+          {/* 고객사 현황 탭 */}
           <TabsContent value="clients">
             <Card className="border-none shadow-sm dark:bg-slate-900">
               <CardHeader>
@@ -132,7 +157,6 @@ export default function ConsultantDashboard() {
                 <CardDescription>계약된 고객사의 노무 리스크 및 계약 상태를 관리합니다.</CardDescription>
               </CardHeader>
               <CardContent>
-                {/* 기존 고객사 리스트 뷰 재사용 가능 */}
                 <div className="text-center py-8 text-muted-foreground">
                   파트너 관리 탭에서 더 상세한 정보를 확인할 수 있습니다.
                 </div>
@@ -178,45 +202,6 @@ export default function ConsultantDashboard() {
                       </div>
                     </div>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* 규정/서식 관리 탭 */}
-          <TabsContent value="documents">
-            <Card className="border-none shadow-sm dark:bg-slate-900">
-              <CardHeader>
-                <CardTitle className="dark:text-slate-100">법정 필수 서식 및 취업규칙</CardTitle>
-                <CardDescription>최신 노동법이 반영된 표준 서식을 고객사에 배포합니다.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 border rounded-lg bg-white dark:bg-slate-950 dark:border-slate-800 hover:border-indigo-500 transition-colors cursor-pointer">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-indigo-600" />
-                        <h4 className="font-bold dark:text-slate-200">2026년 표준 취업규칙</h4>
-                      </div>
-                      <Badge>New</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-4">직장 내 괴롭힘 방지법 개정안 반영 완료</p>
-                    <Button variant="outline" size="sm" className="w-full">
-                      <Download className="w-4 h-4 mr-2" /> 서식 다운로드
-                    </Button>
-                  </div>
-                  <div className="p-4 border rounded-lg bg-white dark:bg-slate-950 dark:border-slate-800 hover:border-indigo-500 transition-colors cursor-pointer">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-indigo-600" />
-                        <h4 className="font-bold dark:text-slate-200">포괄임금제 근로계약서</h4>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-4">사무직/생산직 직군별 표준 계약서 양식</p>
-                    <Button variant="outline" size="sm" className="w-full">
-                      <Download className="w-4 h-4 mr-2" /> 서식 다운로드
-                    </Button>
-                  </div>
                 </div>
               </CardContent>
             </Card>
