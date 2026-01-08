@@ -21,6 +21,7 @@ import AttendanceCorrection from "@/components/admin/AttendanceCorrection";
 import FlexibleWorkPolicyManager from "@/components/flexible-work/FlexibleWorkPolicyManager";
 import FlexibleWorkApprovalList from "@/components/flexible-work/FlexibleWorkApprovalList";
 import AnnualLeaveLedger from "@/components/admin/AnnualLeaveLedger";
+import TeamLeaveCalendar from "@/components/calendar/TeamLeaveCalendar";
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -63,11 +64,12 @@ export default function AdminDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 lg:w-[900px] bg-white dark:bg-slate-900 h-auto p-1">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 lg:w-[1000px] bg-white dark:bg-slate-900 h-auto p-1">
             <TabsTrigger value="dashboard" className="py-2">대시보드</TabsTrigger>
             <TabsTrigger value="employees" className="py-2">직원 관리</TabsTrigger>
             <TabsTrigger value="payroll" className="py-2">급여 관리</TabsTrigger>
             <TabsTrigger value="attendance" className="py-2">근태 관리</TabsTrigger>
+            <TabsTrigger value="calendar" className="py-2">휴가 캘린더</TabsTrigger>
             <TabsTrigger value="flexible" className="py-2">유연근무</TabsTrigger>
             <TabsTrigger value="leave" className="py-2">연차 관리</TabsTrigger>
           </TabsList>
@@ -155,6 +157,10 @@ export default function AdminDashboard() {
 
           <TabsContent value="attendance">
             <AttendanceCorrection />
+          </TabsContent>
+
+          <TabsContent value="calendar">
+            <TeamLeaveCalendar isAdmin={true} />
           </TabsContent>
 
           <TabsContent value="flexible">

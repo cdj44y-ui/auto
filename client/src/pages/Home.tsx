@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import AttendanceCorrection from "@/components/admin/AttendanceCorrection";
 import FlexibleWorkApplicationWizard from "@/components/flexible-work/FlexibleWorkApplicationWizard";
+import TeamLeaveCalendar from "@/components/calendar/TeamLeaveCalendar";
 import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
@@ -102,8 +103,9 @@ export default function Home() {
 
       <Tabs defaultValue="dashboard" className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <TabsList className="bg-white p-1 rounded-xl shadow-sm w-full md:w-auto grid grid-cols-2 md:inline-flex">
+          <TabsList className="bg-white p-1 rounded-xl shadow-sm w-full md:w-auto grid grid-cols-3 md:inline-flex">
             <TabsTrigger value="dashboard" className="rounded-lg">대시보드</TabsTrigger>
+            <TabsTrigger value="calendar" className="rounded-lg">팀 휴가 캘린더</TabsTrigger>
             <TabsTrigger value="correction" className="rounded-lg">근태 수정/보완</TabsTrigger>
           </TabsList>
 
@@ -218,6 +220,10 @@ export default function Home() {
           </CardContent>
         </Card>
       </div>
+        </TabsContent>
+
+        <TabsContent value="calendar">
+          <TeamLeaveCalendar />
         </TabsContent>
 
         <TabsContent value="correction">
