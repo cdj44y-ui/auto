@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { useBranding } from "@/contexts/BrandingContext";
 import { Link, useLocation } from "wouter";
 
 interface LayoutProps {
@@ -36,6 +37,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { branding } = useBranding();
 
   const navItems = [
     { icon: Clock, label: "대시보드", path: "/" },
@@ -55,10 +57,18 @@ export default function Layout({ children }: LayoutProps) {
       {/* Sidebar - Desktop */}
       <aside className="hidden md:flex w-64 flex-col border-r border-border bg-sidebar/80 backdrop-blur-xl fixed h-full z-30">
         <div className="p-6 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg shadow-lg shadow-primary/20">
-            A
-          </div>
-          <span className="font-bold text-xl tracking-tight">근태관리 시스템</span>
+          {branding.logoUrl ? (
+            <div className="w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center bg-white shadow-sm">
+              <img src={branding.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+            </div>
+          ) : (
+            <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg shadow-lg shadow-primary/20">
+              {branding.companyName.charAt(0)}
+            </div>
+          )}
+          <span className="font-bold text-xl tracking-tight truncate" title={branding.companyName}>
+            {branding.companyName}
+          </span>
         </div>
 
         <ScrollArea className="flex-1 px-4 py-2">
@@ -155,10 +165,16 @@ export default function Layout({ children }: LayoutProps) {
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-border z-40 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold shadow-md">
-            A
-          </div>
-          <span className="font-bold text-lg">근태관리 시스템</span>
+          {branding.logoUrl ? (
+            <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-white shadow-sm">
+              <img src={branding.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+            </div>
+          ) : (
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold shadow-md">
+              {branding.companyName.charAt(0)}
+            </div>
+          )}
+          <span className="font-bold text-lg truncate max-w-[200px]">{branding.companyName}</span>
         </div>
         <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
           <Menu className="w-6 h-6" />

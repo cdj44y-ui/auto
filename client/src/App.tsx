@@ -5,6 +5,7 @@ import { Route, Switch, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { BrandingProvider } from "./contexts/BrandingContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
@@ -97,10 +98,12 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
         <AuthProvider>
+          <BrandingProvider>
           <TooltipProvider>
             <Toaster />
             <Router />
           </TooltipProvider>
+        </BrandingProvider>
         </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>

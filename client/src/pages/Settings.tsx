@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, MapPin, Save, Mail } from "lucide-react";
+import { Clock, MapPin, Save, Mail, Palette } from "lucide-react";
+import BrandingSettings from "@/components/admin/BrandingSettings";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -32,6 +33,9 @@ export default function Settings() {
 
       <Tabs defaultValue="work-policy" className="space-y-6">
         <TabsList className="bg-white p-1 rounded-xl shadow-sm">
+          <TabsTrigger value="branding" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <Palette className="w-4 h-4 mr-2" /> 브랜딩
+          </TabsTrigger>
           <TabsTrigger value="work-policy" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Clock className="w-4 h-4 mr-2" /> 근무 정책
           </TabsTrigger>
@@ -42,6 +46,10 @@ export default function Settings() {
             <Mail className="w-4 h-4 mr-2" /> 알림 설정
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="branding">
+          <BrandingSettings />
+        </TabsContent>
 
         <TabsContent value="work-policy">
           <Card className="border-none shadow-sm">
