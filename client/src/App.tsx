@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 // Pages
 import Home from "./pages/Home";
 import LoginGateway from "@/pages/LoginGateway";
+import UnifiedLogin from "@/pages/UnifiedLogin";
 import EmployeeSignup from "@/pages/EmployeeSignup";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import ContractSigning from "@/pages/ContractSigning";
@@ -31,11 +32,12 @@ function Router() {
     <Switch>
       {/* 공통 진입점 */}
       <Route path="/login-gateway" component={LoginGateway} />
+      <Route path="/login" component={UnifiedLogin} />
       <Route path="/employee-signup" component={EmployeeSignup} />
       
       {/* 루트 경로 접속 시 로그인 페이지로 리다이렉트 (보안 강화) */}
       <Route path="/">
-        <Redirect to="/login-gateway" />
+        <Redirect to="/login" />
       </Route>
 
       {/* 직원 전용 대시보드 (직원만 접근 가능) */}
