@@ -4,6 +4,8 @@ interface BrandingSettings {
   logoUrl: string | null;
   primaryColor: string;
   companyName: string;
+  loginBackgroundUrl: string | null;
+  welcomeMessage: string;
 }
 
 interface BrandingContextType {
@@ -16,6 +18,8 @@ const defaultSettings: BrandingSettings = {
   logoUrl: null,
   primaryColor: "#007AFF", // Default Apple Blue
   companyName: "ATTENDANCE ENTERPRISE SYSTEM",
+  loginBackgroundUrl: null,
+  welcomeMessage: "근태관리 시스템 접속",
 };
 
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined);

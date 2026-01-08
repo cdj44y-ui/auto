@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
+import { useBranding } from "@/contexts/BrandingContext";
 import { useLocation } from "wouter";
 import { Building2, Code2, User, ShieldCheck, Briefcase } from "lucide-react";
 
 export default function LoginGateway() {
   const { login } = useAuth();
+  const { branding } = useBranding();
   const [, setLocation] = useLocation();
 
   const handleRoleSelect = (role: UserRole) => {
@@ -13,11 +15,33 @@ export default function LoginGateway() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="max-w-7xl w-full space-y-8">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden">
+      {branding.loginBackgroundUrl && (
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={branding.loginBackgroundUrl} 
+            alt="Background" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+        </div>
+      )}
+      
+      <div className="max-w-7xl w-full space-y-8 relative z-10">
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900">근태관리 시스템 접속</h1>
-          <p className="text-lg text-muted-foreground">접속하실 역할을 선택해주세요.</p>
+          {branding.logoUrl && (
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center p-4">
+                <img src={branding.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+              </div>
+            </div>
+          )}
+          <h1 className={`text-4xl font-bold tracking-tight ${branding.loginBackgroundUrl ? 'text-white drop-shadow-md' : 'text-slate-900'}`}>
+            {branding.welcomeMessage}
+          </h1>
+          <p className={`text-lg ${branding.loginBackgroundUrl ? 'text-white/90 drop-shadow-sm' : 'text-muted-foreground'}`}>
+            접속하실 역할을 선택해주세요.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -109,8 +133,8 @@ export default function LoginGateway() {
           </Card>
         </div>
         
-        <div className="text-center text-sm text-muted-foreground pt-8">
-          <p>© 2026 Attendance Enterprise System. All rights reserved.</p>
+        <div className={`text-center text-sm pt-8 ${branding.loginBackgroundUrl ? 'text-white/80' : 'text-muted-foreground'}`}>
+          <p>© 2026 {branding.companyName}. All rights reserved.</p>
         </div>
       </div>
     </div>

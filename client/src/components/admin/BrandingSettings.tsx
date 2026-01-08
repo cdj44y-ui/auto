@@ -12,7 +12,9 @@ export default function BrandingSettings() {
   const { branding, updateBranding, resetBranding } = useBranding();
   const [primaryColor, setPrimaryColor] = useState(branding.primaryColor);
   const [companyName, setCompanyName] = useState(branding.companyName);
+  const [welcomeMessage, setWelcomeMessage] = useState(branding.welcomeMessage);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const bgInputRef = useRef<HTMLInputElement>(null);
 
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPrimaryColor(e.target.value);
@@ -36,10 +38,29 @@ export default function BrandingSettings() {
     reader.readAsDataURL(file);
   };
 
+  const handleBgUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("이미지 크기는 5MB 이하여야 합니다.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      updateBranding({ loginBackgroundUrl: base64String });
+      toast.success("배경 이미지가 업데이트되었습니다.");
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSave = () => {
     updateBranding({
       primaryColor,
       companyName,
+      welcomeMessage,
     });
     toast.success("브랜딩 설정이 저장되었습니다.");
   };
@@ -48,6 +69,7 @@ export default function BrandingSettings() {
     resetBranding();
     setPrimaryColor("#007AFF");
     setCompanyName("ATTENDANCE ENTERPRISE SYSTEM");
+    setWelcomeMessage("근태관리 시스템 접속");
     toast.info("기본 설정으로 초기화되었습니다.");
   };
 
@@ -116,6 +138,106 @@ export default function BrandingSettings() {
                     accept="image/*"
                     onChange={handleLogoUpload}
                   />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>로그인 페이지 설정</CardTitle>
+            <CardDescription>
+              로그인 화면의 배경 이미지와 환영 메시지를 설정합니다.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="welcomeMessage">환영 메시지</Label>
+                  <Input
+                    id="welcomeMessage"
+                    value={welcomeMessage}
+                    onChange={(e) => setWelcomeMessage(e.target.value)}
+                    placeholder="예: 근태관리 시스템 접속"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>배경 이미지</Label>
+                  <div className="flex flex-col gap-4">
+                    <div className="relative w-full h-48 border rounded-lg overflow-hidden bg-slate-100 flex items-center justify-center group">
+                      {branding.loginBackgroundUrl ? (
+                        <img
+                          src={branding.loginBackgroundUrl}
+                          alt="Login Background"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-sm text-muted-foreground">기본 배경 사용 중</span>
+                      )}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => bgInputRef.current?.click()}
+                        >
+                          <Upload className="w-4 h-4 mr-2" />
+                          이미지 변경
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <p className="text-xs text-muted-foreground">
+                        권장 크기: 1920x1080px (최대 5MB)
+                      </p>
+                      {branding.loginBackgroundUrl && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => updateBranding({ loginBackgroundUrl: null })}
+                        >
+                          기본값으로 복원
+                        </Button>
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      ref={bgInputRef}
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleBgUpload}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border rounded-lg p-4 bg-slate-50">
+                <Label className="mb-2 block">미리보기</Label>
+                <div className="relative w-full aspect-video rounded-md overflow-hidden border shadow-sm">
+                  {branding.loginBackgroundUrl ? (
+                    <img 
+                      src={branding.loginBackgroundUrl} 
+                      className="absolute inset-0 w-full h-full object-cover" 
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50" />
+                  )}
+                  <div className="absolute inset-0 flex items-center justify-center p-8">
+                    <div className="bg-white/90 backdrop-blur shadow-lg rounded-lg p-6 w-full max-w-xs text-center space-y-4">
+                      <div className="w-12 h-12 bg-primary rounded-lg mx-auto flex items-center justify-center text-white font-bold">
+                        {branding.logoUrl ? (
+                          <img src={branding.logoUrl} className="w-8 h-8 object-contain" />
+                        ) : (
+                          branding.companyName.charAt(0)
+                        )}
+                      </div>
+                      <h3 className="font-bold text-lg">{welcomeMessage}</h3>
+                      <div className="h-8 bg-slate-100 rounded w-full" />
+                      <div className="h-8 bg-primary rounded w-full" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
