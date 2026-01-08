@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { calculateFiscalYearLeave, calculateJoinDateLeave, LeaveCalculationMethod } from "@/lib/annual-leave";
-import { Download, Search, Calendar, Calculator, Mail, AlertCircle, Building2 } from "lucide-react";
+import { Download, Search, Calendar, Calculator, Mail, AlertCircle, Building2, MapPin } from "lucide-react";
 import * as XLSX from 'xlsx';
 
 // Mock Client Companies (자문사용)
@@ -19,13 +19,23 @@ const MOCK_CLIENTS = [
   { id: "C003", name: "퓨처디자인랩" },
 ];
 
-// Mock Employee Data with Company ID
+// Mock Business Sites (사업장)
+const MOCK_SITES = [
+  { id: "all", companyId: "all", name: "전체 사업장" },
+  { id: "S001", companyId: "C001", name: "서울 본사" },
+  { id: "S002", companyId: "C001", name: "판교 연구소" },
+  { id: "S003", companyId: "C002", name: "부산 지사" },
+  { id: "S004", companyId: "C002", name: "인천 물류센터" },
+  { id: "S005", companyId: "C003", name: "강남 오피스" },
+];
+
+// Mock Employee Data with Company ID and Site ID
 const MOCK_EMPLOYEES = [
-  { id: "EMP001", companyId: "C001", name: "김철수", department: "개발팀", joinDate: "2020-03-01", position: "과장", email: "kim@tech.com" },
-  { id: "EMP002", companyId: "C001", name: "이영희", department: "디자인팀", joinDate: "2023-07-15", position: "대리", email: "lee@tech.com" },
-  { id: "EMP003", companyId: "C002", name: "박지민", department: "마케팅팀", joinDate: "2025-01-01", position: "사원", email: "park@global.com" },
-  { id: "EMP004", companyId: "C002", name: "최민수", department: "영업팀", joinDate: "2018-11-20", position: "차장", email: "choi@global.com" },
-  { id: "EMP005", companyId: "C003", name: "정수진", department: "인사팀", joinDate: "2024-05-10", position: "사원", email: "jung@future.com" },
+  { id: "EMP001", companyId: "C001", siteId: "S001", name: "김철수", department: "개발팀", joinDate: "2020-03-01", position: "과장", email: "kim@tech.com" },
+  { id: "EMP002", companyId: "C001", siteId: "S002", name: "이영희", department: "디자인팀", joinDate: "2023-07-15", position: "대리", email: "lee@tech.com" },
+  { id: "EMP003", companyId: "C002", siteId: "S003", name: "박지민", department: "마케팅팀", joinDate: "2025-01-01", position: "사원", email: "park@global.com" },
+  { id: "EMP004", companyId: "C002", siteId: "S004", name: "최민수", department: "영업팀", joinDate: "2018-11-20", position: "차장", email: "choi@global.com" },
+  { id: "EMP005", companyId: "C003", siteId: "S005", name: "정수진", department: "인사팀", joinDate: "2024-05-10", position: "사원", email: "jung@future.com" },
 ];
 
 // Mock Usage Data (월별 사용일수 - 소수점 지원)
@@ -52,15 +62,29 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
   const [baseDate, setBaseDate] = useState(`${new Date().getFullYear()}-12-31`);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCompany, setSelectedCompany] = useState("all");
+  const [selectedSite, setSelectedSite] = useState("all");
   const [promotionDialogOpen, setPromotionDialogOpen] = useState(false);
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
+
+  // Filtered Sites based on selected Company
+  const availableSites = useMemo(() => {
+    if (selectedCompany === "all") return [];
+    return MOCK_SITES.filter(site => site.companyId === selectedCompany || site.id === "all");
+  }, [selectedCompany]);
 
   const ledgerData = useMemo(() => {
     let filteredEmployees = MOCK_EMPLOYEES;
 
     // 자문사 모드일 경우 고객사 필터링 적용
-    if (isConsultant && selectedCompany !== "all") {
-      filteredEmployees = filteredEmployees.filter(emp => emp.companyId === selectedCompany);
+    if (isConsultant) {
+      if (selectedCompany !== "all") {
+        filteredEmployees = filteredEmployees.filter(emp => emp.companyId === selectedCompany);
+        
+        // 사업장 필터링 (고객사가 선택된 경우에만 유효)
+        if (selectedSite !== "all") {
+          filteredEmployees = filteredEmployees.filter(emp => emp.siteId === selectedSite);
+        }
+      }
     }
 
     return filteredEmployees.map((emp, index) => {
@@ -93,12 +117,13 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
       emp.name.includes(searchTerm) || 
       emp.department.includes(searchTerm)
     );
-  }, [method, baseDate, searchTerm, selectedCompany, isConsultant]);
+  }, [method, baseDate, searchTerm, selectedCompany, selectedSite, isConsultant]);
 
   const handleExportExcel = () => {
     const ws = XLSX.utils.json_to_sheet(ledgerData.map(item => ({
       "연번": item.no,
       "고객사": MOCK_CLIENTS.find(c => c.id === item.companyId)?.name || "-",
+      "사업장": MOCK_SITES.find(s => s.id === item.siteId)?.name || "-",
       "성명": item.name,
       "부서": item.department,
       "직급": item.position,
@@ -130,7 +155,7 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
           <div>
             <CardTitle className="text-2xl font-bold">연차유급휴가 관리대장</CardTitle>
             <CardDescription>
-              {isConsultant ? "고객사별" : "전 직원"} 연차 발생, 사용(반차/반반차 포함), 잔여 현황을 통합 관리합니다.
+              {isConsultant ? "고객사 및 사업장별" : "전 직원"} 연차 발생, 사용(반차/반반차 포함), 잔여 현황을 통합 관리합니다.
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
@@ -191,21 +216,50 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
           {/* Controls */}
           <div className="flex flex-col md:flex-row gap-4 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border">
             {isConsultant && (
-              <div className="w-full md:w-64 space-y-2">
-                <label className="text-sm font-medium flex items-center gap-1 text-indigo-600">
-                  <Building2 className="w-4 h-4" /> 고객사 선택
-                </label>
-                <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-                  <SelectTrigger className="bg-white dark:bg-slate-950 border-indigo-200">
-                    <SelectValue placeholder="고객사 선택" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {MOCK_CLIENTS.map(client => (
-                      <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <>
+                <div className="w-full md:w-56 space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-1 text-indigo-600">
+                    <Building2 className="w-4 h-4" /> 고객사 선택
+                  </label>
+                  <Select value={selectedCompany} onValueChange={(val) => {
+                    setSelectedCompany(val);
+                    setSelectedSite("all"); // Reset site when company changes
+                  }}>
+                    <SelectTrigger className="bg-white dark:bg-slate-950 border-indigo-200">
+                      <SelectValue placeholder="고객사 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {MOCK_CLIENTS.map(client => (
+                        <SelectItem key={client.id} value={client.id}>{client.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="w-full md:w-48 space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-1 text-indigo-600">
+                    <MapPin className="w-4 h-4" /> 사업장 선택
+                  </label>
+                  <Select 
+                    value={selectedSite} 
+                    onValueChange={setSelectedSite}
+                    disabled={selectedCompany === "all"}
+                  >
+                    <SelectTrigger className="bg-white dark:bg-slate-950 border-indigo-200">
+                      <SelectValue placeholder="사업장 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableSites.length > 0 ? (
+                        availableSites.map(site => (
+                          <SelectItem key={site.id} value={site.id}>{site.name}</SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="all">전체 사업장</SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
             )}
 
             <div className="flex-1 space-y-2">
@@ -218,19 +272,19 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
               </Tabs>
             </div>
             
-            <div className="w-full md:w-48 space-y-2">
+            <div className="w-full md:w-40 space-y-2">
               <label className="text-sm font-medium flex items-center gap-1">
                 <Calendar className="w-4 h-4" /> 기준일자
               </label>
               <Input type="date" value={baseDate} onChange={(e) => setBaseDate(e.target.value)} />
             </div>
 
-            <div className="w-full md:w-64 space-y-2">
+            <div className="w-full md:w-48 space-y-2">
               <label className="text-sm font-medium flex items-center gap-1">
                 <Search className="w-4 h-4" /> 직원 검색
               </label>
               <Input 
-                placeholder="이름 또는 부서 검색" 
+                placeholder="이름/부서" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -243,7 +297,7 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
               <TableHeader className="bg-slate-100 dark:bg-slate-800">
                 <TableRow>
                   <TableHead className="w-[50px] text-center fixed-col bg-slate-100 dark:bg-slate-800 z-10">No</TableHead>
-                  {isConsultant && <TableHead className="w-[120px] text-center">고객사</TableHead>}
+                  {isConsultant && <TableHead className="w-[120px] text-center">고객사/사업장</TableHead>}
                   <TableHead className="w-[100px] text-center fixed-col-2 bg-slate-100 dark:bg-slate-800 z-10">성명</TableHead>
                   <TableHead className="w-[100px] text-center">입사일</TableHead>
                   <TableHead className="w-[80px] text-center">근속년수</TableHead>
@@ -264,7 +318,8 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
                       <TableCell className="text-center font-medium fixed-col bg-white dark:bg-slate-950">{row.no}</TableCell>
                       {isConsultant && (
                         <TableCell className="text-center text-xs text-muted-foreground">
-                          {MOCK_CLIENTS.find(c => c.id === row.companyId)?.name}
+                          <div className="font-medium text-slate-700 dark:text-slate-300">{MOCK_CLIENTS.find(c => c.id === row.companyId)?.name}</div>
+                          <div className="text-[10px]">{MOCK_SITES.find(s => s.id === row.siteId)?.name}</div>
                         </TableCell>
                       )}
                       <TableCell className="text-center font-medium fixed-col-2 bg-white dark:bg-slate-950">
