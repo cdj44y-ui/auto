@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ConsultantPayrollManager from "@/components/consultant/ConsultantPayrollManager";
+import InsuranceReportingCenter from "@/components/consultant/InsuranceReportingCenter";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
@@ -167,45 +168,7 @@ export default function ConsultantDashboard() {
 
           {/* 4대보험 신고 탭 */}
           <TabsContent value="insurance">
-            <Card className="border-none shadow-sm dark:bg-slate-900">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <CardTitle className="dark:text-slate-100">4대보험 신고 업무</CardTitle>
-                    <CardDescription>취득/상실/보수월액 변경 신고를 처리합니다.</CardDescription>
-                  </div>
-                  <Button className="bg-indigo-600 hover:bg-indigo-700">
-                    <Upload className="w-4 h-4 mr-2" /> EDI 파일 업로드
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {insuranceTasks.map((task) => (
-                    <div key={task.id} className="flex items-center justify-between p-4 border rounded-lg bg-white dark:bg-slate-950 dark:border-slate-800">
-                      <div className="flex items-center gap-4">
-                        <Badge variant={task.status === 'completed' ? 'default' : 'secondary'}>
-                          {task.type}
-                        </Badge>
-                        <div>
-                          <p className="font-medium dark:text-slate-200">{task.company} - {task.target}</p>
-                          <p className="text-sm text-muted-foreground">접수일: {task.date}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {task.status === 'pending' ? (
-                          <Button size="sm" onClick={() => toast.success("신고 처리가 완료되었습니다.")}>신고 전송</Button>
-                        ) : (
-                          <span className="text-sm text-green-600 flex items-center gap-1">
-                            <CheckCircle2 className="w-4 h-4" /> 처리완료
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <InsuranceReportingCenter />
           </TabsContent>
         </Tabs>
       </main>

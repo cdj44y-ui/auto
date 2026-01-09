@@ -22,6 +22,8 @@ import FlexibleWorkPolicyManager from "@/components/flexible-work/FlexibleWorkPo
 import FlexibleWorkApprovalList from "@/components/flexible-work/FlexibleWorkApprovalList";
 import AnnualLeaveLedger from "@/components/admin/AnnualLeaveLedger";
 import TeamLeaveCalendar from "@/components/calendar/TeamLeaveCalendar";
+import ShiftScheduler from "@/components/admin/ShiftScheduler";
+import IpAccessManager from "@/components/admin/IpAccessManager";
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -72,6 +74,7 @@ export default function AdminDashboard() {
             <TabsTrigger value="calendar" className="py-2">휴가 캘린더</TabsTrigger>
             <TabsTrigger value="flexible" className="py-2">유연근무</TabsTrigger>
             <TabsTrigger value="leave" className="py-2">연차 관리</TabsTrigger>
+            <TabsTrigger value="shift" className="py-2">교대 근무</TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6">
@@ -172,6 +175,13 @@ export default function AdminDashboard() {
 
           <TabsContent value="leave">
             <AnnualLeaveLedger />
+          </TabsContent>
+
+          <TabsContent value="shift">
+            <div className="space-y-6">
+              <ShiftScheduler />
+              <IpAccessManager />
+            </div>
           </TabsContent>
         </Tabs>
       </main>
