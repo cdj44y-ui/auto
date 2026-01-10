@@ -20,6 +20,7 @@ import PayrollManager from "@/components/admin/PayrollManager";
 import AttendanceCorrection from "@/components/admin/AttendanceCorrection";
 import FlexibleWorkPolicyManager from "@/components/flexible-work/FlexibleWorkPolicyManager";
 import FlexibleWorkApprovalList from "@/components/flexible-work/FlexibleWorkApprovalList";
+import CoreTimeSettings from "@/components/flexible-work/CoreTimeSettings";
 import AnnualLeaveLedger from "@/components/admin/AnnualLeaveLedger";
 import TeamLeaveCalendar from "@/components/calendar/TeamLeaveCalendar";
 import ShiftScheduler from "@/components/admin/ShiftScheduler";
@@ -171,6 +172,7 @@ export default function AdminDashboard() {
 
           <TabsContent value="flexible">
             <div className="space-y-6">
+              <CoreTimeSettings />
               <FlexibleWorkPolicyManager />
               <FlexibleWorkApprovalList />
             </div>
