@@ -1,3 +1,4 @@
+import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
@@ -102,6 +103,7 @@ function App() {
         <AuthProvider>
           <BrandingProvider>
           <TooltipProvider>
+            <PWAInstallPrompt />
             <Toaster />
             <Router />
           </TooltipProvider>
