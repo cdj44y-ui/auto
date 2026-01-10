@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { offlineQueue } from '@/lib/offline-queue';
 import { toast } from 'sonner';
-import { Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { Wifi, WifiOff, RefreshCw, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,6 +10,8 @@ export function OfflineSyncManager() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [pendingCount, setPendingCount] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
+  const [lastSyncStatus, setLastSyncStatus] = useState<'success' | 'error' | null>(null);
 
   useEffect(() => {
     const updateOnlineStatus = () => {
@@ -83,11 +85,15 @@ export function OfflineSyncManager() {
 
     if (successCount > 0) {
       toast.success(`${successCount}개의 요청이 성공적으로 동기화되었습니다.`);
+      setLastSyncStatus('success');
     }
     if (failCount > 0) {
       toast.error(`${failCount}개의 요청 동기화에 실패했습니다. 나중에 다시 시도합니다.`);
+      setLastSyncStatus(successCount === 0 ? 'error' : 'success'); // 부분 성공도 성공으로 간주
     }
     
+    setLastSyncTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+
     // 카운트 업데이트
     const remaining = await offlineQueue.getCount();
     setPendingCount(remaining);
@@ -125,6 +131,16 @@ export function OfflineSyncManager() {
                     ? `${pendingCount}개의 요청이 대기 중입니다.` 
                     : '모든 데이터가 최신입니다.'}
                 </p>
+                {lastSyncTime && (
+                  <div className="flex items-center gap-1 mt-1 text-[10px] text-muted-foreground">
+                    {lastSyncStatus === 'success' ? (
+                      <CheckCircle2 className="h-3 w-3 text-green-500" />
+                    ) : (
+                      <XCircle className="h-3 w-3 text-red-500" />
+                    )}
+                    <span>마지막 동기화: {lastSyncTime}</span>
+                  </div>
+                )}
               </div>
             </div>
             
