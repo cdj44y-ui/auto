@@ -25,6 +25,7 @@ import TeamLeaveCalendar from "@/components/calendar/TeamLeaveCalendar";
 import ShiftScheduler from "@/components/admin/ShiftScheduler";
 import IpAccessManager from "@/components/admin/IpAccessManager";
 import WorkHoursMonitor from "@/components/admin/WorkHoursMonitor";
+import OvertimeReport from "@/components/admin/OvertimeReport";
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -187,7 +188,10 @@ export default function AdminDashboard() {
           </TabsContent>
 
           <TabsContent value="work-hours">
-            <WorkHoursMonitor />
+            <div className="space-y-8">
+              <WorkHoursMonitor />
+              <OvertimeReport />
+            </div>
           </TabsContent>
         </Tabs>
       </main>
