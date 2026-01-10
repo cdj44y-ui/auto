@@ -98,6 +98,7 @@ export default function NotificationSettings() {
                       {rule.triggerType === "late_checkin" && `출근 시간 ${rule.conditionMinutes}분 경과 시 발송`}
                       {rule.triggerType === "absent" && `${rule.conditionTime}까지 미출근 시 발송`}
                       {rule.triggerType === "overtime" && "연장근무 신청 즉시 발송"}
+                      {rule.triggerType === "insurance_status" && "신고 상태 변경(접수/처리중/완료) 시 발송"}
                     </CardDescription>
                   </div>
                 </div>

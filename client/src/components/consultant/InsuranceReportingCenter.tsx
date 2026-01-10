@@ -40,8 +40,20 @@ export default function InsuranceReportingCenter() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleStatusChange = (id: number, newStatus: string) => {
+    const task = tasks.find(t => t.id === id);
     setTasks(tasks.map(t => t.id === id ? { ...t, status: newStatus } : t));
-    toast.success("상태가 변경되었습니다.");
+    
+    // 상태 변경에 따른 알림 메시지 생성
+    let statusText = "";
+    if (newStatus === 'processing') statusText = "처리중(공단 전송)";
+    else if (newStatus === 'completed') statusText = "신고완료";
+    else statusText = "접수대기";
+
+    // 알림 발송 시뮬레이션
+    if (task) {
+      toast.success(`상태가 변경되었습니다. 담당자에게 알림이 발송되었습니다.\n[${task.company}] ${task.employee}님 ${task.type} -> ${statusText}`);
+    }
+    
     setIsDialogOpen(false);
   };
 

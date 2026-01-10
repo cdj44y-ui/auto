@@ -1,6 +1,6 @@
 export type NotificationChannel = "email" | "kakao" | "slack" | "sms" | "push";
 export type NotificationTarget = "self" | "manager" | "admin";
-export type NotificationTriggerType = "late_checkin" | "absent" | "overtime" | "leave_request" | "contract_sign";
+export type NotificationTriggerType = "late_checkin" | "absent" | "overtime" | "leave_request" | "contract_sign" | "insurance_status";
 
 export interface NotificationRule {
   id: string;
@@ -43,5 +43,14 @@ export const DEFAULT_NOTIFICATION_RULES: NotificationRule[] = [
     targets: ["manager"],
     isActive: true,
     template: "{{name}}님이 연장근무를 신청했습니다. 승인해주세요."
+  },
+  {
+    id: "rule-4",
+    name: "4대보험 신고 상태 변경 알림",
+    triggerType: "insurance_status",
+    channels: ["kakao", "email"],
+    targets: ["manager", "admin"],
+    isActive: true,
+    template: "[{{company}}] {{name}}님의 {{type}} 처리가 '{{status}}' 상태로 변경되었습니다."
   }
 ];
