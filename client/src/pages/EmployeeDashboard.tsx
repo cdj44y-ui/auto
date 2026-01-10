@@ -16,6 +16,7 @@ import NotificationCenter from "@/components/NotificationCenter";
 import WeeklyWorkHoursWidget from "@/components/employee/WeeklyWorkHoursWidget";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 // macOS Style Layout Component
 function EmployeeLayout({ children }: { children: React.ReactNode }) {
@@ -23,9 +24,9 @@ function EmployeeLayout({ children }: { children: React.ReactNode }) {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-[var(--macos-bg)] transition-colors duration-300 font-sans">
-      {/* Header */}
-      <header className="bg-[var(--macos-card)]/80 backdrop-blur-md border-b border-black/5 dark:border-white/10 sticky top-0 z-50">
+    <div className="min-h-screen bg-[var(--macos-bg)] transition-colors duration-300 font-sans pb-24 md:pb-0">
+      {/* Header (Desktop Only) */}
+      <header className="hidden md:block bg-[var(--macos-card)]/80 backdrop-blur-md border-b border-black/5 dark:border-white/10 sticky top-0 z-50">
         <div className="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-[12px] flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
@@ -57,9 +58,51 @@ function EmployeeLayout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className="max-w-[1600px] mx-auto px-6 py-8">
-        {children}
+      {/* Mobile Header */}
+      <header className="md:hidden flex items-center justify-between px-6 py-4 bg-[var(--macos-bg)] sticky top-0 z-50">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-[10px] flex items-center justify-center text-white font-bold shadow-md">
+            A
+          </div>
+          <span className="font-semibold text-lg text-[var(--macos-text-primary)]">AES</span>
+        </div>
+        <NotificationCenter />
+      </header>
+
+      <main className="max-w-[1600px] mx-auto px-6 py-4 md:py-8">
+        <AnimatePresence mode="wait">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--macos-card)]/90 backdrop-blur-xl border-t border-black/5 dark:border-white/10 pb-safe z-50">
+        <div className="flex justify-around items-center h-16 px-2">
+          <Button variant="ghost" className="flex flex-col items-center gap-1 h-auto py-2 text-[var(--macos-primary)]">
+            <Clock className="w-6 h-6" />
+            <span className="text-[10px] font-medium">근태</span>
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center gap-1 h-auto py-2 text-[var(--macos-text-secondary)]">
+            <Calendar className="w-6 h-6" />
+            <span className="text-[10px] font-medium">일정</span>
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center gap-1 h-auto py-2 text-[var(--macos-text-secondary)]">
+            <Briefcase className="w-6 h-6" />
+            <span className="text-[10px] font-medium">휴가</span>
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center gap-1 h-auto py-2 text-[var(--macos-text-secondary)]" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            {theme === "dark" ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+            <span className="text-[10px] font-medium">테마</span>
+          </Button>
+        </div>
+      </nav>
     </div>
   );
 }
@@ -116,7 +159,12 @@ export default function EmployeeDashboard() {
       <div className="grid grid-cols-12 gap-6">
         
         {/* Left Column: Request Form (30%) */}
-        <div className="col-span-12 lg:col-span-4 space-y-6">
+        <motion.div 
+          className="col-span-12 lg:col-span-4 space-y-6"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+        >
           <Card className="macos-card h-full">
             <CardHeader>
               <CardTitle className="text-xl font-semibold">근태 신청</CardTitle>
@@ -158,18 +206,26 @@ export default function EmployeeDashboard() {
                 />
               </div>
 
-              <Button className="macos-btn-primary w-full mt-4" onClick={handleRequestSubmit}>
-                결재 상신하기
-              </Button>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button className="macos-btn-primary w-full mt-4" onClick={handleRequestSubmit}>
+                  결재 상신하기
+                </Button>
+              </motion.div>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
 
         {/* Right Column: Dashboard Widgets (70%) */}
         <div className="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           
           {/* Time & Attendance Card */}
-          <Card className="macos-card col-span-1 md:col-span-2 p-6 flex flex-col md:flex-row items-center justify-between gap-8">
+          <motion.div 
+            className="col-span-1 md:col-span-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            <Card className="macos-card p-6 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left space-y-2">
               <div className="flex items-center gap-2 text-[var(--macos-text-secondary)] justify-center md:justify-start">
                 <Clock className="w-5 h-5" />
@@ -188,31 +244,47 @@ export default function EmployeeDashboard() {
 
             <div className="flex gap-4 w-full md:w-auto">
               {!workLog.clockIn ? (
-                <Button 
-                  onClick={handleClockIn}
-                  className="flex-1 md:w-40 h-14 rounded-[16px] bg-[var(--macos-primary)] hover:bg-blue-700 text-white text-lg font-semibold shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95"
-                >
-                  출근하기
-                </Button>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full md:w-auto">
+                  <Button 
+                    onClick={handleClockIn}
+                    className="w-full md:w-40 h-14 rounded-[16px] bg-[var(--macos-primary)] hover:bg-blue-700 text-white text-lg font-semibold shadow-lg shadow-blue-500/20"
+                  >
+                    출근하기
+                  </Button>
+                </motion.div>
               ) : (
-                <Button 
-                  onClick={handleClockOut}
-                  disabled={!!workLog.clockOut}
-                  className="flex-1 md:w-40 h-14 rounded-[16px] bg-slate-100 hover:bg-slate-200 text-slate-900 text-lg font-semibold transition-all hover:scale-105 active:scale-95"
-                >
-                  {workLog.clockOut ? "퇴근완료" : "퇴근하기"}
-                </Button>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full md:w-auto">
+                  <Button 
+                    onClick={handleClockOut}
+                    disabled={!!workLog.clockOut}
+                    className="w-full md:w-40 h-14 rounded-[16px] bg-slate-100 hover:bg-slate-200 text-slate-900 text-lg font-semibold"
+                  >
+                    {workLog.clockOut ? "퇴근완료" : "퇴근하기"}
+                  </Button>
+                </motion.div>
               )}
             </div>
-          </Card>
+            </Card>
+          </motion.div>
 
           {/* Weekly Work Hours Widget */}
-          <div className="col-span-1 md:col-span-2">
+          <motion.div 
+            className="col-span-1 md:col-span-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
             <WeeklyWorkHoursWidget currentHours={38} overtimeHours={4} />
-          </div>
+          </motion.div>
 
           {/* Recent Requests List */}
-          <Card className="macos-card col-span-1 md:col-span-2">
+          <motion.div 
+            className="col-span-1 md:col-span-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <Card className="macos-card">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-semibold">최근 신청 내역</CardTitle>
               <Button variant="ghost" className="text-[var(--macos-primary)] hover:bg-blue-50">전체보기</Button>
@@ -223,7 +295,12 @@ export default function EmployeeDashboard() {
                 { type: "반차", date: "2026.01.15", status: "대기중", icon: Coffee, color: "bg-orange-100 text-orange-600" },
                 { type: "연장", date: "2026.01.10", status: "반려", icon: Briefcase, color: "bg-red-100 text-red-600" },
               ].map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between p-4 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-[16px] hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                <motion.div 
+                  key={idx} 
+                  className="flex items-center justify-between p-4 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-[16px] hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
                   <div className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.color}`}>
                       <item.icon className="w-5 h-5" />
@@ -240,10 +317,11 @@ export default function EmployeeDashboard() {
                   }`}>
                     {item.status}
                   </Badge>
-                </div>
+                </motion.div>
               ))}
             </CardContent>
           </Card>
+          </motion.div>
 
         </div>
       </div>
