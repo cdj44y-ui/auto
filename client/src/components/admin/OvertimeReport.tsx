@@ -5,7 +5,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Download, BarChart3, TrendingUp, Users, Search, Filter } from "lucide-react";
 import { useState, useMemo } from "react";
+import { format } from "date-fns";
 import { toast } from "sonner";
+import { DatePickerWithRange } from "@/components/ui/date-range-picker";
+import { addDays, isWithinInterval, parseISO } from "date-fns";
+import { DateRange } from "react-day-picker";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
 // Mock Data for Monthly Statistics
 const MONTHLY_STATS = [
@@ -27,18 +32,25 @@ const DETAILED_REPORT = [
 ];
 
 export default function OvertimeReport() {
-  const [selectedMonth, setSelectedMonth] = useState("2026-01");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(2026, 0, 1),
+    to: new Date(2026, 0, 31),
+  });
   const [selectedDept, setSelectedDept] = useState("all");
   const [searchName, setSearchName] = useState("");
 
   // 필터링 로직
   const filteredData = useMemo(() => {
     return DETAILED_REPORT.filter(item => {
+      const itemDate = parseISO(item.date);
+      const matchDate = dateRange?.from && dateRange?.to 
+        ? isWithinInterval(itemDate, { start: dateRange.from, end: dateRange.to })
+        : true;
       const matchDept = selectedDept === "all" || item.dept === selectedDept;
       const matchName = item.name.includes(searchName);
-      return matchDept && matchName;
+      return matchDate && matchDept && matchName;
     });
-  }, [selectedMonth, selectedDept, searchName]);
+  }, [dateRange, selectedDept, searchName]);
 
   // 필터링된 데이터 기반 통계 재계산
   const stats = useMemo(() => {
@@ -47,8 +59,36 @@ export default function OvertimeReport() {
     return { total, avg };
   }, [filteredData]);
 
+  // 차트 데이터 생성 (부서별 집계)
+  const chartData = useMemo(() => {
+    const deptMap = filteredData.reduce((acc, curr) => {
+      acc[curr.dept] = (acc[curr.dept] || 0) + curr.hours;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return Object.entries(deptMap).map(([name, value]) => ({ name, value }));
+  }, [filteredData]);
+
   const handleDownload = () => {
-    toast.success(`${selectedMonth} 연장근무 리포트(${filteredData.length}건)가 다운로드되었습니다.`);
+    // 실제 CSV 다운로드 로직 구현
+    const headers = ["일자", "이름", "부서", "시간", "사유"];
+    const csvContent = [
+      headers.join(","),
+      ...filteredData.map(row => 
+        [row.date, row.name, row.dept, row.hours, `"${row.reason}"`].join(",")
+      )
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `overtime_report_${format(new Date(), "yyyyMMdd")}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast.success(`연장근무 리포트(${filteredData.length}건)가 다운로드되었습니다.`);
   };
 
   return (
@@ -59,16 +99,7 @@ export default function OvertimeReport() {
           <p className="text-sm text-muted-foreground">월별 연장근무 추이를 분석하고 상세 내역을 다운로드합니다.</p>
         </div>
         <div className="flex flex-wrap gap-2 w-full md:w-auto">
-          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="월 선택" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="2026-01">2026년 1월</SelectItem>
-              <SelectItem value="2025-12">2025년 12월</SelectItem>
-              <SelectItem value="2025-11">2025년 11월</SelectItem>
-            </SelectContent>
-          </Select>
+          <DatePickerWithRange date={dateRange} setDate={setDateRange} />
 
           <Select value={selectedDept} onValueChange={setSelectedDept}>
             <SelectTrigger className="w-[140px]">
@@ -100,36 +131,68 @@ export default function OvertimeReport() {
         </div>
       </div>
 
-      {/* 통계 카드 (필터링 결과 반영) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">총 연장근무 시간</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+      {/* 통계 카드 및 차트 */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="space-y-4 lg:col-span-1">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">총 연장근무 시간</CardTitle>
+              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.total}시간</div>
+              <p className="text-xs text-muted-foreground">선택된 조건 기준 합계</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">평균 연장근무</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.avg}시간</div>
+              <p className="text-xs text-muted-foreground">선택된 인원 평균</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>부서별 연장근무 현황</CardTitle>
+            <CardDescription>선택된 기간 동안의 부서별 누적 연장근무 시간입니다.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}시간</div>
-            <p className="text-xs text-muted-foreground">선택된 조건 기준 합계</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">평균 연장근무</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.avg}시간</div>
-            <p className="text-xs text-muted-foreground">선택된 인원 평균</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">최다 발생 부서</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">개발팀</div>
-            <p className="text-xs text-muted-foreground">총 85시간 (전체의 45%)</p>
+          <CardContent className="pl-2">
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#888888" 
+                    fontSize={12} 
+                    tickLine={false} 
+                    axisLine={false} 
+                  />
+                  <YAxis 
+                    stroke="#888888" 
+                    fontSize={12} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tickFormatter={(value) => `${value}h`} 
+                  />
+                  <Tooltip 
+                    cursor={{ fill: 'transparent' }}
+                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                  />
+                  <Bar 
+                    dataKey="value" 
+                    fill="currentColor" 
+                    radius={[4, 4, 0, 0]} 
+                    className="fill-primary" 
+                    barSize={40}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
       </div>
