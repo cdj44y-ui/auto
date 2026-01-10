@@ -47,11 +47,16 @@ export default function InsuranceReportingCenter() {
     let statusText = "";
     if (newStatus === 'processing') statusText = "처리중(공단 전송)";
     else if (newStatus === 'completed') statusText = "신고완료";
+    else if (newStatus === 'rejected') statusText = "신고반려";
     else statusText = "접수대기";
 
     // 알림 발송 시뮬레이션
     if (task) {
-      toast.success(`상태가 변경되었습니다. 담당자에게 알림이 발송되었습니다.\n[${task.company}] ${task.employee}님 ${task.type} -> ${statusText}`);
+      if (newStatus === 'rejected') {
+        toast.error(`[긴급] 신고가 반려되었습니다. 담당자에게 전화(음성 알림)가 발신됩니다.\n[${task.company}] ${task.employee}님 ${task.type} -> ${statusText}`);
+      } else {
+        toast.success(`상태가 변경되었습니다. 담당자에게 알림이 발송되었습니다.\n[${task.company}] ${task.employee}님 ${task.type} -> ${statusText}`);
+      }
     }
     
     setIsDialogOpen(false);
@@ -62,6 +67,7 @@ export default function InsuranceReportingCenter() {
       case 'pending': return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">접수대기</Badge>;
       case 'processing': return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">처리중</Badge>;
       case 'completed': return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">신고완료</Badge>;
+      case 'rejected': return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">신고반려</Badge>;
       default: return <Badge variant="outline">미정</Badge>;
     }
   };
@@ -198,6 +204,7 @@ export default function InsuranceReportingCenter() {
                                 <SelectItem value="pending">접수대기 (서류 검토 전)</SelectItem>
                                 <SelectItem value="processing">처리중 (공단 전송 완료)</SelectItem>
                                 <SelectItem value="completed">신고완료 (처리 결과 확인)</SelectItem>
+                                <SelectItem value="rejected" className="text-red-600 font-medium">신고반려 (보완 필요)</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>

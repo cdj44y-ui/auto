@@ -29,7 +29,8 @@ import {
   Users, 
   Plus, 
   Trash2,
-  Save
+  Save,
+  PhoneCall
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -55,6 +56,7 @@ export default function NotificationSettings() {
       case "slack": return <Slack className="h-4 w-4" />;
       case "sms": return <Smartphone className="h-4 w-4" />;
       case "push": return <Bell className="h-4 w-4" />;
+      case "phone": return <PhoneCall className="h-4 w-4" />;
     }
   };
 
@@ -65,6 +67,7 @@ export default function NotificationSettings() {
       case "slack": return "슬랙";
       case "sms": return "문자";
       case "push": return "앱 푸시";
+      case "phone": return "전화(음성)";
     }
   };
 

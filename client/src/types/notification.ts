@@ -1,4 +1,4 @@
-export type NotificationChannel = "email" | "kakao" | "slack" | "sms" | "push";
+export type NotificationChannel = "email" | "kakao" | "slack" | "sms" | "push" | "phone";
 export type NotificationTarget = "self" | "manager" | "admin";
 export type NotificationTriggerType = "late_checkin" | "absent" | "overtime" | "leave_request" | "contract_sign" | "insurance_status";
 
