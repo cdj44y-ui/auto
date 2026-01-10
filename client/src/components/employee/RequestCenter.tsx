@@ -13,6 +13,10 @@ import { toast } from "sonner";
 export default function RequestCenter() {
   const [requestType, setRequestType] = useState("vacation");
   
+  // 주 52시간 체크를 위한 Mock Data (실제로는 API에서 받아와야 함)
+  const currentWeeklyHours = 48; // 현재 누적 근무시간 (48시간 가정)
+  const maxWeeklyHours = 52;
+
   // 모의 신청 내역 데이터
   const [requests, setRequests] = useState([
     {
@@ -114,9 +118,27 @@ export default function RequestCenter() {
             </div>
 
             <div className="pt-2">
-              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={() => toast.success("결재가 상신되었습니다.")}>
+              <Button 
+                className="w-full bg-blue-600 hover:bg-blue-700" 
+                onClick={() => {
+                  if (requestType === "overtime" && currentWeeklyHours >= 50) {
+                    toast.error("주 52시간 초과 위험으로 인해 연장근무 신청이 제한됩니다. 관리자에게 문의하세요.");
+                    return;
+                  }
+                  toast.success("결재가 상신되었습니다.");
+                }}
+              >
                 결재 상신하기
               </Button>
+              {requestType === "overtime" && currentWeeklyHours >= 45 && (
+                <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg flex items-start gap-2 text-sm text-orange-700 dark:text-orange-300">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span>
+                    현재 주간 누적 근무시간이 <strong>{currentWeeklyHours}시간</strong>입니다. 
+                    52시간 초과 시 법적 문제가 발생할 수 있으니 주의해주세요.
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

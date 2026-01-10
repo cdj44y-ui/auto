@@ -24,6 +24,7 @@ import AnnualLeaveLedger from "@/components/admin/AnnualLeaveLedger";
 import TeamLeaveCalendar from "@/components/calendar/TeamLeaveCalendar";
 import ShiftScheduler from "@/components/admin/ShiftScheduler";
 import IpAccessManager from "@/components/admin/IpAccessManager";
+import WorkHoursMonitor from "@/components/admin/WorkHoursMonitor";
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -75,6 +76,7 @@ export default function AdminDashboard() {
             <TabsTrigger value="flexible" className="py-2">유연근무</TabsTrigger>
             <TabsTrigger value="leave" className="py-2">연차 관리</TabsTrigger>
             <TabsTrigger value="shift" className="py-2">교대 근무</TabsTrigger>
+            <TabsTrigger value="work-hours" className="py-2">주 52시간</TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6">
@@ -182,6 +184,10 @@ export default function AdminDashboard() {
               <ShiftScheduler />
               <IpAccessManager />
             </div>
+          </TabsContent>
+
+          <TabsContent value="work-hours">
+            <WorkHoursMonitor />
           </TabsContent>
         </Tabs>
       </main>

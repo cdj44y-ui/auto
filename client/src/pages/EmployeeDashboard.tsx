@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import NotificationCenter from "@/components/NotificationCenter";
 import RequestCenter from "@/components/employee/RequestCenter";
+import WeeklyWorkHoursWidget from "@/components/employee/WeeklyWorkHoursWidget";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
@@ -139,8 +140,13 @@ export default function EmployeeDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* 주간 근무시간 위젯 (모바일에서는 상단, 데스크탑에서는 우측 배치 고려) */}
+        <div className="md:col-span-1 md:order-2">
+          <WeeklyWorkHoursWidget currentHours={38} overtimeHours={4} />
+        </div>
+
         {/* 출퇴근 및 타임라인 카드 */}
-        <Card className="border-none shadow-sm bg-white dark:bg-slate-900 md:col-span-2">
+        <Card className="border-none shadow-sm bg-white dark:bg-slate-900 md:col-span-2 md:order-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 dark:text-slate-100">
               <Clock className="w-5 h-5 text-blue-600" />
