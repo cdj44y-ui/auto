@@ -211,3 +211,44 @@
     }
   }
 }
+
+@layer base {
+  :root {
+    /* macOS Big Sur Inspired Colors */
+    --macos-bg: #F5F5F7;
+    --macos-card: #FFFFFF;
+    --macos-primary: #0052CC; /* Royal Blue */
+    --macos-text-primary: #1D1D1F;
+    --macos-text-secondary: #86868B;
+    
+    /* Soft Shadows */
+    --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.04);
+    --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.08);
+    --shadow-deep: 0 16px 48px rgba(0, 0, 0, 0.12);
+  }
+
+  .dark {
+    --macos-bg: #000000;
+    --macos-card: #1C1C1E;
+    --macos-text-primary: #F5F5F7;
+    --macos-text-secondary: #86868B;
+  }
+}
+
+@layer utilities {
+  .macos-card {
+    @apply bg-[var(--macos-card)] rounded-[24px] shadow-[var(--shadow-soft)] border-none;
+  }
+  
+  .macos-input {
+    @apply bg-[#F5F5F7] dark:bg-[#2C2C2E] border-none rounded-[12px] h-12 px-4 transition-all duration-200 focus:ring-2 focus:ring-[var(--macos-primary)] focus:ring-offset-0;
+  }
+
+  .macos-btn-primary {
+    @apply bg-gradient-to-b from-[#0066FF] to-[#0052CC] text-white rounded-[14px] h-12 font-medium shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all active:scale-[0.98];
+  }
+
+  .text-big {
+    @apply text-[40px] font-bold tracking-tight leading-none text-[var(--macos-text-primary)];
+  }
+}
