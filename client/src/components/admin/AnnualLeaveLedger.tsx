@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { calculateFiscalYearLeave, calculateJoinDateLeave, LeaveCalculationMethod } from "@/lib/annual-leave";
 import { Download, Search, Calendar, Calculator, Mail, AlertCircle, Building2, MapPin } from "lucide-react";
+import { AddToCalendarButton } from "@/components/ui/AddToCalendarButton";
 import * as XLSX from 'xlsx';
 
 // Mock Client Companies (자문사용)
@@ -309,6 +310,7 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
                   ))}
                   <TableHead className="w-[80px] text-center bg-orange-50 dark:bg-orange-900/20">사용일수</TableHead>
                   <TableHead className="w-[80px] text-center bg-green-50 dark:bg-green-900/20 font-bold">잔여일수</TableHead>
+                  <TableHead className="w-[100px] text-center">캘린더</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -345,6 +347,18 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
 
                       <TableCell className="text-center font-bold text-orange-600 dark:text-orange-400 bg-orange-50/30">{row.totalUsed}</TableCell>
                       <TableCell className="text-center font-bold text-green-600 dark:text-green-400 bg-green-50/30">{row.remaining}</TableCell>
+                      <TableCell className="text-center">
+                        <AddToCalendarButton 
+                          event={{
+                            title: `${row.name} 휴가`,
+                            description: `잔여 연차: ${row.remaining}일`,
+                            startDate: new Date(), // 실제로는 휴가 신청 내역에서 가져와야 함
+                            endDate: new Date(),
+                          }}
+                          variant="ghost"
+                          size="icon"
+                        />
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (

@@ -29,6 +29,7 @@ import WorkHoursMonitor from "@/components/admin/WorkHoursMonitor";
 import OvertimeReport from "@/components/admin/OvertimeReport";
 import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
 import { WorkflowSettings } from "@/components/admin/WorkflowSettings";
+import { IntegrationCenter } from "@/components/settings/IntegrationCenter";
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -82,6 +83,7 @@ export default function AdminDashboard() {
             <TabsTrigger value="shift" className="py-2">교대 근무</TabsTrigger>
             <TabsTrigger value="work-hours" className="py-2">주 52시간</TabsTrigger>
             <TabsTrigger value="security" className="py-2">보안 및 감사</TabsTrigger>
+            <TabsTrigger value="integration" className="py-2">외부 연동</TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6">
@@ -204,6 +206,10 @@ export default function AdminDashboard() {
               <AuditLogViewer />
               <WorkflowSettings />
             </div>
+          </TabsContent>
+
+          <TabsContent value="integration">
+            <IntegrationCenter />
           </TabsContent>
         </Tabs>
       </main>
