@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, XCircle, UserCheck } from "lucide-react";
+import { MaskedData } from "@/components/ui/MaskedData";
 import { toast } from "sonner";
 
 // 모의 가입 신청 데이터
@@ -72,7 +73,14 @@ export default function SignupApproval() {
                   <TableCell>
                     <Badge variant="outline">{req.department}</Badge> {req.position}
                   </TableCell>
-                  <TableCell>{req.phone}</TableCell>
+                  <TableCell>
+                    <MaskedData 
+                      value={req.phone} 
+                      type="phone" 
+                      label="연락처" 
+                      employeeName={req.name} 
+                    />
+                  </TableCell>
                   <TableCell className="text-sm text-muted-foreground">{req.requestedAt}</TableCell>
                   <TableCell>
                     {req.status === "pending" && <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">승인 대기</Badge>}

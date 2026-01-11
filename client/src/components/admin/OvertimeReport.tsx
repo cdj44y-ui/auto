@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Download, BarChart3, TrendingUp, Users, Search, Filter } from "lucide-react";
+import { MaskedData } from "@/components/ui/MaskedData";
 import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -210,7 +211,7 @@ export default function OvertimeReport() {
                 <TableHead>일자</TableHead>
                 <TableHead>이름</TableHead>
                 <TableHead>부서</TableHead>
-                <TableHead>시간</TableHead>
+                <TableHead>예상 수당</TableHead>
                 <TableHead>사유</TableHead>
               </TableRow>
             </TableHeader>
@@ -221,7 +222,14 @@ export default function OvertimeReport() {
                     <TableCell>{item.date}</TableCell>
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell>{item.dept}</TableCell>
-                    <TableCell>{item.hours}h</TableCell>
+                    <TableCell>
+                      <MaskedData 
+                        value={String(item.hours * 15000)} // 임시 시급 1.5만원 가정
+                        type="salary" 
+                        label="연장수당" 
+                        employeeName={item.name} 
+                      />
+                    </TableCell>
                     <TableCell className="text-muted-foreground">{item.reason}</TableCell>
                   </TableRow>
                 ))
