@@ -28,8 +28,8 @@ import Employees from "./pages/Employees";
 import Settings from "./pages/Settings";
 import Insights from "./pages/Insights";
 import Attendance from "./pages/Attendance";
-
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       {/* 공통 진입점 */}

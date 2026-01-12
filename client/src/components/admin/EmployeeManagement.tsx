@@ -1,29 +1,37 @@
 import { useState, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Upload, Download, UserPlus, FileSpreadsheet, CheckCircle2, AlertCircle, X } from "lucide-react";
+import { Upload, Download, UserPlus, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 import * as XLSX from 'xlsx';
 
-// Mock Data for Employee List
-const MOCK_EMPLOYEES = [
-  { id: "EMP001", name: "김철수", dept: "개발팀", position: "과장", email: "kim@tech.com", status: "active", joinDate: "2020-03-01" },
-  { id: "EMP002", name: "이영희", dept: "디자인팀", position: "대리", email: "lee@tech.com", status: "active", joinDate: "2023-07-15" },
-  { id: "EMP003", name: "박지민", dept: "마케팅팀", position: "사원", email: "park@global.com", status: "active", joinDate: "2025-01-01" },
-  { id: "EMP004", name: "최민수", dept: "영업팀", position: "차장", email: "choi@global.com", status: "leave", joinDate: "2018-11-20" },
-  { id: "EMP005", name: "정수진", dept: "인사팀", position: "사원", email: "jung@future.com", status: "active", joinDate: "2024-05-10" },
-];
-
 export default function EmployeeManagement() {
-  const [employees, setEmployees] = useState(MOCK_EMPLOYEES);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [previewData, setPreviewData] = useState<any[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Fetch employees from database
+  const { data: employees, isLoading, refetch } = trpc.employee.list.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+  // Bulk create mutation
+  const bulkCreateMutation = trpc.employee.bulkCreate.useMutation({
+    onSuccess: (data) => {
+      toast.success(`${data.count}명의 직원이 성공적으로 등록되었습니다.`);
+      setUploadDialogOpen(false);
+      setPreviewData([]);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`등록 실패: ${error.message}`);
+    },
+  });
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -38,16 +46,22 @@ export default function EmployeeManagement() {
       const data = XLSX.utils.sheet_to_json(ws);
       
       // Validate and format data
-      const formattedData = data.map((row: any, index) => ({
-        id: `NEW${String(index + 1).padStart(3, '0')}`,
-        name: row['이름'] || row['Name'] || 'Unknown',
-        dept: row['부서'] || row['Department'] || 'Unassigned',
-        position: row['직급'] || row['Position'] || 'Staff',
-        email: row['이메일'] || row['Email'] || '-',
-        status: 'pending',
-        joinDate: row['입사일'] || row['JoinDate'] || new Date().toISOString().split('T')[0],
-        isValid: !!(row['이름'] || row['Name']) && !!(row['이메일'] || row['Email'])
-      }));
+      const formattedData = data.map((row: any, index) => {
+        const name = row['이름'] || row['Name'] || '';
+        const email = row['이메일'] || row['Email'] || '';
+        const department = row['부서'] || row['Department'] || '';
+        
+        return {
+          employeeId: `EMP${String(Date.now()).slice(-6)}${String(index + 1).padStart(3, '0')}`,
+          name,
+          department,
+          position: row['직급'] || row['Position'] || '사원',
+          email: email || undefined,
+          phone: row['전화번호'] || row['Phone'] || undefined,
+          joinDate: row['입사일'] || row['JoinDate'] ? new Date(row['입사일'] || row['JoinDate']) : undefined,
+          isValid: !!name && !!department,
+        };
+      });
 
       setPreviewData(formattedData);
     };
@@ -61,26 +75,28 @@ export default function EmployeeManagement() {
       return;
     }
 
-    const newEmployees = validRows.map(({ isValid, ...rest }) => ({
-      ...rest,
-      status: 'active'
-    }));
-
-    setEmployees(prev => [...newEmployees, ...prev]);
-    setUploadDialogOpen(false);
-    setPreviewData([]);
-    toast.success(`${validRows.length}명의 직원이 성공적으로 등록되었습니다.`);
+    // Remove isValid field before sending to API
+    const employeesToCreate = validRows.map(({ isValid, ...rest }) => rest);
+    bulkCreateMutation.mutate(employeesToCreate);
   };
 
   const downloadTemplate = () => {
     const ws = XLSX.utils.json_to_sheet([
-      { 이름: "홍길동", 부서: "개발팀", 직급: "사원", 이메일: "hong@example.com", 입사일: "2026-01-01" },
-      { 이름: "김영희", 부서: "디자인팀", 직급: "대리", 이메일: "kim@example.com", 입사일: "2026-02-01" }
+      { 이름: "홍길동", 부서: "개발팀", 직급: "사원", 이메일: "hong@example.com", 전화번호: "010-1234-5678", 입사일: "2026-01-01" },
+      { 이름: "김영희", 부서: "디자인팀", 직급: "대리", 이메일: "kim@example.com", 전화번호: "010-9876-5432", 입사일: "2026-02-01" }
     ]);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "직원등록양식");
     XLSX.writeFile(wb, "직원일괄등록_양식.xlsx");
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -155,9 +171,9 @@ export default function EmployeeManagement() {
                               )}
                             </TableCell>
                             <TableCell>{row.name}</TableCell>
-                            <TableCell>{row.dept}</TableCell>
+                            <TableCell>{row.department}</TableCell>
                             <TableCell>{row.position}</TableCell>
-                            <TableCell>{row.email}</TableCell>
+                            <TableCell>{row.email || '-'}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -168,7 +184,11 @@ export default function EmployeeManagement() {
 
               <DialogFooter>
                 <Button variant="outline" onClick={() => setUploadDialogOpen(false)}>취소</Button>
-                <Button onClick={handleConfirmUpload} disabled={previewData.length === 0}>
+                <Button 
+                  onClick={handleConfirmUpload} 
+                  disabled={previewData.length === 0 || bulkCreateMutation.isPending}
+                >
+                  {bulkCreateMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                   {previewData.filter(r => r.isValid).length}명 등록하기
                 </Button>
               </DialogFooter>
@@ -197,26 +217,34 @@ export default function EmployeeManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {employees.map((emp) => (
-                <TableRow key={emp.id}>
-                  <TableCell className="font-medium">{emp.id}</TableCell>
-                  <TableCell>{emp.name}</TableCell>
-                  <TableCell>{emp.dept}</TableCell>
-                  <TableCell>{emp.position}</TableCell>
-                  <TableCell>{emp.email}</TableCell>
-                  <TableCell>{emp.joinDate}</TableCell>
-                  <TableCell>
-                    <Badge variant={emp.status === 'active' ? 'default' : 'secondary'} className={
-                      emp.status === 'active' ? 'bg-green-100 text-green-700 hover:bg-green-200 border-0' : ''
-                    }>
-                      {emp.status === 'active' ? '재직중' : '휴직'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">수정</Button>
+              {employees && employees.length > 0 ? (
+                employees.map((emp) => (
+                  <TableRow key={emp.id}>
+                    <TableCell className="font-medium">{emp.employeeId}</TableCell>
+                    <TableCell>{emp.name}</TableCell>
+                    <TableCell>{emp.department}</TableCell>
+                    <TableCell>{emp.position || '-'}</TableCell>
+                    <TableCell>{emp.email || '-'}</TableCell>
+                    <TableCell>{emp.joinDate ? new Date(emp.joinDate).toLocaleDateString('ko-KR') : '-'}</TableCell>
+                    <TableCell>
+                      <Badge variant={emp.status === 'active' ? 'default' : 'secondary'} className={
+                        emp.status === 'active' ? 'bg-green-100 text-green-700 hover:bg-green-200 border-0' : ''
+                      }>
+                        {emp.status === 'active' ? '재직중' : emp.status === 'leave' ? '휴직' : '퇴사'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm">수정</Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                    등록된 직원이 없습니다. 엑셀 일괄 등록을 통해 직원을 추가해 보세요.
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </CardContent>

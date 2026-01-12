@@ -13,6 +13,10 @@ import TeamLeaveCalendar from "@/components/calendar/TeamLeaveCalendar";
 import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
+  // The userAuth hooks provides authentication state
+  // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
+  let { user, loading, error, isAuthenticated, logout } = useAuth();
+
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [isFlexibleWorkDialogOpen, setIsFlexibleWorkDialogOpen] = useState(false);

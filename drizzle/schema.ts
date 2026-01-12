@@ -1,0 +1,106 @@
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, bigint, decimal, boolean } from "drizzle-orm/mysql-core";
+
+/**
+ * Core user table backing auth flow.
+ * Extend this file with additional tables as your product grows.
+ * Columns use camelCase to match both database fields and generated types.
+ */
+export const users = mysqlTable("users", {
+  /**
+   * Surrogate primary key. Auto-incremented numeric value managed by the database.
+   * Use this for relations between tables.
+   */
+  id: int("id").autoincrement().primaryKey(),
+  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
+  openId: varchar("openId", { length: 64 }).notNull().unique(),
+  name: text("name"),
+  email: varchar("email", { length: 320 }),
+  loginMethod: varchar("loginMethod", { length: 64 }),
+  /** Role for RBAC: admin (full access), hr (employee management), finance (payroll), user (basic) */
+  role: mysqlEnum("role", ["user", "admin", "hr", "finance"]).default("user").notNull(),
+  /** Department the user belongs to */
+  department: varchar("department", { length: 64 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+});
+
+export type User = typeof users.$inferSelect;
+export type InsertUser = typeof users.$inferInsert;
+
+/**
+ * Employee table for storing employee information
+ */
+export const employees = mysqlTable("employees", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Employee ID (사번) */
+  employeeId: varchar("employeeId", { length: 32 }).notNull().unique(),
+  name: varchar("name", { length: 100 }).notNull(),
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 20 }),
+  department: varchar("department", { length: 64 }).notNull(),
+  position: varchar("position", { length: 64 }),
+  /** Employment status */
+  status: mysqlEnum("status", ["active", "leave", "resigned"]).default("active").notNull(),
+  joinDate: timestamp("joinDate"),
+  resignDate: timestamp("resignDate"),
+  /** Link to user account if exists */
+  userId: int("userId"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Employee = typeof employees.$inferSelect;
+export type InsertEmployee = typeof employees.$inferInsert;
+
+/**
+ * Payroll table for storing monthly payroll records
+ */
+export const payrollRecords = mysqlTable("payroll_records", {
+  id: int("id").autoincrement().primaryKey(),
+  employeeId: int("employeeId").notNull(),
+  /** Year-Month in format YYYYMM */
+  period: varchar("period", { length: 6 }).notNull(),
+  /** Base salary in KRW */
+  baseSalary: bigint("baseSalary", { mode: "number" }).notNull(),
+  /** Overtime pay in KRW */
+  overtimePay: bigint("overtimePay", { mode: "number" }).default(0),
+  /** Bonus in KRW */
+  bonus: bigint("bonus", { mode: "number" }).default(0),
+  /** Total deductions in KRW */
+  deductions: bigint("deductions", { mode: "number" }).default(0),
+  /** Net pay (total after deductions) */
+  netPay: bigint("netPay", { mode: "number" }).notNull(),
+  /** Payslip sent status */
+  slipSent: boolean("slipSent").default(false),
+  slipSentAt: timestamp("slipSentAt"),
+  /** Record status */
+  status: mysqlEnum("status", ["draft", "confirmed", "paid"]).default("draft").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PayrollRecord = typeof payrollRecords.$inferSelect;
+export type InsertPayrollRecord = typeof payrollRecords.$inferInsert;
+
+/**
+ * Email log table for tracking sent emails
+ */
+export const emailLogs = mysqlTable("email_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
+  recipientName: varchar("recipientName", { length: 100 }),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  /** Email type for categorization */
+  emailType: mysqlEnum("emailType", ["payslip", "notification", "approval", "other"]).default("other").notNull(),
+  /** Reference ID (e.g., payroll record ID) */
+  referenceId: int("referenceId"),
+  /** Send status */
+  status: mysqlEnum("status", ["pending", "sent", "failed"]).default("pending").notNull(),
+  errorMessage: text("errorMessage"),
+  sentAt: timestamp("sentAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmailLog = typeof emailLogs.$inferSelect;
+export type InsertEmailLog = typeof emailLogs.$inferInsert;

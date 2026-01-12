@@ -1,19 +1,20 @@
-import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useState, useMemo } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { 
   LogOut, 
   LayoutDashboard, 
   Users, 
-  Settings, 
-  FileText, 
   Moon, 
   Sun,
   Bell,
-  CalendarDays
+  Shield,
+  Briefcase,
+  DollarSign
 } from "lucide-react";
 import { toast } from "sonner";
 import EmployeeManagement from "@/components/admin/EmployeeManagement";
@@ -32,10 +33,51 @@ import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
 import { WorkflowSettings } from "@/components/admin/WorkflowSettings";
 import { IntegrationCenter } from "@/components/settings/IntegrationCenter";
 
+// Role-based tab configuration
+type TabConfig = {
+  id: string;
+  label: string;
+  roles: string[]; // Which roles can see this tab
+};
+
+const TAB_CONFIG: TabConfig[] = [
+  { id: "dashboard", label: "대시보드", roles: ["admin", "hr", "finance", "user"] },
+  { id: "employees", label: "직원 관리", roles: ["admin", "hr"] },
+  { id: "payroll", label: "급여 관리", roles: ["admin", "finance"] },
+  { id: "attendance", label: "근태 관리", roles: ["admin", "hr"] },
+  { id: "calendar", label: "휴가 캘린더", roles: ["admin", "hr", "finance", "user"] },
+  { id: "flexible", label: "유연근무", roles: ["admin", "hr"] },
+  { id: "leave", label: "연차 관리", roles: ["admin", "hr"] },
+  { id: "shift", label: "교대 근무", roles: ["admin", "hr"] },
+  { id: "work-hours", label: "주 52시간", roles: ["admin", "hr", "finance"] },
+  { id: "security", label: "보안 및 감사", roles: ["admin"] },
+  { id: "integration", label: "외부 연동", roles: ["admin"] },
+];
+
+// Role display info
+const ROLE_INFO: Record<string, { label: string; color: string; icon: React.ElementType }> = {
+  admin: { label: "관리자", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400", icon: Shield },
+  hr: { label: "인사팀", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400", icon: Users },
+  finance: { label: "재무팀", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400", icon: DollarSign },
+  user: { label: "일반", color: "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400", icon: Briefcase },
+};
+
 export default function AdminDashboard() {
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState("dashboard");
+
+  // Get user role (default to 'user' if not set)
+  const userRole = user?.role || "user";
+  
+  // Filter tabs based on user role
+  const visibleTabs = useMemo(() => {
+    return TAB_CONFIG.filter(tab => tab.roles.includes(userRole));
+  }, [userRole]);
+
+  // Get role display info
+  const roleInfo = ROLE_INFO[userRole] || ROLE_INFO.user;
+  const RoleIcon = roleInfo.icon;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
@@ -48,10 +90,13 @@ export default function AdminDashboard() {
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-full">
-              <Users className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
-                {user?.department} | {user?.name} {user?.position}
+            <div className="hidden md:flex items-center gap-2">
+              <Badge className={`${roleInfo.color} border-0 gap-1`}>
+                <RoleIcon className="w-3 h-3" />
+                {roleInfo.label}
+              </Badge>
+              <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                {user?.name || "사용자"}
               </span>
             </div>
 
@@ -73,18 +118,16 @@ export default function AdminDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="flex w-full overflow-x-auto md:grid md:grid-cols-7 lg:w-[1000px] bg-white dark:bg-slate-900 h-auto p-1 gap-1 no-scrollbar">
-            <TabsTrigger value="dashboard" className="py-2 min-w-[80px] flex-shrink-0">대시보드</TabsTrigger>
-            <TabsTrigger value="employees" className="py-2 min-w-[80px] flex-shrink-0">직원 관리</TabsTrigger>
-            <TabsTrigger value="payroll" className="py-2 min-w-[80px] flex-shrink-0">급여 관리</TabsTrigger>
-            <TabsTrigger value="attendance" className="py-2 min-w-[80px] flex-shrink-0">근태 관리</TabsTrigger>
-            <TabsTrigger value="calendar" className="py-2 min-w-[80px] flex-shrink-0">휴가 캘린더</TabsTrigger>
-            <TabsTrigger value="flexible" className="py-2 min-w-[80px] flex-shrink-0">유연근무</TabsTrigger>
-            <TabsTrigger value="leave" className="py-2 min-w-[80px] flex-shrink-0">연차 관리</TabsTrigger>
-            <TabsTrigger value="shift" className="py-2 min-w-[80px] flex-shrink-0">교대 근무</TabsTrigger>
-            <TabsTrigger value="work-hours" className="py-2 min-w-[80px] flex-shrink-0">주 52시간</TabsTrigger>
-            <TabsTrigger value="security" className="py-2 min-w-[80px] flex-shrink-0">보안 및 감사</TabsTrigger>
-            <TabsTrigger value="integration" className="py-2 min-w-[80px] flex-shrink-0">외부 연동</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto bg-white dark:bg-slate-900 h-auto p-1 gap-1 no-scrollbar">
+            {visibleTabs.map(tab => (
+              <TabsTrigger 
+                key={tab.id} 
+                value={tab.id} 
+                className="py-2 min-w-[80px] flex-shrink-0"
+              >
+                {tab.label}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6">
@@ -158,6 +201,26 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Role-based access notice */}
+            {userRole !== 'admin' && (
+              <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+                <CardContent className="py-4">
+                  <div className="flex items-start gap-3">
+                    <RoleIcon className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-blue-800 dark:text-blue-200">권한 안내</p>
+                      <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                        현재 <strong>{roleInfo.label}</strong> 권한으로 로그인되어 있습니다. 
+                        {userRole === 'hr' && " 직원 관리, 근태 관리, 휴가 관리 메뉴에 접근할 수 있습니다."}
+                        {userRole === 'finance' && " 급여 관리, 주 52시간 관리 메뉴에 접근할 수 있습니다."}
+                        {userRole === 'user' && " 대시보드와 휴가 캘린더를 확인할 수 있습니다."}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="employees">
