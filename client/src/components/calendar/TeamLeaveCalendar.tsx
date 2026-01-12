@@ -13,7 +13,9 @@ import {
   isToday
 } from "date-fns";
 import { ko } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, User } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, User, Search, Filter } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -67,6 +69,8 @@ const LeaveTypeLabels: Record<LeaveType, string> = {
 export default function TeamLeaveCalendar({ isAdmin = false }: { isAdmin?: boolean }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDept, setSelectedDept] = useState("all");
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
@@ -79,8 +83,14 @@ export default function TeamLeaveCalendar({ isAdmin = false }: { isAdmin?: boole
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
   const goToToday = () => setCurrentDate(new Date());
 
+  const filteredEvents = MOCK_EVENTS.filter(event => {
+    const matchName = event.userName.includes(searchTerm) || event.department.includes(searchTerm);
+    const matchDept = selectedDept === "all" || event.department === selectedDept;
+    return matchName && matchDept;
+  });
+
   const getEventsForDay = (date: Date) => {
-    return MOCK_EVENTS.filter(event => isSameDay(event.date, date));
+    return filteredEvents.filter(event => isSameDay(event.date, date));
   };
 
   return (
@@ -108,6 +118,36 @@ export default function TeamLeaveCalendar({ isAdmin = false }: { isAdmin?: boole
           </div>
         </CardHeader>
         <CardContent>
+          {/* Filters */}
+          <div className="flex flex-col md:flex-row gap-3 mb-6 bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input 
+                placeholder="직원 이름 검색..." 
+                className="pl-9 bg-white dark:bg-slate-950" 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="w-full md:w-[180px]">
+              <Select value={selectedDept} onValueChange={setSelectedDept}>
+                <SelectTrigger className="bg-white dark:bg-slate-950">
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-4 w-4 text-muted-foreground" />
+                    <SelectValue placeholder="부서 선택" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">전체 부서</SelectItem>
+                  <SelectItem value="개발팀">개발팀</SelectItem>
+                  <SelectItem value="디자인팀">디자인팀</SelectItem>
+                  <SelectItem value="마케팅팀">마케팅팀</SelectItem>
+                  <SelectItem value="영업팀">영업팀</SelectItem>
+                  <SelectItem value="인사팀">인사팀</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           {/* Weekday Headers */}
           <div className="grid grid-cols-7 mb-2">
             {['일', '월', '화', '수', '목', '금', '토'].map((day, i) => (
