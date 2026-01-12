@@ -1,20 +1,226 @@
+import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { Upload, Download, UserPlus, FileSpreadsheet, CheckCircle2, AlertCircle, X } from "lucide-react";
+import * as XLSX from 'xlsx';
+
+// Mock Data for Employee List
+const MOCK_EMPLOYEES = [
+  { id: "EMP001", name: "김철수", dept: "개발팀", position: "과장", email: "kim@tech.com", status: "active", joinDate: "2020-03-01" },
+  { id: "EMP002", name: "이영희", dept: "디자인팀", position: "대리", email: "lee@tech.com", status: "active", joinDate: "2023-07-15" },
+  { id: "EMP003", name: "박지민", dept: "마케팅팀", position: "사원", email: "park@global.com", status: "active", joinDate: "2025-01-01" },
+  { id: "EMP004", name: "최민수", dept: "영업팀", position: "차장", email: "choi@global.com", status: "leave", joinDate: "2018-11-20" },
+  { id: "EMP005", name: "정수진", dept: "인사팀", position: "사원", email: "jung@future.com", status: "active", joinDate: "2024-05-10" },
+];
 
 export default function EmployeeManagement() {
+  const [employees, setEmployees] = useState(MOCK_EMPLOYEES);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [previewData, setPreviewData] = useState<any[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const bstr = evt.target?.result;
+      const wb = XLSX.read(bstr, { type: 'binary' });
+      const wsname = wb.SheetNames[0];
+      const ws = wb.Sheets[wsname];
+      const data = XLSX.utils.sheet_to_json(ws);
+      
+      // Validate and format data
+      const formattedData = data.map((row: any, index) => ({
+        id: `NEW${String(index + 1).padStart(3, '0')}`,
+        name: row['이름'] || row['Name'] || 'Unknown',
+        dept: row['부서'] || row['Department'] || 'Unassigned',
+        position: row['직급'] || row['Position'] || 'Staff',
+        email: row['이메일'] || row['Email'] || '-',
+        status: 'pending',
+        joinDate: row['입사일'] || row['JoinDate'] || new Date().toISOString().split('T')[0],
+        isValid: !!(row['이름'] || row['Name']) && !!(row['이메일'] || row['Email'])
+      }));
+
+      setPreviewData(formattedData);
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  const handleConfirmUpload = () => {
+    const validRows = previewData.filter(row => row.isValid);
+    if (validRows.length === 0) {
+      toast.error("등록할 수 있는 유효한 데이터가 없습니다.");
+      return;
+    }
+
+    const newEmployees = validRows.map(({ isValid, ...rest }) => ({
+      ...rest,
+      status: 'active'
+    }));
+
+    setEmployees(prev => [...newEmployees, ...prev]);
+    setUploadDialogOpen(false);
+    setPreviewData([]);
+    toast.success(`${validRows.length}명의 직원이 성공적으로 등록되었습니다.`);
+  };
+
+  const downloadTemplate = () => {
+    const ws = XLSX.utils.json_to_sheet([
+      { 이름: "홍길동", 부서: "개발팀", 직급: "사원", 이메일: "hong@example.com", 입사일: "2026-01-01" },
+      { 이름: "김영희", 부서: "디자인팀", 직급: "대리", 이메일: "kim@example.com", 입사일: "2026-02-01" }
+    ]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "직원등록양식");
+    XLSX.writeFile(wb, "직원일괄등록_양식.xlsx");
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>직원 관리</CardTitle>
-        <CardDescription>직원 목록 조회 및 관리 기능을 제공합니다.</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col items-center justify-center py-10 space-y-4">
-        <p className="text-muted-foreground">현재 직원 관리 모듈을 준비 중입니다.</p>
-        <Button onClick={() => toast.info("직원 등록 기능은 곧 제공될 예정입니다.")}>
-          신규 직원 등록
-        </Button>
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 className="text-lg font-semibold">직원 관리</h2>
+          <p className="text-sm text-muted-foreground">직원 정보를 조회하고 신규 입사자를 등록합니다.</p>
+        </div>
+        <div className="flex gap-2">
+          <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <FileSpreadsheet className="w-4 h-4" /> 엑셀 일괄 등록
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle>직원 일괄 등록</DialogTitle>
+                <DialogDescription>
+                  엑셀 파일을 업로드하여 여러 명의 직원을 한 번에 등록할 수 있습니다.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4 py-4">
+                <div className="flex items-center justify-between p-4 border-2 border-dashed rounded-lg bg-slate-50 dark:bg-slate-900">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
+                      <FileSpreadsheet className="w-6 h-6 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <p className="font-medium">엑셀 파일 업로드</p>
+                      <p className="text-xs text-muted-foreground">.xlsx, .xls 형식 지원</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={downloadTemplate}>
+                      <Download className="w-3 h-3 mr-1" /> 양식 다운로드
+                    </Button>
+                    <Button size="sm" onClick={() => fileInputRef.current?.click()}>
+                      <Upload className="w-3 h-3 mr-1" /> 파일 선택
+                    </Button>
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      className="hidden" 
+                      accept=".xlsx, .xls" 
+                      onChange={handleFileUpload}
+                    />
+                  </div>
+                </div>
+
+                {previewData.length > 0 && (
+                  <div className="border rounded-md max-h-[300px] overflow-y-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[50px]">상태</TableHead>
+                          <TableHead>이름</TableHead>
+                          <TableHead>부서</TableHead>
+                          <TableHead>직급</TableHead>
+                          <TableHead>이메일</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {previewData.map((row, i) => (
+                          <TableRow key={i} className={!row.isValid ? "bg-red-50 dark:bg-red-900/10" : ""}>
+                            <TableCell>
+                              {row.isValid ? (
+                                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                              ) : (
+                                <AlertCircle className="w-4 h-4 text-red-500" />
+                              )}
+                            </TableCell>
+                            <TableCell>{row.name}</TableCell>
+                            <TableCell>{row.dept}</TableCell>
+                            <TableCell>{row.position}</TableCell>
+                            <TableCell>{row.email}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setUploadDialogOpen(false)}>취소</Button>
+                <Button onClick={handleConfirmUpload} disabled={previewData.length === 0}>
+                  {previewData.filter(r => r.isValid).length}명 등록하기
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          
+          <Button className="gap-2" onClick={() => toast.info("개별 등록 기능은 준비 중입니다.")}>
+            <UserPlus className="w-4 h-4" /> 신규 등록
+          </Button>
+        </div>
+      </div>
+
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>사번</TableHead>
+                <TableHead>이름</TableHead>
+                <TableHead>부서</TableHead>
+                <TableHead>직급</TableHead>
+                <TableHead>이메일</TableHead>
+                <TableHead>입사일</TableHead>
+                <TableHead>상태</TableHead>
+                <TableHead className="text-right">관리</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {employees.map((emp) => (
+                <TableRow key={emp.id}>
+                  <TableCell className="font-medium">{emp.id}</TableCell>
+                  <TableCell>{emp.name}</TableCell>
+                  <TableCell>{emp.dept}</TableCell>
+                  <TableCell>{emp.position}</TableCell>
+                  <TableCell>{emp.email}</TableCell>
+                  <TableCell>{emp.joinDate}</TableCell>
+                  <TableCell>
+                    <Badge variant={emp.status === 'active' ? 'default' : 'secondary'} className={
+                      emp.status === 'active' ? 'bg-green-100 text-green-700 hover:bg-green-200 border-0' : ''
+                    }>
+                      {emp.status === 'active' ? '재직중' : '휴직'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="ghost" size="sm">수정</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

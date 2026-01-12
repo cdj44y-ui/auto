@@ -73,18 +73,18 @@ export default function AdminDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 lg:w-[1000px] bg-white dark:bg-slate-900 h-auto p-1">
-            <TabsTrigger value="dashboard" className="py-2">대시보드</TabsTrigger>
-            <TabsTrigger value="employees" className="py-2">직원 관리</TabsTrigger>
-            <TabsTrigger value="payroll" className="py-2">급여 관리</TabsTrigger>
-            <TabsTrigger value="attendance" className="py-2">근태 관리</TabsTrigger>
-            <TabsTrigger value="calendar" className="py-2">휴가 캘린더</TabsTrigger>
-            <TabsTrigger value="flexible" className="py-2">유연근무</TabsTrigger>
-            <TabsTrigger value="leave" className="py-2">연차 관리</TabsTrigger>
-            <TabsTrigger value="shift" className="py-2">교대 근무</TabsTrigger>
-            <TabsTrigger value="work-hours" className="py-2">주 52시간</TabsTrigger>
-            <TabsTrigger value="security" className="py-2">보안 및 감사</TabsTrigger>
-            <TabsTrigger value="integration" className="py-2">외부 연동</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto md:grid md:grid-cols-7 lg:w-[1000px] bg-white dark:bg-slate-900 h-auto p-1 gap-1 no-scrollbar">
+            <TabsTrigger value="dashboard" className="py-2 min-w-[80px] flex-shrink-0">대시보드</TabsTrigger>
+            <TabsTrigger value="employees" className="py-2 min-w-[80px] flex-shrink-0">직원 관리</TabsTrigger>
+            <TabsTrigger value="payroll" className="py-2 min-w-[80px] flex-shrink-0">급여 관리</TabsTrigger>
+            <TabsTrigger value="attendance" className="py-2 min-w-[80px] flex-shrink-0">근태 관리</TabsTrigger>
+            <TabsTrigger value="calendar" className="py-2 min-w-[80px] flex-shrink-0">휴가 캘린더</TabsTrigger>
+            <TabsTrigger value="flexible" className="py-2 min-w-[80px] flex-shrink-0">유연근무</TabsTrigger>
+            <TabsTrigger value="leave" className="py-2 min-w-[80px] flex-shrink-0">연차 관리</TabsTrigger>
+            <TabsTrigger value="shift" className="py-2 min-w-[80px] flex-shrink-0">교대 근무</TabsTrigger>
+            <TabsTrigger value="work-hours" className="py-2 min-w-[80px] flex-shrink-0">주 52시간</TabsTrigger>
+            <TabsTrigger value="security" className="py-2 min-w-[80px] flex-shrink-0">보안 및 감사</TabsTrigger>
+            <TabsTrigger value="integration" className="py-2 min-w-[80px] flex-shrink-0">외부 연동</TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6">

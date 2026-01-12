@@ -252,3 +252,13 @@
     @apply text-[40px] font-bold tracking-tight leading-none text-[var(--macos-text-primary)];
   }
 }
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
