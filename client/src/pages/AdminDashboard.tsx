@@ -15,6 +15,7 @@ import {
   Bell,
   CalendarDays
 } from "lucide-react";
+import { toast } from "sonner";
 import EmployeeManagement from "@/components/admin/EmployeeManagement";
 import PayrollManager from "@/components/admin/PayrollManager";
 import AttendanceCorrection from "@/components/admin/AttendanceCorrection";
@@ -58,7 +59,7 @@ export default function AdminDashboard() {
               {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
             </Button>
 
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative" onClick={() => toast.info("알림 기능은 준비 중입니다.")}>
               <Bell className="w-5 h-5 text-slate-500" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
             </Button>

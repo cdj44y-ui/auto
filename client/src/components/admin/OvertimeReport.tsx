@@ -201,7 +201,7 @@ export default function OvertimeReport() {
       {/* 상세 내역 테이블 */}
       <Card>
         <CardHeader>
-          <CardTitle>상세 내역 ({selectedMonth})</CardTitle>
+          <CardTitle>상세 내역</CardTitle>
           <CardDescription>해당 월의 연장근무 신청 및 승인 내역입니다.</CardDescription>
         </CardHeader>
         <CardContent>
