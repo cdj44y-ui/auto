@@ -11,11 +11,12 @@ import AttendanceCorrection from "@/components/admin/AttendanceCorrection";
 import FlexibleWorkApplicationWizard from "@/components/flexible-work/FlexibleWorkApplicationWizard";
 import TeamLeaveCalendar from "@/components/calendar/TeamLeaveCalendar";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Home() {
   // The userAuth hooks provides authentication state
   // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
+  const { user } = useAuth();
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isCheckedIn, setIsCheckedIn] = useState(false);
