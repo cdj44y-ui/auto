@@ -46,6 +46,12 @@ export const employees = mysqlTable("employees", {
   resignDate: timestamp("resignDate"),
   /** Link to user account if exists */
   userId: int("userId"),
+  /** Monthly base salary in KRW */
+  salary: bigint("salary", { mode: "number" }),
+  /** Bank name for salary payment */
+  bankName: varchar("bankName", { length: 64 }),
+  /** Bank account number */
+  bankAccount: varchar("bankAccount", { length: 64 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

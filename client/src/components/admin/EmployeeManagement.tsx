@@ -5,13 +5,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Upload, Download, UserPlus, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Upload, Download, UserPlus, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2, Pencil, Search } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import * as XLSX from 'xlsx';
+import EmployeeDetailForm, { EmployeeFormData } from "./EmployeeDetailForm";
+import { Input } from "@/components/ui/input";
 
 export default function EmployeeManagement() {
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [previewData, setPreviewData] = useState<any[]>([]);
+  const [detailFormOpen, setDetailFormOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeFormData | null>(null);
+  const [formMode, setFormMode] = useState<"create" | "edit">("create");
+  const [searchQuery, setSearchQuery] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch employees from database
@@ -30,6 +36,26 @@ export default function EmployeeManagement() {
     },
     onError: (error) => {
       toast.error(`등록 실패: ${error.message}`);
+    },
+  });
+
+  // Create single employee mutation
+  const createMutation = trpc.employee.create.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error) => {
+      throw error;
+    },
+  });
+
+  // Update employee mutation
+  const updateMutation = trpc.employee.update.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error) => {
+      throw error;
     },
   });
 
@@ -89,6 +115,74 @@ export default function EmployeeManagement() {
     XLSX.utils.book_append_sheet(wb, ws, "직원등록양식");
     XLSX.writeFile(wb, "직원일괄등록_양식.xlsx");
   };
+
+  const handleOpenCreateForm = () => {
+    setSelectedEmployee(null);
+    setFormMode("create");
+    setDetailFormOpen(true);
+  };
+
+  const handleOpenEditForm = (emp: any) => {
+    setSelectedEmployee({
+      id: emp.id,
+      name: emp.name || "",
+      email: emp.email || "",
+      phone: emp.phone || "",
+      department: emp.department || "",
+      position: emp.position || "",
+      hireDate: emp.joinDate ? new Date(emp.joinDate).toISOString().split("T")[0] : "",
+      salary: emp.salary || 0,
+      bankAccount: emp.bankAccount || "",
+      bankName: emp.bankName || "",
+      status: emp.status === "active" ? "active" : emp.status === "leave" ? "inactive" : "pending",
+    });
+    setFormMode("edit");
+    setDetailFormOpen(true);
+  };
+
+  const handleSaveEmployee = async (data: EmployeeFormData) => {
+    if (formMode === "create") {
+      await createMutation.mutateAsync({
+        employeeId: `EMP${String(Date.now()).slice(-6)}${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
+        name: data.name,
+        department: data.department,
+        position: data.position,
+        email: data.email || undefined,
+        phone: data.phone || undefined,
+        joinDate: data.hireDate ? new Date(data.hireDate) : undefined,
+        salary: data.salary,
+        bankAccount: data.bankAccount || undefined,
+        bankName: data.bankName || undefined,
+        status: data.status === "active" ? "active" : data.status === "inactive" ? "leave" : "active",
+      });
+    } else if (data.id) {
+      await updateMutation.mutateAsync({
+        id: data.id,
+        name: data.name,
+        department: data.department,
+        position: data.position,
+        email: data.email || undefined,
+        phone: data.phone || undefined,
+        joinDate: data.hireDate ? new Date(data.hireDate) : undefined,
+        salary: data.salary,
+        bankAccount: data.bankAccount || undefined,
+        bankName: data.bankName || undefined,
+        status: data.status === "active" ? "active" : data.status === "inactive" ? "leave" : "active",
+      });
+    }
+  };
+
+  // Filter employees based on search query
+  const filteredEmployees = employees?.filter((emp) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      emp.name?.toLowerCase().includes(query) ||
+      emp.employeeId?.toLowerCase().includes(query) ||
+      emp.department?.toLowerCase().includes(query) ||
+      emp.email?.toLowerCase().includes(query)
+    );
+  });
 
   if (isLoading) {
     return (
@@ -195,10 +289,21 @@ export default function EmployeeManagement() {
             </DialogContent>
           </Dialog>
           
-          <Button className="gap-2" onClick={() => toast.info("개별 등록 기능은 준비 중입니다.")}>
+          <Button className="gap-2" onClick={handleOpenCreateForm}>
             <UserPlus className="w-4 h-4" /> 신규 등록
           </Button>
         </div>
+      </div>
+
+      {/* Search Bar */}
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder="이름, 사번, 부서, 이메일로 검색..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9"
+        />
       </div>
 
       <Card>
@@ -217,8 +322,8 @@ export default function EmployeeManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {employees && employees.length > 0 ? (
-                employees.map((emp) => (
+              {filteredEmployees && filteredEmployees.length > 0 ? (
+                filteredEmployees.map((emp) => (
                   <TableRow key={emp.id}>
                     <TableCell className="font-medium">{emp.employeeId}</TableCell>
                     <TableCell>{emp.name}</TableCell>
@@ -234,14 +339,23 @@ export default function EmployeeManagement() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">수정</Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="gap-1"
+                        onClick={() => handleOpenEditForm(emp)}
+                      >
+                        <Pencil className="w-3 h-3" /> 수정
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                    등록된 직원이 없습니다. 엑셀 일괄 등록을 통해 직원을 추가해 보세요.
+                    {searchQuery 
+                      ? "검색 결과가 없습니다." 
+                      : "등록된 직원이 없습니다. 신규 등록 또는 엑셀 일괄 등록을 통해 직원을 추가해 보세요."}
                   </TableCell>
                 </TableRow>
               )}
@@ -249,6 +363,15 @@ export default function EmployeeManagement() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Employee Detail Form */}
+      <EmployeeDetailForm
+        open={detailFormOpen}
+        onOpenChange={setDetailFormOpen}
+        employee={selectedEmployee}
+        onSave={handleSaveEmployee}
+        mode={formMode}
+      />
     </div>
   );
 }

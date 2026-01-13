@@ -34,6 +34,24 @@ const createEmployeeSchema = z.object({
   department: z.string().min(1),
   position: z.string().optional(),
   joinDate: z.date().optional(),
+  salary: z.number().optional(),
+  bankAccount: z.string().optional(),
+  bankName: z.string().optional(),
+  status: z.enum(['active', 'leave', 'resigned']).optional(),
+});
+
+const updateEmployeeSchema = z.object({
+  id: z.number(),
+  name: z.string().min(1).optional(),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+  department: z.string().min(1).optional(),
+  position: z.string().optional(),
+  joinDate: z.date().optional(),
+  salary: z.number().optional(),
+  bankAccount: z.string().optional(),
+  bankName: z.string().optional(),
+  status: z.enum(['active', 'leave', 'resigned']).optional(),
 });
 
 const bulkCreateEmployeesSchema = z.array(createEmployeeSchema);
@@ -95,12 +113,10 @@ export const appRouter = router({
       }),
 
     update: hrProcedure
-      .input(z.object({
-        id: z.number(),
-        data: createEmployeeSchema.partial(),
-      }))
+      .input(updateEmployeeSchema)
       .mutation(async ({ input }) => {
-        await db.updateEmployee(input.id, input.data);
+        const { id, ...data } = input;
+        await db.updateEmployee(id, data);
         return { success: true };
       }),
 
