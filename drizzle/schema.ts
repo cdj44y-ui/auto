@@ -110,3 +110,64 @@ export const emailLogs = mysqlTable("email_logs", {
 
 export type EmailLog = typeof emailLogs.$inferSelect;
 export type InsertEmailLog = typeof emailLogs.$inferInsert;
+
+
+// ============================================
+// 멀티테넌트 스키마 (Phase 1)
+// ============================================
+
+/**
+ * 고객사 (Clients) 테이블 - 멀티테넌트 핵심
+ */
+export const clients = mysqlTable("clients", {
+  id: int("id").autoincrement().primaryKey(),
+  companyName: varchar("companyName", { length: 200 }).notNull(),
+  businessNumber: varchar("businessNumber", { length: 20 }).unique(),
+  representativeName: varchar("representativeName", { length: 100 }),
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 20 }),
+  address: text("address"),
+  contractStartDate: timestamp("contractStartDate"),
+  contractEndDate: timestamp("contractEndDate"),
+  contractStatus: mysqlEnum("contractStatus", ["active", "pending", "expired", "terminated"]).default("pending").notNull(),
+  maxEmployees: int("maxEmployees").default(100),
+  isActive: boolean("isActive").default(true).notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Client = typeof clients.$inferSelect;
+export type InsertClient = typeof clients.$inferInsert;
+
+/**
+ * 자문 이력 (Consultations) 테이블
+ */
+export const consultations = mysqlTable("consultations", {
+  id: int("id").autoincrement().primaryKey(),
+  clientId: int("clientId").notNull(),
+  consultantId: int("consultantId").notNull(),
+  title: varchar("title", { length: 300 }).notNull(),
+  description: text("description"),
+  consultationType: mysqlEnum("consultationType", ["labor_law", "payroll", "hr_policy", "compliance", "contract", "dispute", "general", "other"]).default("general").notNull(),
+  consultationDate: timestamp("consultationDate").notNull(),
+  startTime: varchar("startTime", { length: 10 }),
+  endTime: varchar("endTime", { length: 10 }),
+  duration: int("duration"),
+  status: mysqlEnum("status", ["scheduled", "in_progress", "completed", "cancelled", "rescheduled"]).default("scheduled").notNull(),
+  outcome: text("outcome"),
+  recommendations: text("recommendations"),
+  followUpRequired: mysqlEnum("followUpRequired", ["yes", "no"]).default("no"),
+  followUpDate: timestamp("followUpDate"),
+  attachments: text("attachments"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Consultation = typeof consultations.$inferSelect;
+export type InsertConsultation = typeof consultations.$inferInsert;
+
+/**
+ * 5단계 권한 타입 (super_admin, consultant, company_admin, company_hr, employee)
+ */
+export type UserRole = "super_admin" | "consultant" | "company_admin" | "company_hr" | "employee";

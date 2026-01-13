@@ -41,3 +41,14 @@
 
 - [x] 관리자 대시보드 오류 수정
 - [x] 관리자 로그인 오류 수정 (useAuth import 경로 수정)
+
+
+## 멀티테넌트 백엔드 통합 (Phase 1)
+
+- [x] 고객사(clients) 테이블 스키마 추가
+- [x] 자문 이력(consultations) 테이블 스키마 추가
+- [ ] 직원 테이블에 client_id 외래키 추가
+- [ ] 5단계 권한 체계 (super_admin, consultant, company_admin, company_hr, employee)
+- [ ] 고객사 CRUD API
+- [ ] 자문 이력 CRUD API
+- [ ] 권한 검증 미들웨어

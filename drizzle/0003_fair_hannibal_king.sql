@@ -1,0 +1,41 @@
+CREATE TABLE `clients` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`companyName` varchar(200) NOT NULL,
+	`businessNumber` varchar(20),
+	`representativeName` varchar(100),
+	`email` varchar(320),
+	`phone` varchar(20),
+	`address` text,
+	`contractStartDate` timestamp,
+	`contractEndDate` timestamp,
+	`contractStatus` enum('active','pending','expired','terminated') NOT NULL DEFAULT 'pending',
+	`maxEmployees` int DEFAULT 100,
+	`isActive` boolean NOT NULL DEFAULT true,
+	`notes` text,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `clients_id` PRIMARY KEY(`id`),
+	CONSTRAINT `clients_businessNumber_unique` UNIQUE(`businessNumber`)
+);
+--> statement-breakpoint
+CREATE TABLE `consultations` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`clientId` int NOT NULL,
+	`consultantId` int NOT NULL,
+	`title` varchar(300) NOT NULL,
+	`description` text,
+	`consultationType` enum('labor_law','payroll','hr_policy','compliance','contract','dispute','general','other') NOT NULL DEFAULT 'general',
+	`consultationDate` timestamp NOT NULL,
+	`startTime` varchar(10),
+	`endTime` varchar(10),
+	`duration` int,
+	`status` enum('scheduled','in_progress','completed','cancelled','rescheduled') NOT NULL DEFAULT 'scheduled',
+	`outcome` text,
+	`recommendations` text,
+	`followUpRequired` enum('yes','no') DEFAULT 'no',
+	`followUpDate` timestamp,
+	`attachments` text,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `consultations_id` PRIMARY KEY(`id`)
+);
