@@ -49,6 +49,8 @@
 - [x] 자문 이력(consultations) 테이블 스키마 추가
 - [ ] 직원 테이블에 client_id 외래키 추가
 - [ ] 5단계 권한 체계 (super_admin, consultant, company_admin, company_hr, employee)
-- [ ] 고객사 CRUD API
+- [x] 고객사 CRUD API
 - [ ] 자문 이력 CRUD API
 - [ ] 권한 검증 미들웨어
+
+- [x] 고객사 관리 페이지 (ClientsPage.tsx) UI 구현

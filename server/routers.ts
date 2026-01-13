@@ -67,6 +67,38 @@ const createPayrollSchema = z.object({
 
 // ============ Router Definition ============
 
+// ============ Client Input Schemas ============
+
+const createClientSchema = z.object({
+  companyName: z.string().min(1),
+  businessNumber: z.string().optional(),
+  representativeName: z.string().optional(),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  contractStartDate: z.date().optional(),
+  contractEndDate: z.date().optional(),
+  contractStatus: z.enum(['active', 'pending', 'expired', 'terminated']).optional(),
+  maxEmployees: z.number().optional(),
+  notes: z.string().optional(),
+});
+
+const updateClientSchema = z.object({
+  id: z.number(),
+  companyName: z.string().min(1).optional(),
+  businessNumber: z.string().optional(),
+  representativeName: z.string().optional(),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  contractStartDate: z.date().optional(),
+  contractEndDate: z.date().optional(),
+  contractStatus: z.enum(['active', 'pending', 'expired', 'terminated']).optional(),
+  maxEmployees: z.number().optional(),
+  isActive: z.boolean().optional(),
+  notes: z.string().optional(),
+});
+
 export const appRouter = router({
   system: systemRouter,
   
@@ -235,6 +267,45 @@ export const appRouter = router({
           failed: results.filter(r => !r.success).length,
           results 
         };
+      }),
+  }),
+
+  // ============ Client Management (Admin Only) ============
+  client: router({
+    list: adminProcedure.query(async () => {
+      return db.getAllClients();
+    }),
+
+    getById: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return db.getClientById(input.id);
+      }),
+
+    create: adminProcedure
+      .input(createClientSchema)
+      .mutation(async ({ input }) => {
+        const id = await db.createClient({
+          ...input,
+          contractStatus: input.contractStatus || 'pending',
+          isActive: true,
+        });
+        return { id, success: true };
+      }),
+
+    update: adminProcedure
+      .input(updateClientSchema)
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateClient(id, data);
+        return { success: true };
+      }),
+
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteClient(input.id);
+        return { success: true };
       }),
   }),
 

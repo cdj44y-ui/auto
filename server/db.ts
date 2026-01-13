@@ -217,3 +217,45 @@ export async function getEmailLogsByReference(referenceId: number, emailType: st
       eq(emailLogs.emailType, emailType as any)
     ));
 }
+
+
+// ============ Client (고객사) Queries ============
+
+import { clients, InsertClient, Client } from "../drizzle/schema";
+
+export async function getAllClients(): Promise<Client[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(clients).orderBy(desc(clients.createdAt));
+}
+
+export async function getClientById(id: number): Promise<Client | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(clients).where(eq(clients.id, id)).limit(1);
+  return result[0];
+}
+
+export async function createClient(data: InsertClient): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(clients).values(data);
+  return Number(result[0].insertId);
+}
+
+export async function updateClient(id: number, data: Partial<InsertClient>): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(clients).set(data).where(eq(clients.id, id));
+}
+
+export async function deleteClient(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.delete(clients).where(eq(clients.id, id));
+}

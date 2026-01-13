@@ -28,6 +28,7 @@ import Employees from "./pages/Employees";
 import Settings from "./pages/Settings";
 import Insights from "./pages/Insights";
 import Attendance from "./pages/Attendance";
+import ClientsPage from "./pages/ClientsPage";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -90,6 +91,9 @@ function Router() {
       </Route>
       <Route path="/insights">
         <ProtectedRoute allowedRoles={["admin"]} component={Insights} />
+      </Route>
+      <Route path="/clients">
+        <ProtectedRoute allowedRoles={["admin"]} component={ClientsPage} />
       </Route>
       
       <Route component={NotFound} />
