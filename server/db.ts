@@ -259,3 +259,40 @@ export async function deleteClient(id: number): Promise<void> {
   
   await db.delete(clients).where(eq(clients.id, id));
 }
+
+
+// ============ Consultation (자문이력) Queries ============
+
+import { consultations, InsertConsultation, Consultation } from "../drizzle/schema";
+
+export async function getAllConsultations(): Promise<Consultation[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(consultations).orderBy(desc(consultations.consultationDate));
+}
+
+export async function getConsultationById(id: number): Promise<Consultation | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(consultations).where(eq(consultations.id, id)).limit(1);
+  return result[0];
+}
+
+export async function createConsultation(data: InsertConsultation): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(consultations).values(data);
+  return Number(result[0].insertId);
+}
+
+export async function updateConsultation(id: number, data: Partial<InsertConsultation>): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(consultations).set(data).where(eq(consultations.id, id));
+}
+
+export async function deleteConsultation(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(consultations).where(eq(consultations.id, id));
+}

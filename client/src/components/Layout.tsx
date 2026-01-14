@@ -16,7 +16,8 @@ import {
   Bell,
   CheckCircle2,
   BrainCircuit,
-  Building2
+  Building2,
+  ClipboardList
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -51,6 +52,7 @@ export default function Layout({ children }: LayoutProps) {
     { icon: BarChart3, label: "통계 보고서", path: "/reports" },
     { icon: BrainCircuit, label: "AI 인사이트", path: "/insights" },
     { icon: Building2, label: "고객사 관리", path: "/clients" },
+    { icon: ClipboardList, label: "자문 이력", path: "/consultations" },
     { icon: Settings, label: "설정", path: "/settings" },
   ];
 

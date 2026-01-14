@@ -270,6 +270,58 @@ export const appRouter = router({
       }),
   }),
 
+  // ============ Consultation Management (Admin Only) ============
+  consultation: router({
+    list: adminProcedure.query(async () => {
+      return db.getAllConsultations();
+    }),
+    getById: adminProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
+      return db.getConsultationById(input.id);
+    }),
+    create: adminProcedure.input(z.object({
+      clientId: z.number(),
+      consultantId: z.number(),
+      title: z.string().min(1),
+      description: z.string().optional(),
+      consultationType: z.enum(['labor_law', 'payroll', 'hr_policy', 'compliance', 'contract', 'dispute', 'general', 'other']).optional(),
+      consultationDate: z.date(),
+      startTime: z.string().optional(),
+      endTime: z.string().optional(),
+      duration: z.number().optional(),
+      status: z.enum(['scheduled', 'in_progress', 'completed', 'cancelled', 'rescheduled']).optional(),
+      outcome: z.string().optional(),
+      recommendations: z.string().optional(),
+      followUpRequired: z.enum(['yes', 'no']).optional(),
+      followUpDate: z.date().optional(),
+    })).mutation(async ({ input }) => {
+      const id = await db.createConsultation({ ...input, status: input.status || 'scheduled', consultationType: input.consultationType || 'general' });
+      return { id, success: true };
+    }),
+    update: adminProcedure.input(z.object({
+      id: z.number(),
+      title: z.string().optional(),
+      description: z.string().optional(),
+      consultationType: z.enum(['labor_law', 'payroll', 'hr_policy', 'compliance', 'contract', 'dispute', 'general', 'other']).optional(),
+      consultationDate: z.date().optional(),
+      startTime: z.string().optional(),
+      endTime: z.string().optional(),
+      duration: z.number().optional(),
+      status: z.enum(['scheduled', 'in_progress', 'completed', 'cancelled', 'rescheduled']).optional(),
+      outcome: z.string().optional(),
+      recommendations: z.string().optional(),
+      followUpRequired: z.enum(['yes', 'no']).optional(),
+      followUpDate: z.date().optional(),
+    })).mutation(async ({ input }) => {
+      const { id, ...data } = input;
+      await db.updateConsultation(id, data);
+      return { success: true };
+    }),
+    delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
+      await db.deleteConsultation(input.id);
+      return { success: true };
+    }),
+  }),
+
   // ============ Client Management (Admin Only) ============
   client: router({
     list: adminProcedure.query(async () => {
