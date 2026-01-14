@@ -16,8 +16,8 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  /** Role for RBAC: 5-level permission system */
-  role: mysqlEnum("role", ["super_admin", "consultant", "company_admin", "company_hr", "employee"]).default("employee").notNull(),
+  /** Role for RBAC: admin (full access), hr (employee management), finance (payroll), user (basic) */
+  role: mysqlEnum("role", ["user", "admin", "hr", "finance"]).default("user").notNull(),
   /** Department the user belongs to */
   department: varchar("department", { length: 64 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -46,8 +46,6 @@ export const employees = mysqlTable("employees", {
   resignDate: timestamp("resignDate"),
   /** Link to user account if exists */
   userId: int("userId"),
-  /** Link to client (multi-tenant) */
-  clientId: int("clientId"),
   /** Monthly base salary in KRW */
   salary: bigint("salary", { mode: "number" }),
   /** Bank name for salary payment */
