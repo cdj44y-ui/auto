@@ -15,7 +15,8 @@ import {
   DollarSign,
   Bell,
   CheckCircle2,
-  BrainCircuit
+  BrainCircuit,
+  Building2
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -49,6 +50,7 @@ export default function Layout({ children }: LayoutProps) {
     { icon: DollarSign, label: "급여 관리", path: "/payroll" },
     { icon: BarChart3, label: "통계 보고서", path: "/reports" },
     { icon: BrainCircuit, label: "AI 인사이트", path: "/insights" },
+    { icon: Building2, label: "고객사 관리", path: "/clients" },
     { icon: Settings, label: "설정", path: "/settings" },
   ];
 
