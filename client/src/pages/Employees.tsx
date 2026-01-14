@@ -33,6 +33,7 @@ import { DollarSign, Upload, FileText, Edit, Trash2, User, Mail, Building2, Brie
 import { Plus, Search } from "lucide-react";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 
 interface Employee {
   id: number;
@@ -45,6 +46,7 @@ interface Employee {
   workTime: string;
   phone?: string;
   hireDate?: string;
+  clientId?: number;
 }
 
 const initialEmployeesData: Employee[] = [
@@ -120,6 +122,7 @@ interface EmployeeFormData {
   role: string;
   phone: string;
   hireDate: string;
+  clientId: number | null;
 }
 
 const initialFormData: EmployeeFormData = {
@@ -129,9 +132,11 @@ const initialFormData: EmployeeFormData = {
   role: "",
   phone: "",
   hireDate: "",
+  clientId: null,
 };
 
 export default function Employees() {
+  const { data: clients = [] } = trpc.client.list.useQuery();
   const [employees, setEmployees] = useState<Employee[]>(initialEmployeesData);
   const [searchTerm, setSearchTerm] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("all");
@@ -328,7 +333,11 @@ export default function Employees() {
 
   // 폼 입력 변경 처리
   const handleInputChange = (field: keyof EmployeeFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === "clientId") {
+      setFormData(prev => ({ ...prev, clientId: value === "none" ? null : Number(value) }));
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
     // 입력 시 해당 필드의 에러 제거
     if (formErrors[field]) {
       setFormErrors(prev => ({ ...prev, [field]: undefined }));
@@ -412,6 +421,27 @@ export default function Employees() {
               {formErrors.email && (
                 <p className="text-sm text-red-500">{formErrors.email}</p>
               )}
+            </div>
+
+            {/* 고객사 선택 */}
+            <div className="grid gap-2">
+              <Label htmlFor="clientId" className="flex items-center gap-1">
+                <Building2 className="w-4 h-4" /> 고객사
+              </Label>
+              <Select
+                value={formData.clientId ? String(formData.clientId) : ""}
+                onValueChange={(value) => handleInputChange("clientId", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="고객사 선택 (선택사항)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">선택 안함</SelectItem>
+                  {clients.map((client) => (
+                    <SelectItem key={client.id} value={String(client.id)}>{client.companyName}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* 부서 & 직급 */}
