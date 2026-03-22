@@ -74,19 +74,19 @@ export default function ConsultationsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const utils = trpc.useUtils();
-  const { data: consultations = [], isLoading } = trpc.consultation.list.useQuery();
-  const { data: clients = [] } = trpc.client.list.useQuery();
+  const { data: consultations = [], isLoading } = trpc.consultationMgmt.list.useQuery();
+  const { data: clients = [] } = trpc.clientMgmt.list.useQuery();
 
-  const createMutation = trpc.consultation.create.useMutation({
-    onSuccess: () => { utils.consultation.list.invalidate(); setIsDialogOpen(false); setFormData(initialFormData); toast.success("자문 이력이 등록되었습니다."); },
+  const createMutation = trpc.consultationMgmt.create.useMutation({
+    onSuccess: () => { utils.consultationMgmt.list.invalidate(); setIsDialogOpen(false); setFormData(initialFormData); toast.success("자문 이력이 등록되었습니다."); },
     onError: (e) => toast.error(e.message),
   });
-  const updateMutation = trpc.consultation.update.useMutation({
-    onSuccess: () => { utils.consultation.list.invalidate(); setIsDialogOpen(false); setEditingItem(null); setFormData(initialFormData); toast.success("자문 이력이 수정되었습니다."); },
+  const updateMutation = trpc.consultationMgmt.update.useMutation({
+    onSuccess: () => { utils.consultationMgmt.list.invalidate(); setIsDialogOpen(false); setEditingItem(null); setFormData(initialFormData); toast.success("자문 이력이 수정되었습니다."); },
     onError: (e) => toast.error(e.message),
   });
-  const deleteMutation = trpc.consultation.delete.useMutation({
-    onSuccess: () => { utils.consultation.list.invalidate(); setIsDeleteDialogOpen(false); setDeletingItem(null); toast.success("자문 이력이 삭제되었습니다."); },
+  const deleteMutation = trpc.consultationMgmt.delete.useMutation({
+    onSuccess: () => { utils.consultationMgmt.list.invalidate(); setIsDeleteDialogOpen(false); setDeletingItem(null); toast.success("자문 이력이 삭제되었습니다."); },
     onError: (e) => toast.error(e.message),
   });
 
@@ -123,13 +123,13 @@ export default function ConsultationsPage() {
     else createMutation.mutate(payload);
   };
 
-  const filteredData = consultations.filter((c) => {
+  const filteredData = consultations.filter((c: Consultation) => {
     const matchesSearch = c.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || c.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const getClientName = (clientId: number) => clients.find(c => c.id === clientId)?.companyName || "-";
+  const getClientName = (clientId: number) => clients.find((c: any) => c.id === clientId)?.companyName || "-";
 
   return (
     <div className="p-6 space-y-6">
@@ -169,7 +169,7 @@ export default function ConsultationsPage() {
             ) : filteredData.length === 0 ? (
               <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">등록된 자문 이력이 없습니다.</TableCell></TableRow>
             ) : (
-              filteredData.map((item) => (
+              filteredData.map((item: Consultation) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.title}</TableCell>
                   <TableCell>{getClientName(item.clientId)}</TableCell>
@@ -201,7 +201,7 @@ export default function ConsultationsPage() {
                 <Label>고객사 *</Label>
                 <Select value={String(formData.clientId || "")} onValueChange={(v) => setFormData({ ...formData, clientId: Number(v) })}>
                   <SelectTrigger><SelectValue placeholder="고객사 선택" /></SelectTrigger>
-                  <SelectContent>{clients.map(c => <SelectItem key={c.id} value={String(c.id)}>{c.companyName}</SelectItem>)}</SelectContent>
+                  <SelectContent>{clients.map((c: any) => <SelectItem key={c.id} value={String(c.id)}>{c.companyName}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">

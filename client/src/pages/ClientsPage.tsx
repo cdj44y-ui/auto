@@ -102,11 +102,11 @@ export default function ClientsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const utils = trpc.useUtils();
-  const { data: clients = [], isLoading } = trpc.client.list.useQuery();
+  const { data: clients = [], isLoading } = trpc.clientMgmt.list.useQuery();
 
-  const createMutation = trpc.client.create.useMutation({
+  const createMutation = trpc.clientMgmt.create.useMutation({
     onSuccess: () => {
-      utils.client.list.invalidate();
+      utils.clientMgmt.list.invalidate();
       setIsDialogOpen(false);
       setFormData(initialFormData);
       toast.success("고객사가 등록되었습니다.");
@@ -116,9 +116,9 @@ export default function ClientsPage() {
     },
   });
 
-  const updateMutation = trpc.client.update.useMutation({
+  const updateMutation = trpc.clientMgmt.update.useMutation({
     onSuccess: () => {
-      utils.client.list.invalidate();
+      utils.clientMgmt.list.invalidate();
       setIsDialogOpen(false);
       setEditingClient(null);
       setFormData(initialFormData);
@@ -129,9 +129,9 @@ export default function ClientsPage() {
     },
   });
 
-  const deleteMutation = trpc.client.delete.useMutation({
+  const deleteMutation = trpc.clientMgmt.delete.useMutation({
     onSuccess: () => {
-      utils.client.list.invalidate();
+      utils.clientMgmt.list.invalidate();
       setIsDeleteDialogOpen(false);
       setDeletingClient(null);
       toast.success("고객사가 삭제되었습니다.");

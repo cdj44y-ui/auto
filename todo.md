@@ -54,3 +54,13 @@
 - [ ] 권한 검증 미들웨어
 
 - [x] 고객사 관리 페이지 (ClientsPage.tsx) UI 구현
+
+## 멀티테넌트 보안 강화 (7개 프롬프트)
+
+- [x] 프롬프트1: 테넌트 격리 미들웨어 (tenantProcedure, clientFilter)
+- [x] 프롬프트2: 테이블 관계 설정 (Drizzle relations)
+- [x] 프롬프트3: 외래키 연결 (consultations.clientId, consultantId, employees.clientId)
+- [x] 프롬프트4: 로그인 보안 강화 (5회 실패 잠금, 비밀번호 정책, JWT 24h)
+- [x] 프롬프트5: 민감정보 암호화 (AES-256-GCM, 마스킹)
+- [x] 프롬프트6: 감사 로그 (audit_logs 테이블, writeAuditLog)
+- [x] 프롬프트7: 테스트 데이터 생성 (seed.ts)

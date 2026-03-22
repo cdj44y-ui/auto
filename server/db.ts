@@ -4,7 +4,8 @@ import {
   InsertUser, users, 
   employees, InsertEmployee, Employee,
   payrollRecords, InsertPayrollRecord, PayrollRecord,
-  emailLogs, InsertEmailLog
+  emailLogs, InsertEmailLog,
+  auditLogs, InsertAuditLog, AuditLog
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -295,4 +296,19 @@ export async function deleteConsultation(id: number): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(consultations).where(eq(consultations.id, id));
+}
+
+// ============ Audit Log Queries (감사 로그) ============
+
+export async function createAuditLog(data: InsertAuditLog): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(auditLogs).values(data);
+  return Number(result[0].insertId);
+}
+
+export async function getAuditLogs(limit: number = 50, offset: number = 0): Promise<AuditLog[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(auditLogs).orderBy(desc(auditLogs.createdAt)).limit(limit).offset(offset);
 }

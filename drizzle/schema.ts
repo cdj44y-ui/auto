@@ -23,6 +23,12 @@ export const users = mysqlTable("users", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+  /** 로그인 실패 횟수 */
+  failedLoginAttempts: int("failedLoginAttempts").default(0),
+  /** 계정 잠금 해제 시간 (Unix ms) */
+  lockedUntil: bigint("lockedUntil", { mode: "number" }),
+  /** 비밀번호 변경 시간 (Unix ms) */
+  passwordChangedAt: bigint("passwordChangedAt", { mode: "number" }),
 });
 
 export type User = typeof users.$inferSelect;
@@ -46,6 +52,8 @@ export const employees = mysqlTable("employees", {
   resignDate: timestamp("resignDate"),
   /** Link to user account if exists */
   userId: int("userId"),
+  /** 소속 고객사 (멀티테넌트 외래키) */
+  clientId: int("clientId"),
   /** Monthly base salary in KRW */
   salary: bigint("salary", { mode: "number" }),
   /** Bank name for salary payment */
@@ -171,3 +179,22 @@ export type InsertConsultation = typeof consultations.$inferInsert;
  * 5단계 권한 타입 (super_admin, consultant, company_admin, company_hr, employee)
  */
 export type UserRole = "super_admin" | "consultant" | "company_admin" | "company_hr" | "employee";
+
+/**
+ * 감사 로그 (Audit Logs) 테이블 - 프롬프트 6
+ */
+export const auditLogs = mysqlTable("audit_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: varchar("userId", { length: 64 }).notNull(),
+  clientId: int("clientId"),
+  action: mysqlEnum("action", ["create", "read", "update", "delete"]).notNull(),
+  tableName: varchar("tableName", { length: 64 }).notNull(),
+  recordId: int("recordId"),
+  oldValue: text("oldValue"),
+  newValue: text("newValue"),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  createdAt: bigint("createdAt", { mode: "number" }).notNull(),
+});
+
+export type AuditLog = typeof auditLogs.$inferSelect;
+export type InsertAuditLog = typeof auditLogs.$inferInsert;
