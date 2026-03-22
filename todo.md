@@ -73,3 +73,13 @@
 - [x] D-4: 공통 데이터 테이블 (DataTable.tsx 생성)
 - [x] D-5: 출퇴근 버튼 실시간 API (attendance router + DB)
 - [x] D-6: 알림 테이블 및 API (notifications router + DB)
+
+## 프리미엄 디자인 개선 (P-1~P-7)
+
+- [x] P-1: 컬러 시스템 + Pretendard 글꼴 교체
+- [x] P-2: 사이드바 프리미엄 리디자인 (slate-900 배경)
+- [x] P-3: 대시보드 카드 + 여백 리디자인
+- [x] P-4: 테이블 프리미엄 스타일 + Badge 통일 (StatusBadge.tsx)
+- [x] P-5: 빈 상태(EmptyState) + 로딩 상태(LoadingState)
+- [x] P-6: 폼/다이얼로그 스타일 통일 (ClientsPage 적용)
+- [x] P-7: 마이크로 인터랙션 + 페이지 전환 애니메이션 (index.css)

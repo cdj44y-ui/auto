@@ -2,13 +2,10 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
@@ -18,18 +15,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Building2, Plus, Pencil, Trash2, Search, Phone, Mail, MapPin } from "lucide-react";
+import { Building2, Plus, Pencil, Trash2, Search, Phone, Mail } from "lucide-react";
 import { toast } from "sonner";
+import StatusBadge from "@/components/StatusBadge";
+import EmptyState from "@/components/EmptyState";
+import LoadingState from "@/components/LoadingState";
 
 type Client = {
   id: number;
@@ -77,13 +68,6 @@ const initialFormData: ClientFormData = {
   notes: "",
 };
 
-const statusColors: Record<string, string> = {
-  active: "bg-green-100 text-green-800",
-  pending: "bg-yellow-100 text-yellow-800",
-  expired: "bg-gray-100 text-gray-800",
-  terminated: "bg-red-100 text-red-800",
-};
-
 const statusLabels: Record<string, string> = {
   active: "활성",
   pending: "대기",
@@ -92,7 +76,6 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function ClientsPage() {
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
@@ -109,11 +92,9 @@ export default function ClientsPage() {
       utils.clientMgmt.list.invalidate();
       setIsDialogOpen(false);
       setFormData(initialFormData);
-      toast.success("고객사가 등록되었습니다.");
+      toast.success("고객사가 등록되었습니다", { description: formData.companyName });
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+    onError: (error) => toast.error(error.message),
   });
 
   const updateMutation = trpc.clientMgmt.update.useMutation({
@@ -122,11 +103,9 @@ export default function ClientsPage() {
       setIsDialogOpen(false);
       setEditingClient(null);
       setFormData(initialFormData);
-      toast.success("고객사 정보가 수정되었습니다.");
+      toast.success("고객사 정보가 수정되었습니다");
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+    onError: (error) => toast.error(error.message),
   });
 
   const deleteMutation = trpc.clientMgmt.delete.useMutation({
@@ -134,11 +113,9 @@ export default function ClientsPage() {
       utils.clientMgmt.list.invalidate();
       setIsDeleteDialogOpen(false);
       setDeletingClient(null);
-      toast.success("고객사가 삭제되었습니다.");
+      toast.error("삭제되었습니다", { description: "이 작업은 되돌릴 수 없습니다" });
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+    onError: (error) => toast.error(error.message),
   });
 
   const handleOpenCreate = () => {
@@ -169,17 +146,11 @@ export default function ClientsPage() {
     setIsDialogOpen(true);
   };
 
-  const handleOpenDelete = (client: Client) => {
-    setDeletingClient(client);
-    setIsDeleteDialogOpen(true);
-  };
-
   const handleSubmit = () => {
     if (!formData.companyName.trim()) {
       toast.error("회사명을 입력해주세요.");
       return;
     }
-
     const payload = {
       companyName: formData.companyName,
       businessNumber: formData.businessNumber || undefined,
@@ -193,17 +164,10 @@ export default function ClientsPage() {
       maxEmployees: formData.maxEmployees,
       notes: formData.notes || undefined,
     };
-
     if (editingClient) {
       updateMutation.mutate({ id: editingClient.id, ...payload });
     } else {
       createMutation.mutate(payload);
-    }
-  };
-
-  const handleDelete = () => {
-    if (deletingClient) {
-      deleteMutation.mutate({ id: deletingClient.id });
     }
   };
 
@@ -217,33 +181,35 @@ export default function ClientsPage() {
   });
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 animate-fade-in">
+      {/* P-3: Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Building2 className="h-6 w-6" />
+          <h1 className="text-xl font-semibold text-slate-900 flex items-center gap-2">
+            <Building2 className="h-5 w-5 text-indigo-600" />
             고객사 관리
           </h1>
-          <p className="text-muted-foreground">등록된 고객사를 관리합니다.</p>
+          <p className="text-sm text-slate-500 mt-1">등록된 고객사를 관리합니다.</p>
         </div>
-        <Button onClick={handleOpenCreate}>
-          <Plus className="h-4 w-4 mr-2" />
+        <Button onClick={handleOpenCreate} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+          <Plus className="h-4 w-4 mr-1.5" />
           고객사 추가
         </Button>
       </div>
 
-      <div className="flex gap-4">
+      {/* Search & Filter */}
+      <div className="flex gap-3">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             placeholder="회사명, 사업자번호, 대표자명 검색"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 h-10 text-sm border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20"
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[150px]">
+          <SelectTrigger className="w-[140px] h-10 text-sm border-slate-200">
             <SelectValue placeholder="계약 상태" />
           </SelectTrigger>
           <SelectContent>
@@ -256,174 +222,135 @@ export default function ClientsPage() {
         </Select>
       </div>
 
-      <div className="border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>회사명</TableHead>
-              <TableHead>사업자번호</TableHead>
-              <TableHead>대표자</TableHead>
-              <TableHead>연락처</TableHead>
-              <TableHead>계약 상태</TableHead>
-              <TableHead>최대 직원수</TableHead>
-              <TableHead className="text-right">관리</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
-                  로딩 중...
-                </TableCell>
-              </TableRow>
-            ) : filteredClients.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  등록된 고객사가 없습니다.
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredClients.map((client) => (
-                <TableRow key={client.id}>
-                  <TableCell className="font-medium">{client.companyName}</TableCell>
-                  <TableCell>{client.businessNumber || "-"}</TableCell>
-                  <TableCell>{client.representativeName || "-"}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-col gap-1 text-sm">
+      {/* P-4: Premium Table */}
+      {isLoading ? (
+        <LoadingState />
+      ) : filteredClients.length === 0 ? (
+        <EmptyState
+          icon={<Building2 className="h-7 w-7" />}
+          title="등록된 고객사가 없습니다"
+          description="첫 번째 고객사를 등록하고 근태 관리를 시작하세요."
+          action={
+            <Button onClick={handleOpenCreate} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+              <Plus className="h-4 w-4 mr-1" />고객사 등록
+            </Button>
+          }
+        />
+      ) : (
+        <div className="bg-white rounded-xl shadow-[0_1px_3px_0_rgb(0_0_0/0.04)] border border-slate-100 overflow-hidden">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-slate-100">
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">회사명</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">사업자번호</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">대표자</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">연락처</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">계약 상태</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">최대 직원수</th>
+                <th className="text-right px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredClients.map((client) => (
+                <tr key={client.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4 text-sm font-medium text-slate-900">{client.companyName}</td>
+                  <td className="px-6 py-4 text-sm text-slate-600">{client.businessNumber || "-"}</td>
+                  <td className="px-6 py-4 text-sm text-slate-600">{client.representativeName || "-"}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-0.5 text-sm text-slate-600">
                       {client.phone && (
-                        <span className="flex items-center gap-1">
-                          <Phone className="h-3 w-3" /> {client.phone}
-                        </span>
+                        <span className="flex items-center gap-1.5"><Phone className="h-3 w-3 text-slate-400" /> {client.phone}</span>
                       )}
                       {client.email && (
-                        <span className="flex items-center gap-1">
-                          <Mail className="h-3 w-3" /> {client.email}
-                        </span>
+                        <span className="flex items-center gap-1.5"><Mail className="h-3 w-3 text-slate-400" /> {client.email}</span>
                       )}
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={statusColors[client.contractStatus]}>
-                      {statusLabels[client.contractStatus]}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{client.maxEmployees?.toLocaleString() || "-"}명</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(client)}>
+                  </td>
+                  <td className="px-6 py-4">
+                    <StatusBadge status={statusLabels[client.contractStatus]} />
+                  </td>
+                  <td className="px-6 py-4 text-sm text-slate-600">{client.maxEmployees?.toLocaleString() || "-"}명</td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-1">
+                      <button onClick={() => handleOpenEdit(client)} className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
                         <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleOpenDelete(client)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
+                      </button>
+                      <button onClick={() => { setDeletingClient(client); setIsDeleteDialogOpen(true); }} className="p-1.5 rounded-md hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-      {/* Create/Edit Dialog */}
+      {/* P-6: Premium Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editingClient ? "고객사 수정" : "신규 고객사 등록"}</DialogTitle>
-            <DialogDescription>
-              {editingClient ? "고객사 정보를 수정합니다." : "새로운 고객사를 등록합니다."}
+        <DialogContent className="sm:max-w-lg bg-white p-0 rounded-xl overflow-hidden">
+          <div className="px-6 py-4 bg-slate-50 border-b border-slate-100">
+            <DialogTitle className="text-base font-semibold text-slate-900">
+              {editingClient ? "고객사 수정" : "고객사 등록"}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-500 mt-0.5">
+              {editingClient ? "고객사 정보를 수정합니다." : "새로운 고객사 정보를 입력해주세요."}
             </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
+          </div>
+
+          <div className="px-6 py-5 space-y-4 max-h-[60vh] overflow-y-auto">
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="companyName">회사명 *</Label>
-                <Input
-                  id="companyName"
-                  value={formData.companyName}
-                  onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                  placeholder="(주)회사명"
-                />
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  회사명 <span className="text-red-500">*</span>
+                </label>
+                <Input className="h-11 text-sm border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20" placeholder="예: 주식회사 가나다"
+                  value={formData.companyName} onChange={(e) => setFormData({ ...formData, companyName: e.target.value })} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="businessNumber">사업자번호</Label>
-                <Input
-                  id="businessNumber"
-                  value={formData.businessNumber}
-                  onChange={(e) => setFormData({ ...formData, businessNumber: e.target.value })}
-                  placeholder="000-00-00000"
-                />
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">사업자등록번호</label>
+                <Input className="h-11 text-sm border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20" placeholder="예: 123-45-67890"
+                  value={formData.businessNumber} onChange={(e) => setFormData({ ...formData, businessNumber: e.target.value })} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="representativeName">대표자명</Label>
-                <Input
-                  id="representativeName"
-                  value={formData.representativeName}
-                  onChange={(e) => setFormData({ ...formData, representativeName: e.target.value })}
-                  placeholder="홍길동"
-                />
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">대표자명</label>
+                <Input className="h-11 text-sm border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20" placeholder="홍길동"
+                  value={formData.representativeName} onChange={(e) => setFormData({ ...formData, representativeName: e.target.value })} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">연락처</Label>
-                <Input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="02-1234-5678"
-                />
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">연락처</label>
+                <Input className="h-11 text-sm border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20" placeholder="02-1234-5678"
+                  value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">이메일</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="contact@company.com"
-              />
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">이메일</label>
+              <Input className="h-11 text-sm border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20" type="email" placeholder="contact@company.com"
+                value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="address">주소</Label>
-              <Input
-                id="address"
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                placeholder="서울시 강남구 테헤란로 123"
-              />
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">주소</label>
+              <Input className="h-11 text-sm border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20" placeholder="서울시 강남구 테헤란로 123"
+                value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="contractStartDate">계약 시작일</Label>
-                <Input
-                  id="contractStartDate"
-                  type="date"
-                  value={formData.contractStartDate}
-                  onChange={(e) => setFormData({ ...formData, contractStartDate: e.target.value })}
-                />
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">계약 시작일</label>
+                <Input className="h-11 text-sm border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20" type="date"
+                  value={formData.contractStartDate} onChange={(e) => setFormData({ ...formData, contractStartDate: e.target.value })} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="contractEndDate">계약 종료일</Label>
-                <Input
-                  id="contractEndDate"
-                  type="date"
-                  value={formData.contractEndDate}
-                  onChange={(e) => setFormData({ ...formData, contractEndDate: e.target.value })}
-                />
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">계약 종료일</label>
+                <Input className="h-11 text-sm border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20" type="date"
+                  value={formData.contractEndDate} onChange={(e) => setFormData({ ...formData, contractEndDate: e.target.value })} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="contractStatus">계약 상태</Label>
-                <Select
-                  value={formData.contractStatus}
-                  onValueChange={(value: "active" | "pending" | "expired" | "terminated") =>
-                    setFormData({ ...formData, contractStatus: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">계약 상태</label>
+                <Select value={formData.contractStatus} onValueChange={(v: "active" | "pending" | "expired" | "terminated") => setFormData({ ...formData, contractStatus: v })}>
+                  <SelectTrigger className="h-11 text-sm border-slate-200"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="pending">대기</SelectItem>
                     <SelectItem value="active">활성</SelectItem>
@@ -433,63 +360,40 @@ export default function ClientsPage() {
                 </Select>
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="maxEmployees">최대 직원수</Label>
-              <Input
-                id="maxEmployees"
-                type="number"
-                value={formData.maxEmployees}
-                onChange={(e) => setFormData({ ...formData, maxEmployees: parseInt(e.target.value) || 100 })}
-              />
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">최대 직원수</label>
+              <Input className="h-11 text-sm border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20" type="number"
+                value={formData.maxEmployees} onChange={(e) => setFormData({ ...formData, maxEmployees: parseInt(e.target.value) || 100 })} />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="notes">비고</Label>
-              <Textarea
-                id="notes"
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                placeholder="추가 메모사항"
-                rows={3}
-              />
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">비고</label>
+              <Textarea className="text-sm border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20" placeholder="추가 메모사항" rows={3}
+                value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              취소
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={createMutation.isPending || updateMutation.isPending}
-            >
+
+          <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
+            <Button variant="outline" className="border-slate-200 text-slate-600" onClick={() => setIsDialogOpen(false)}>취소</Button>
+            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleSubmit} disabled={createMutation.isPending || updateMutation.isPending}>
               {editingClient ? "수정" : "등록"}
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>고객사 삭제</DialogTitle>
-            <DialogDescription>
-              정말로 "{deletingClient?.companyName}" 고객사를 삭제하시겠습니까?
-              <br />
-              이 작업은 되돌릴 수 없습니다.
+        <DialogContent className="sm:max-w-sm bg-white p-0 rounded-xl overflow-hidden">
+          <div className="px-6 py-4 bg-slate-50 border-b border-slate-100">
+            <DialogTitle className="text-base font-semibold text-slate-900">고객사 삭제</DialogTitle>
+            <DialogDescription className="text-xs text-slate-500 mt-0.5">
+              정말로 "{deletingClient?.companyName}" 고객사를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
             </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-              취소
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={deleteMutation.isPending}
-            >
-              삭제
-            </Button>
-          </DialogFooter>
+          </div>
+          <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
+            <Button variant="outline" className="border-slate-200 text-slate-600" onClick={() => setIsDeleteDialogOpen(false)}>취소</Button>
+            <Button variant="destructive" onClick={() => { if (deletingClient) deleteMutation.mutate({ id: deletingClient.id }); }} disabled={deleteMutation.isPending}>삭제</Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
