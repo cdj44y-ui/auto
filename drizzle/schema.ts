@@ -198,3 +198,36 @@ export const auditLogs = mysqlTable("audit_logs", {
 
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = typeof auditLogs.$inferInsert;
+
+/**
+ * 출퇴근 기록 (Attendance) 테이블 - D-5
+ */
+export const attendanceRecords = mysqlTable("attendance_records", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  clientId: int("clientId"),
+  clockIn: bigint("clockIn", { mode: "number" }).notNull(),
+  clockOut: bigint("clockOut", { mode: "number" }),
+  createdAt: bigint("createdAt", { mode: "number" }).notNull(),
+  updatedAt: bigint("updatedAt", { mode: "number" }).notNull(),
+});
+
+export type AttendanceRecord = typeof attendanceRecords.$inferSelect;
+export type InsertAttendanceRecord = typeof attendanceRecords.$inferInsert;
+
+/**
+ * 알림 (Notifications) 테이블 - D-6
+ */
+export const notifications = mysqlTable("notifications", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  title: varchar("title", { length: 200 }).notNull(),
+  message: text("message"),
+  type: mysqlEnum("type", ["info", "warning", "success", "error"]).default("info").notNull(),
+  isRead: boolean("isRead").default(false).notNull(),
+  link: varchar("link", { length: 500 }),
+  createdAt: bigint("createdAt", { mode: "number" }).notNull(),
+});
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;

@@ -64,3 +64,12 @@
 - [x] 프롬프트5: 민감정보 암호화 (AES-256-GCM, 마스킹)
 - [x] 프롬프트6: 감사 로그 (audit_logs 테이블, writeAuditLog)
 - [x] 프롬프트7: 테스트 데이터 생성 (seed.ts)
+
+## 디자인 개선 (D-1~D-6)
+
+- [x] D-1: 역할별 대시보드 (기존 구현 확인)
+- [x] D-2: 온보딩 마법사 (기존 ClientOnboardingWizard 확인)
+- [x] D-3: 사이드바 메뉴 역할 분리 (Layout.tsx 업데이트)
+- [x] D-4: 공통 데이터 테이블 (DataTable.tsx 생성)
+- [x] D-5: 출퇴근 버튼 실시간 API (attendance router + DB)
+- [x] D-6: 알림 테이블 및 API (notifications router + DB)

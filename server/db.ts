@@ -312,3 +312,92 @@ export async function getAuditLogs(limit: number = 50, offset: number = 0): Prom
   if (!db) return [];
   return db.select().from(auditLogs).orderBy(desc(auditLogs.createdAt)).limit(limit).offset(offset);
 }
+
+// ============ Attendance (출퇴근) Queries - D-5 ============
+
+import { attendanceRecords, InsertAttendanceRecord, AttendanceRecord } from "../drizzle/schema";
+
+export async function clockIn(userId: number, clientId?: number | null): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const now = Date.now();
+  const result = await db.insert(attendanceRecords).values({
+    userId,
+    clientId: clientId ?? null,
+    clockIn: now,
+    createdAt: now,
+    updatedAt: now,
+  });
+  return Number(result[0].insertId);
+}
+
+export async function clockOut(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const now = Date.now();
+  await db.update(attendanceRecords).set({ clockOut: now, updatedAt: now }).where(eq(attendanceRecords.id, id));
+}
+
+export async function getTodayAttendance(userId: number): Promise<AttendanceRecord | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const result = await db.select().from(attendanceRecords)
+    .where(and(
+      eq(attendanceRecords.userId, userId),
+      sql`${attendanceRecords.clockIn} >= ${todayStart.getTime()}`
+    ))
+    .orderBy(desc(attendanceRecords.clockIn))
+    .limit(1);
+  return result[0];
+}
+
+export async function getAttendanceByUser(userId: number, limit: number = 30): Promise<AttendanceRecord[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(attendanceRecords)
+    .where(eq(attendanceRecords.userId, userId))
+    .orderBy(desc(attendanceRecords.clockIn))
+    .limit(limit);
+}
+
+// ============ Notification (알림) Queries - D-6 ============
+
+import { notifications, InsertNotification, Notification } from "../drizzle/schema";
+
+export async function createNotification(data: Omit<InsertNotification, 'createdAt'>): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(notifications).values({ ...data, createdAt: Date.now() });
+  return Number(result[0].insertId);
+}
+
+export async function getNotificationsByUser(userId: number, limit: number = 20): Promise<Notification[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(notifications)
+    .where(eq(notifications.userId, userId))
+    .orderBy(desc(notifications.createdAt))
+    .limit(limit);
+}
+
+export async function markNotificationRead(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(notifications).set({ isRead: true }).where(eq(notifications.id, id));
+}
+
+export async function markAllNotificationsRead(userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(notifications).set({ isRead: true }).where(eq(notifications.userId, userId));
+}
+
+export async function getUnreadNotificationCount(userId: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db.select({ count: sql<number>`count(*)` }).from(notifications)
+    .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
+  return result[0]?.count ?? 0;
+}

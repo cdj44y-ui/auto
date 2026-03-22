@@ -506,6 +506,72 @@ export const appRouter = router({
         return db.getAuditLogs(input?.limit ?? 50, input?.offset ?? 0);
       }),
   }),
+
+  // ============ Attendance (출퇴근) - D-5 ============
+  attendance: router({
+    clockIn: protectedProcedure.mutation(async ({ ctx }) => {
+      const existing = await db.getTodayAttendance(ctx.user.id);
+      if (existing && !existing.clockOut) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: '이미 출근 처리되었습니다.' });
+      }
+      const id = await db.clockIn(ctx.user.id);
+      await writeAuditLog({
+        userId: ctx.user.id, clientId: null,
+        action: 'create', tableName: 'attendance_records', recordId: id,
+        newValue: { clockIn: Date.now() },
+      });
+      return { id, success: true };
+    }),
+
+    clockOut: protectedProcedure.mutation(async ({ ctx }) => {
+      const today = await db.getTodayAttendance(ctx.user.id);
+      if (!today || today.clockOut) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: '출근 기록이 없거나 이미 퇴근 처리되었습니다.' });
+      }
+      await db.clockOut(today.id);
+      await writeAuditLog({
+        userId: ctx.user.id, clientId: null,
+        action: 'update', tableName: 'attendance_records', recordId: today.id,
+        newValue: { clockOut: Date.now() },
+      });
+      return { success: true };
+    }),
+
+    today: protectedProcedure.query(async ({ ctx }) => {
+      return db.getTodayAttendance(ctx.user.id);
+    }),
+
+    history: protectedProcedure
+      .input(z.object({ limit: z.number().min(1).max(100).optional() }).optional())
+      .query(async ({ ctx, input }) => {
+        return db.getAttendanceByUser(ctx.user.id, input?.limit ?? 30);
+      }),
+  }),
+
+  // ============ Notification (알림) - D-6 ============
+  notification: router({
+    list: protectedProcedure
+      .input(z.object({ limit: z.number().min(1).max(50).optional() }).optional())
+      .query(async ({ ctx, input }) => {
+        return db.getNotificationsByUser(ctx.user.id, input?.limit ?? 20);
+      }),
+
+    unreadCount: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUnreadNotificationCount(ctx.user.id);
+    }),
+
+    markRead: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.markNotificationRead(input.id);
+        return { success: true };
+      }),
+
+    markAllRead: protectedProcedure.mutation(async ({ ctx }) => {
+      await db.markAllNotificationsRead(ctx.user.id);
+      return { success: true };
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

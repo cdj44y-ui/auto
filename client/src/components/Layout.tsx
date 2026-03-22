@@ -8,7 +8,6 @@ import {
   LogOut,
   Menu,
   Settings,
-  User,
   Users,
   FileSignature,
   FileText,
@@ -17,7 +16,10 @@ import {
   CheckCircle2,
   BrainCircuit,
   Building2,
-  ClipboardList
+  ClipboardList,
+  Wallet,
+  Shield,
+  X
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -31,30 +33,54 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { useBranding } from "@/contexts/BrandingContext";
 import { Link, useLocation } from "wouter";
+import { useAuth, UserRole } from "@/contexts/AuthContext";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
+const allMenuItems = [
+  { icon: Clock, label: "대시보드", path: "/admin-dashboard", roles: ["admin"] as UserRole[] },
+  { icon: Clock, label: "대시보드", path: "/consultant-dashboard", roles: ["consultant"] as UserRole[] },
+  { icon: Clock, label: "대시보드", path: "/employee-dashboard", roles: ["employee"] as UserRole[] },
+  { icon: Clock, label: "대시보드", path: "/developer-dashboard", roles: ["developer"] as UserRole[] },
+  { icon: Building2, label: "고객사 관리", path: "/clients", roles: ["admin", "consultant"] as UserRole[] },
+  { icon: ClipboardList, label: "자문 이력", path: "/consultations", roles: ["admin", "consultant"] as UserRole[] },
+  { icon: Users, label: "직원 관리", path: "/employees", roles: ["admin", "consultant"] as UserRole[] },
+  { icon: Calendar, label: "근태 관리", path: "/attendance", roles: ["admin", "consultant"] as UserRole[] },
+  { icon: CheckCircle2, label: "승인 관리", path: "/approvals", roles: ["admin"] as UserRole[] },
+  { icon: FileSignature, label: "전자 근로계약서", path: "/contract", roles: ["admin"] as UserRole[] },
+  { icon: FileText, label: "전자 결재", path: "/workflow", roles: ["admin"] as UserRole[] },
+  { icon: DollarSign, label: "급여 관리", path: "/payroll", roles: ["admin", "consultant"] as UserRole[] },
+  { icon: BarChart3, label: "통계 보고서", path: "/reports", roles: ["admin", "consultant"] as UserRole[] },
+  { icon: BrainCircuit, label: "AI 인사이트", path: "/insights", roles: ["admin"] as UserRole[] },
+  { icon: Clock, label: "내 근태", path: "/employee-dashboard", roles: ["employee"] as UserRole[] },
+  { icon: Wallet, label: "내 급여", path: "/employee-dashboard", roles: ["employee"] as UserRole[] },
+  { icon: Settings, label: "설정", path: "/settings", roles: ["admin"] as UserRole[] },
+];
+
+const roleLabels: Record<string, string> = {
+  admin: "최고관리자",
+  consultant: "노무사",
+  employee: "직원",
+  developer: "개발자",
+};
+
+const roleBadgeColors: Record<string, string> = {
+  admin: "bg-red-100 text-red-700",
+  consultant: "bg-blue-100 text-blue-700",
+  employee: "bg-gray-100 text-gray-600",
+  developer: "bg-purple-100 text-purple-700",
+};
+
 export default function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { branding } = useBranding();
+  const { user, logout } = useAuth();
 
-  const navItems = [
-    { icon: Clock, label: "대시보드", path: "/" },
-    { icon: Calendar, label: "근태 관리", path: "/attendance" },
-    { icon: Users, label: "직원 관리", path: "/employees" },
-    { icon: CheckCircle2, label: "승인 관리", path: "/approvals" },
-    { icon: FileSignature, label: "전자 근로계약서", path: "/contract" },
-    { icon: FileText, label: "전자 결재", path: "/workflow" },
-    { icon: DollarSign, label: "급여 관리", path: "/payroll" },
-    { icon: BarChart3, label: "통계 보고서", path: "/reports" },
-    { icon: BrainCircuit, label: "AI 인사이트", path: "/insights" },
-    { icon: Building2, label: "고객사 관리", path: "/clients" },
-    { icon: ClipboardList, label: "자문 이력", path: "/consultations" },
-    { icon: Settings, label: "설정", path: "/settings" },
-  ];
+  const userRole = user?.role || "employee";
+  const filteredMenuItems = allMenuItems.filter(item => item.roles.includes(userRole));
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -77,8 +103,8 @@ export default function Layout({ children }: LayoutProps) {
 
         <ScrollArea className="flex-1 px-4 py-2">
           <nav className="space-y-1">
-            {navItems.map((item) => (
-              <Link key={item.path} href={item.path}>
+            {filteredMenuItems.map((item, idx) => (
+              <Link key={`${item.path}-${idx}`} href={item.path}>
                 <Button
                   variant="ghost"
                   className={cn(
@@ -149,19 +175,31 @@ export default function Layout({ children }: LayoutProps) {
             </DropdownMenu>
           </div>
 
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-sidebar-accent/50 transition-colors cursor-pointer group">
-            <div className="w-10 h-10 rounded-full bg-secondary overflow-hidden border border-border">
-              <img 
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663276387564/TsUJ6Yw3YnqZMgGDEG5xKg/profile-placeholder_20e3dd66.jpg" 
-                alt="User" 
-                className="w-full h-full object-cover"
-              />
+          {/* D-3: 사용자 정보 + 역할 배지 */}
+          <div className="p-4 border-t mt-auto">
+            <div className="flex items-center gap-3 group">
+              <div className="w-10 h-10 rounded-full bg-secondary overflow-hidden border border-border">
+                <img 
+                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663276387564/TsUJ6Yw3YnqZMgGDEG5xKg/profile-placeholder_20e3dd66.jpg" 
+                  alt="User" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold truncate">{user?.name || "사용자"}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={cn(
+                    "inline-block px-2 py-0.5 rounded text-xs font-bold",
+                    roleBadgeColors[userRole] || "bg-gray-100 text-gray-600"
+                  )}>
+                    {roleLabels[userRole] || "사용자"}
+                  </span>
+                </div>
+              </div>
+              <button onClick={logout} className="p-1 rounded hover:bg-destructive/10 transition-colors">
+                <LogOut className="w-4 h-4 text-muted-foreground group-hover:text-destructive transition-colors" />
+              </button>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">김관리</p>
-              <p className="text-xs text-muted-foreground truncate">관리자</p>
-            </div>
-            <LogOut className="w-4 h-4 text-muted-foreground group-hover:text-destructive transition-colors" />
           </div>
         </div>
       </aside>
@@ -191,12 +229,12 @@ export default function Layout({ children }: LayoutProps) {
           <div className="h-16 flex items-center justify-between px-4 border-b border-border">
             <span className="font-bold text-lg">메뉴</span>
             <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
-              <LogOut className="w-6 h-6 rotate-45" /> {/* Close icon hack */}
+              <X className="w-6 h-6" />
             </Button>
           </div>
-          <nav className="p-4 space-y-2">
-            {navItems.map((item) => (
-              <Link key={item.path} href={item.path} onClick={() => setIsMobileMenuOpen(false)}>
+          <nav className="p-4 space-y-2 flex-1">
+            {filteredMenuItems.map((item, idx) => (
+              <Link key={`${item.path}-mobile-${idx}`} href={item.path} onClick={() => setIsMobileMenuOpen(false)}>
                 <Button
                   variant="ghost"
                   className={cn(
@@ -212,6 +250,30 @@ export default function Layout({ children }: LayoutProps) {
               </Link>
             ))}
           </nav>
+          {/* Mobile user info */}
+          <div className="p-4 border-t">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-secondary overflow-hidden border border-border">
+                <img 
+                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663276387564/TsUJ6Yw3YnqZMgGDEG5xKg/profile-placeholder_20e3dd66.jpg" 
+                  alt="User" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold truncate">{user?.name || "사용자"}</p>
+                <span className={cn(
+                  "inline-block px-2 py-0.5 rounded text-xs font-bold mt-1",
+                  roleBadgeColors[userRole] || "bg-gray-100 text-gray-600"
+                )}>
+                  {roleLabels[userRole] || "사용자"}
+                </span>
+              </div>
+              <button onClick={logout} className="p-2 rounded hover:bg-destructive/10">
+                <LogOut className="w-5 h-5 text-muted-foreground" />
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

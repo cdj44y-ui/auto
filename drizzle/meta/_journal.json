@@ -43,6 +43,13 @@
       "when": 1774179659585,
       "tag": "0005_late_thor",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1774180838828,
+      "tag": "0006_polite_captain_britain",
+      "breakpoints": true
     }
   ]
 }
