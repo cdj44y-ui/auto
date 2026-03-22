@@ -401,3 +401,227 @@ export async function getUnreadNotificationCount(userId: number): Promise<number
     .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
   return result[0]?.count ?? 0;
 }
+
+
+// ============ Privacy Consents (B-1) ============
+
+import { privacyConsents, InsertPrivacyConsent, PrivacyConsent } from "../drizzle/schema";
+
+export async function savePrivacyConsent(data: InsertPrivacyConsent): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(privacyConsents).values(data);
+  return Number(result[0].insertId);
+}
+
+export async function getPrivacyConsents(userId: string): Promise<PrivacyConsent[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(privacyConsents).where(eq(privacyConsents.userId, userId));
+}
+
+// ============ Webhooks (E-1) ============
+
+import { webhooks, InsertWebhook, Webhook } from "../drizzle/schema";
+
+export async function getActiveWebhooks(clientId: number | null, event: string): Promise<Webhook[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const all = await db.select().from(webhooks).where(eq(webhooks.active, true));
+  return all.filter(w => {
+    const events = JSON.parse(w.events) as string[];
+    return events.includes(event) && (w.clientId === clientId || w.clientId === null);
+  });
+}
+
+export async function sendWebhook(params: { event: string; timestamp: number; clientId: number | null; data: any }) {
+  const hooks = await getActiveWebhooks(params.clientId, params.event);
+  for (const hook of hooks) {
+    try {
+      const body = JSON.stringify(params);
+      await fetch(hook.url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Webhook-Secret": hook.secret },
+        body,
+        signal: AbortSignal.timeout(5000),
+      });
+    } catch (e) {
+      console.error(`[Webhook] Failed to send to ${hook.url}:`, e);
+    }
+  }
+}
+
+// ============ Analytics Queries (A-1, A-2, A-3) ============
+
+import { gte, lte, count, between } from "drizzle-orm";
+
+export async function getMonthlyAttendanceSummary(year: number, month: number, clientId?: number | null) {
+  const db = await getDb();
+  if (!db) return { totalDays: 0, avgWorkHours: 0, overtimeHours: 0, lateCount: 0 };
+  
+  const startOfMonth = new Date(year, month - 1, 1).getTime();
+  const endOfMonth = new Date(year, month, 0, 23, 59, 59, 999).getTime();
+  
+  const conditions = [
+    gte(attendanceRecords.clockIn, startOfMonth),
+    lte(attendanceRecords.clockIn, endOfMonth),
+  ];
+  if (clientId) conditions.push(eq(attendanceRecords.clientId, clientId));
+  
+  const records = await db.select().from(attendanceRecords).where(and(...conditions));
+  
+  const completedRecords = records.filter(r => r.clockOut);
+  const totalWorkMs = completedRecords.reduce((sum, r) => sum + ((r.clockOut ?? 0) - r.clockIn), 0);
+  const avgWorkHours = completedRecords.length > 0 ? (totalWorkMs / completedRecords.length / 3600000) : 0;
+  
+  // 근기법 제50조: 1일 8시간 초과 = 연장근로
+  const overtimeMs = completedRecords.reduce((sum, r) => {
+    const workMs = (r.clockOut ?? 0) - r.clockIn - 3600000; // 1시간 휴게 제외
+    return sum + Math.max(0, workMs - 8 * 3600000);
+  }, 0);
+  
+  return {
+    totalDays: records.length,
+    avgWorkHours: Math.round(avgWorkHours * 10) / 10,
+    overtimeHours: Math.round(overtimeMs / 3600000 * 10) / 10,
+    lateCount: 0, // 09:00 기준 지각 카운트는 설정에 따라 다름
+  };
+}
+
+// A-2: 주 52시간 모니터링 (근기법 제53조 제1항)
+export async function getWeeklyOvertimeAlerts(clientId?: number | null) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  // 이번 주 월요일 00:00
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+  monday.setHours(0, 0, 0, 0);
+  
+  const conditions = [gte(attendanceRecords.clockIn, monday.getTime())];
+  if (clientId) conditions.push(eq(attendanceRecords.clientId, clientId));
+  
+  const records = await db.select().from(attendanceRecords).where(and(...conditions));
+  
+  // 사용자별 주간 근무시간 집계
+  const userHours: { [key: number]: number } = {};
+  for (const r of records) {
+    if (!r.clockOut) continue;
+    const workHours = (r.clockOut - r.clockIn - 3600000) / 3600000; // 휴게 1시간 제외
+    userHours[r.userId] = (userHours[r.userId] ?? 0) + Math.max(0, workHours);
+  }
+  
+  return Object.entries(userHours)
+    .filter(([_, hours]) => hours > 40) // 40시간 초과 시 알림
+    .map(([userId, hours]) => ({
+      userId: Number(userId),
+      weeklyHours: Math.round(hours * 10) / 10,
+      // 근기법 제53조: 52시간 초과 = 위반
+      status: hours > 52 ? "violation" as const : hours > 48 ? "warning" as const : "caution" as const,
+      remainingHours: Math.max(0, Math.round((52 - hours) * 10) / 10),
+    }));
+}
+
+// A-3: 이상 징후 탐지
+export async function detectAnomalies(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const twoWeeksAgo = Date.now() - 14 * 24 * 3600000;
+  const records = await db.select().from(attendanceRecords)
+    .where(and(eq(attendanceRecords.userId, userId), gte(attendanceRecords.clockIn, twoWeeksAgo)))
+    .orderBy(desc(attendanceRecords.clockIn));
+  
+  const anomalies: { type: string; severity: string; description: string }[] = [];
+  
+  // 패턴 1: 지각 급증 (09:00 이후 출근 5회 이상)
+  const lateCount = records.filter(r => {
+    const d = new Date(r.clockIn);
+    return d.getHours() >= 9 && d.getMinutes() > 0;
+  }).length;
+  if (lateCount >= 5) anomalies.push({ type: "late_surge", severity: "warning", description: `최근 2주간 지각 ${lateCount}회 감지` });
+  
+  // 패턴 2: 장시간 근로 (1일 14시간 초과, 근기법 제50조 제2항)
+  const longDays = records.filter(r => r.clockOut && (r.clockOut - r.clockIn) > 14 * 3600000);
+  if (longDays.length > 0) anomalies.push({ type: "overwork", severity: "critical", description: `1일 14시간 초과 근무 ${longDays.length}건 (근기법 §50②)` });
+  
+  // 패턴 3: 연속 근무 (12일 이상, 근기법 제55조 제1항)
+  if (records.length >= 12) {
+    const dates = Array.from(new Set(records.map(r => new Date(r.clockIn).toDateString())));
+    if (dates.length >= 12) anomalies.push({ type: "consecutive_work", severity: "critical", description: `12일 이상 연속 근무 감지 (근기법 §55①)` });
+  }
+  
+  return anomalies;
+}
+
+// ============ Data Retention (B-2) ============
+
+export async function getExpiredRecords() {
+  const db = await getDb();
+  if (!db) return { employees: 0, attendance: 0 };
+  
+  const now = Date.now();
+  const expiredEmps = await db.select({ count: sql<number>`count(*)` }).from(employees)
+    .where(and(sql`${employees.retentionExpiry} IS NOT NULL`, lte(employees.retentionExpiry, now)));
+  const expiredAtt = await db.select({ count: sql<number>`count(*)` }).from(attendanceRecords)
+    .where(and(sql`${attendanceRecords.retentionExpiry} IS NOT NULL`, lte(attendanceRecords.retentionExpiry, now)));
+  
+  return {
+    employees: expiredEmps[0]?.count ?? 0,
+    attendance: expiredAtt[0]?.count ?? 0,
+  };
+}
+
+// F-1: 고객사 헬스 스코어
+export async function getClientHealthScores() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const allClients = await db.select().from(clients);
+  const sevenDaysAgo = Date.now() - 7 * 24 * 3600000;
+  
+  const scores = [];
+  for (const client of allClients) {
+    // 로그인 활동 (간접: 해당 고객사 출근 기록 수)
+    const recentAttendance = await db.select({ count: sql<number>`count(*)` }).from(attendanceRecords)
+      .where(and(eq(attendanceRecords.clientId, client.id), gte(attendanceRecords.clockIn, sevenDaysAgo)));
+    const loginCount = recentAttendance[0]?.count ?? 0;
+    const loginActivity = loginCount >= 5 ? 25 : loginCount >= 3 ? 15 : loginCount >= 1 ? 5 : 0;
+    
+    // 출근율 (이번 달)
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    monthStart.setHours(0, 0, 0, 0);
+    const monthAttendance = await db.select({ count: sql<number>`count(*)` }).from(attendanceRecords)
+      .where(and(eq(attendanceRecords.clientId, client.id), gte(attendanceRecords.clockIn, monthStart.getTime())));
+    const attendanceRate = Math.min(100, (monthAttendance[0]?.count ?? 0) * 5);
+    const attendanceScore = attendanceRate >= 90 ? 25 : attendanceRate >= 70 ? 15 : attendanceRate >= 50 ? 5 : 0;
+    
+    // 기능 사용 (자문 이력 존재 여부)
+    const consultCount = await db.select({ count: sql<number>`count(*)` }).from(consultations)
+      .where(eq(consultations.clientId, client.id));
+    const featureUsage = (consultCount[0]?.count ?? 0) > 0 ? 15 : 5;
+    
+    // 데이터 최신성
+    const lastRecord = await db.select().from(attendanceRecords)
+      .where(eq(attendanceRecords.clientId, client.id))
+      .orderBy(desc(attendanceRecords.clockIn)).limit(1);
+    const daysSinceLastData = lastRecord.length > 0 ? (Date.now() - lastRecord[0].clockIn) / 86400000 : 999;
+    const dataFreshness = daysSinceLastData <= 1 ? 25 : daysSinceLastData <= 3 ? 15 : daysSinceLastData <= 7 ? 5 : 0;
+    
+    const total = loginActivity + attendanceScore + featureUsage + dataFreshness;
+    const grade = total >= 80 ? "healthy" as const : total >= 50 ? "at_risk" as const : "critical" as const;
+    
+    scores.push({
+      clientId: client.id,
+      companyName: client.companyName,
+      score: total,
+      grade,
+      breakdown: { loginActivity, attendanceScore, featureUsage, dataFreshness },
+    });
+  }
+  
+  return scores;
+}

@@ -83,3 +83,31 @@
 - [x] P-5: 빈 상태(EmptyState) + 로딩 상태(LoadingState)
 - [x] P-6: 폼/다이얼로그 스타일 통일 (ClientsPage 적용)
 - [x] P-7: 마이크로 인터랙션 + 페이지 전환 애니메이션 (index.css)
+
+## AES 고도화 (21개 프롬프트)
+
+### 1차 필수
+- [x] A-1: 근태 통계 API (analytics.monthlySummary)
+- [x] A-2: 주 52시간 모니터링 API (analytics.weeklyOvertimeAlerts)
+- [x] B-1: 개인정보 동의 API (privacy.saveConsent/myConsents)
+- [x] B-2: 데이터 보존 만료 API (privacy.expiredRecords)
+- [x] C-1: DB 인덱스 + 스키마 최적화
+- [ ] D-1: API 단위 테스트
+
+### 2차 경쟁력
+- [x] A-3: 이상 징후 탐지 API (analytics.anomalies)
+- [ ] B-3: 개인정보 다운로드/삭제 요청
+- [ ] C-2: 에러 핸들링 + 헬스체크 API
+- [x] E-1: Webhook 테이블 + 발송 로직 (db.sendWebhook)
+- [ ] E-2: 엑셀 내보내기
+- [x] F-1: 고객사 헬스 스코어 API (clientHealth.scores)
+- [ ] G-3: 반응형 모바일 레이아웃
+
+### 3차 확장
+- [ ] C-3: 자동 백업 스크립트
+- [ ] D-2: E2E 테스트
+- [ ] E-3: REST API 문서 자동 생성
+- [ ] F-2: 인앱 도움말 + 툴팁
+- [ ] F-3: 변경 이력 / 릴리스 노트
+- [ ] G-1: 키보드 네비게이션 + 포커스
+- [ ] G-2: 색상 대비 + aria 라벨

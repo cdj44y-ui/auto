@@ -548,6 +548,62 @@ export const appRouter = router({
       }),
   }),
 
+  // ============ Analytics (A-1, A-2, A-3) ============
+  analytics: router({
+    monthlySummary: adminProcedure
+      .input(z.object({ year: z.number(), month: z.number(), clientId: z.number().optional() }))
+      .query(async ({ input }) => {
+        return db.getMonthlyAttendanceSummary(input.year, input.month, input.clientId);
+      }),
+
+    weeklyOvertimeAlerts: adminProcedure
+      .input(z.object({ clientId: z.number().optional() }).optional())
+      .query(async ({ input }) => {
+        return db.getWeeklyOvertimeAlerts(input?.clientId);
+      }),
+
+    anomalies: adminProcedure
+      .input(z.object({ userId: z.number() }))
+      .query(async ({ input }) => {
+        return db.detectAnomalies(input.userId);
+      }),
+  }),
+
+  // ============ Privacy & Retention (B-1, B-2) ============
+  privacy: router({
+    saveConsent: protectedProcedure
+      .input(z.object({
+        consentType: z.enum(['required', 'optional_gps', 'optional_marketing']),
+        consentVersion: z.string(),
+        agreed: z.boolean(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const id = await db.savePrivacyConsent({
+          userId: String(ctx.user.id),
+          consentType: input.consentType,
+          consented: input.agreed,
+          consentedAt: Date.now(),
+          ipAddress: ctx.req.ip ?? null,
+        });
+        return { id, success: true };
+      }),
+
+    myConsents: protectedProcedure.query(async ({ ctx }) => {
+      return db.getPrivacyConsents(String(ctx.user.id));
+    }),
+
+    expiredRecords: adminProcedure.query(async () => {
+      return db.getExpiredRecords();
+    }),
+  }),
+
+  // ============ Client Health (F-1) ============
+  clientHealth: router({
+    scores: adminProcedure.query(async () => {
+      return db.getClientHealthScores();
+    }),
+  }),
+
   // ============ Notification (알림) - D-6 ============
   notification: router({
     list: protectedProcedure

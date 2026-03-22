@@ -50,6 +50,13 @@
       "when": 1774180838828,
       "tag": "0006_polite_captain_britain",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1774183423540,
+      "tag": "0007_burly_jackal",
+      "breakpoints": true
     }
   ]
 }
