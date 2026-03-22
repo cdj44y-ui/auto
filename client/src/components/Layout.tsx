@@ -152,7 +152,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-sidebar-accent/50 transition-colors cursor-pointer group">
             <div className="w-10 h-10 rounded-full bg-secondary overflow-hidden border border-border">
               <img 
-                src="/images/profile-placeholder.jpg" 
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663276387564/TsUJ6Yw3YnqZMgGDEG5xKg/profile-placeholder_20e3dd66.jpg" 
                 alt="User" 
                 className="w-full h-full object-cover"
               />
