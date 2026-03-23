@@ -1,0 +1,26 @@
+{
+  "query": "SHOW COLUMNS FROM users WHERE Field IN ('role', 'clientId');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 1ohHpnYGWqvTCah.root --database TsUJ6Yw3YnqZMgGDEG5xKg --execute SHOW COLUMNS FROM users WHERE Field IN ('role', 'clientId');",
+  "rows": [
+    {
+      "Field": "role",
+      "Type": "enum('super_admin','consultant','company_admin','company_hr','company_finance','employee')",
+      "Null": "NO",
+      "Key": "",
+      "Default": "employee",
+      "Extra": ""
+    },
+    {
+      "Field": "clientId",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "MUL",
+      "Default": "NULL",
+      "Extra": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nrole\tenum('super_admin','consultant','company_admin','company_hr','company_finance','employee')\tNO\t\temployee\t\nclientId\tint\tYES\tMUL\tNULL\t\n",
+  "stderr": "",
+  "execution_time_ms": 1577
+}

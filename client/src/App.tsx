@@ -17,7 +17,6 @@ import UnifiedLogin from "@/pages/UnifiedLogin";
 import EmployeeSignup from "@/pages/EmployeeSignup";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import ContractSigning from "@/pages/ContractSigning";
-import DeveloperDashboard from "./pages/DeveloperDashboard";
 import ConsultantDashboard from "./pages/ConsultantDashboard";
 import Approvals from "./pages/Approvals";
 import Contract from "./pages/Contract";
@@ -30,8 +29,12 @@ import Insights from "./pages/Insights";
 import Attendance from "./pages/Attendance";
 import ClientsPage from "./pages/ClientsPage";
 import ConsultationsPage from "./pages/ConsultationsPage";
+
+/**
+ * P-01: 6단계 권한 체계에 맞는 라우트 접근 제어
+ * super_admin(100) > consultant(80) > company_admin(60) > company_hr(40) > company_finance(30) > employee(10)
+ */
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       {/* 공통 진입점 */}
@@ -39,12 +42,11 @@ function Router() {
       <Route path="/login" component={UnifiedLogin} />
       <Route path="/employee-signup" component={EmployeeSignup} />
       
-      {/* 루트 경로 접속 시 로그인 페이지로 리다이렉트 (보안 강화) */}
       <Route path="/">
         <Redirect to="/login" />
       </Route>
 
-      {/* 직원 전용 대시보드 (직원만 접근 가능) */}
+      {/* 직원 전용 대시보드 */}
       <Route path="/employee-dashboard">
         <ProtectedRoute allowedRoles={["employee"]} component={EmployeeDashboard} />
       </Route>
@@ -52,52 +54,69 @@ function Router() {
         <ProtectedRoute allowedRoles={["employee"]} component={ContractSigning} />
       </Route>
 
-      {/* 개발자 전용 대시보드 (개발자만 접근 가능) */}
-      <Route path="/developer-dashboard">
-        <ProtectedRoute allowedRoles={["developer"]} component={DeveloperDashboard} />
-      </Route>
-
-      {/* 자문사 전용 대시보드 (자문사만 접근 가능) */}
+      {/* 자문사 전용 대시보드 */}
       <Route path="/consultant-dashboard">
         <ProtectedRoute allowedRoles={["consultant"]} component={ConsultantDashboard} />
       </Route>
       
-      {/* 관리자용 라우트 (관리자만 접근 가능) */}
+      {/* 관리자 대시보드 (super_admin, company_admin, company_hr, company_finance) */}
       <Route path="/admin-dashboard">
-        <ProtectedRoute allowedRoles={["admin"]} component={Home} />
+        <ProtectedRoute allowedRoles={["super_admin", "company_admin", "company_hr", "company_finance"]} component={Home} />
       </Route>
+
+      {/* 근태 관리 (super_admin, consultant, company_admin, company_hr) */}
       <Route path="/attendance">
-        <ProtectedRoute allowedRoles={["admin"]} component={Attendance} />
+        <ProtectedRoute allowedRoles={["super_admin", "consultant", "company_admin", "company_hr"]} component={Attendance} />
       </Route>
+
+      {/* 승인 관리 (super_admin, company_admin) */}
       <Route path="/approvals">
-        <ProtectedRoute allowedRoles={["admin"]} component={Approvals} />
+        <ProtectedRoute allowedRoles={["super_admin", "company_admin"]} component={Approvals} />
       </Route>
+
+      {/* 전자 근로계약서 (super_admin, company_admin, company_hr) */}
       <Route path="/contract">
-        <ProtectedRoute allowedRoles={["admin"]} component={Contract} />
+        <ProtectedRoute allowedRoles={["super_admin", "company_admin", "company_hr"]} component={Contract} />
       </Route>
+
+      {/* 전자 결재 (super_admin, company_admin) */}
       <Route path="/workflow">
-        <ProtectedRoute allowedRoles={["admin"]} component={Workflow} />
+        <ProtectedRoute allowedRoles={["super_admin", "company_admin"]} component={Workflow} />
       </Route>
+
+      {/* 급여 관리 (super_admin, consultant, company_admin, company_finance) */}
       <Route path="/payroll">
-        <ProtectedRoute allowedRoles={["admin"]} component={Payroll} />
+        <ProtectedRoute allowedRoles={["super_admin", "consultant", "company_admin", "company_finance"]} component={Payroll} />
       </Route>
+
+      {/* 통계 보고서 (super_admin, consultant, company_admin) */}
       <Route path="/reports">
-        <ProtectedRoute allowedRoles={["admin"]} component={Reports} />
+        <ProtectedRoute allowedRoles={["super_admin", "consultant", "company_admin"]} component={Reports} />
       </Route>
+
+      {/* 직원 관리 (super_admin, consultant, company_admin, company_hr) */}
       <Route path="/employees">
-        <ProtectedRoute allowedRoles={["admin"]} component={Employees} />
+        <ProtectedRoute allowedRoles={["super_admin", "consultant", "company_admin", "company_hr"]} component={Employees} />
       </Route>
+
+      {/* 설정 (super_admin 전용) */}
       <Route path="/settings">
-        <ProtectedRoute allowedRoles={["admin"]} component={Settings} />
+        <ProtectedRoute allowedRoles={["super_admin"]} component={Settings} />
       </Route>
+
+      {/* AI 인사이트 (super_admin, company_admin) */}
       <Route path="/insights">
-        <ProtectedRoute allowedRoles={["admin"]} component={Insights} />
+        <ProtectedRoute allowedRoles={["super_admin", "company_admin"]} component={Insights} />
       </Route>
+
+      {/* 고객사 관리 (super_admin, consultant) */}
       <Route path="/clients">
-        <ProtectedRoute allowedRoles={["admin"]} component={ClientsPage} />
+        <ProtectedRoute allowedRoles={["super_admin", "consultant"]} component={ClientsPage} />
       </Route>
+
+      {/* 자문 이력 (super_admin, consultant) */}
       <Route path="/consultations">
-        <ProtectedRoute allowedRoles={["admin"]} component={ConsultationsPage} />
+        <ProtectedRoute allowedRoles={["super_admin", "consultant"]} component={ConsultationsPage} />
       </Route>
       
       <Route component={NotFound} />

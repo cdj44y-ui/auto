@@ -3,8 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useAuth, UserRole } from "@/contexts/AuthContext";
 import { useBranding } from "@/contexts/BrandingContext";
 import { useLocation } from "wouter";
-import { Building2, Code2, User, ShieldCheck, Briefcase } from "lucide-react";
+import { Building2, User, ShieldCheck, Briefcase } from "lucide-react";
 
+/**
+ * P-01: 6단계 권한 체계에 맞는 로그인 게이트웨이
+ * 직원 / 관리자(super_admin) / 자문사(consultant) 3가지 진입점
+ * 회사 내부 역할(company_admin, company_hr, company_finance)은 관리자 로그인 후 서버에서 판별
+ */
 export default function LoginGateway() {
   const { login } = useAuth();
   const { branding } = useBranding();
@@ -27,7 +32,7 @@ export default function LoginGateway() {
         </div>
       )}
       
-      <div className="max-w-7xl w-full space-y-8 relative z-10">
+      <div className="max-w-5xl w-full space-y-8 relative z-10">
         <div className="text-center space-y-2">
           {branding.logoUrl && (
             <div className="flex justify-center mb-6">
@@ -44,7 +49,7 @@ export default function LoginGateway() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* 직원용 */}
           <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-blue-500 group" onClick={() => handleRoleSelect("employee")}>
             <CardHeader className="text-center pb-2">
@@ -72,14 +77,14 @@ export default function LoginGateway() {
             </CardContent>
           </Card>
 
-          {/* 관리자용 */}
-          <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-green-500 group" onClick={() => handleRoleSelect("admin")}>
+          {/* 관리자용 (super_admin → 서버에서 실제 역할 판별) */}
+          <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-green-500 group" onClick={() => handleRoleSelect("super_admin")}>
             <CardHeader className="text-center pb-2">
               <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-600 transition-colors">
                 <ShieldCheck className="w-8 h-8 text-green-600 group-hover:text-white" />
               </div>
               <CardTitle>관리자용</CardTitle>
-              <CardDescription>인사/총무 담당자 접속</CardDescription>
+              <CardDescription>인사/총무/재무 담당자 접속</CardDescription>
             </CardHeader>
             <CardContent className="text-center text-sm text-muted-foreground">
               <ul className="space-y-1">
@@ -109,26 +114,6 @@ export default function LoginGateway() {
                 <li>법정 의무 교육 관리</li>
               </ul>
               <Button className="w-full mt-6 bg-indigo-600 hover:bg-indigo-700">자문사 로그인</Button>
-            </CardContent>
-          </Card>
-
-          {/* 개발자용 */}
-          <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-purple-500 group" onClick={() => handleRoleSelect("developer")}>
-            <CardHeader className="text-center pb-2">
-              <div className="mx-auto w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-600 transition-colors">
-                <Code2 className="w-8 h-8 text-purple-600 group-hover:text-white" />
-              </div>
-              <CardTitle>개발자용</CardTitle>
-              <CardDescription>시스템 마스터 접속</CardDescription>
-            </CardHeader>
-            <CardContent className="text-center text-sm text-muted-foreground">
-              <ul className="space-y-1">
-                <li>전체 회사 승인/관리</li>
-                <li>자문사 권한 관리</li>
-                <li>데이터베이스 관리</li>
-                <li>오류 로그 모니터링</li>
-              </ul>
-              <Button className="w-full mt-6 bg-purple-600 hover:bg-purple-700">개발자 로그인</Button>
             </CardContent>
           </Card>
         </div>

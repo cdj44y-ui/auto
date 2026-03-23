@@ -9,6 +9,25 @@ interface ProtectedRouteProps {
   allowedRoles?: UserRole[];
 }
 
+/**
+ * P-01: 6단계 권한 체계에 맞는 대시보드 라우팅
+ */
+function getDashboardPath(role: string): string {
+  switch (role) {
+    case "super_admin":
+    case "company_admin":
+    case "company_hr":
+    case "company_finance":
+      return "/admin-dashboard";
+    case "consultant":
+      return "/consultant-dashboard";
+    case "employee":
+      return "/employee-dashboard";
+    default:
+      return "/login-gateway";
+  }
+}
+
 export default function ProtectedRoute({ 
   component: Component, 
   children, 
@@ -16,30 +35,18 @@ export default function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { user, isAuthenticated, isLoading } = useAuth();
 
-  // 1. 로딩 중 처리 (깜빡임 방지)
   if (isLoading) {
     return <LoadingSpinner className="min-h-screen" />;
   }
 
-  // 2. 비로그인 상태면 로그인 페이지로 리다이렉트
   if (!isAuthenticated) {
     return <Redirect to="/login-gateway" />;
   }
 
-  // 3. 권한 체크 (allowedRoles가 설정된 경우)
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    // 권한 없음: 역할에 맞는 대시보드로 강제 이동
-    const redirectPath = 
-      user.role === "employee" ? "/employee-dashboard" :
-      user.role === "developer" ? "/developer-dashboard" :
-      user.role === "consultant" ? "/consultant-dashboard" :
-      user.role === "admin" ? "/admin-dashboard" :
-      "/login-gateway";
-      
-    return <Redirect to={redirectPath} />;
+    return <Redirect to={getDashboardPath(user.role || "employee")} />;
   }
 
-  // 4. 정상 접근 허용
   if (Component) {
     return <Component />;
   }

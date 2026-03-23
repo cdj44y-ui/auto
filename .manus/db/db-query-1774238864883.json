@@ -1,0 +1,18 @@
+{
+  "query": "SHOW COLUMNS FROM users WHERE Field = 'role';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 1ohHpnYGWqvTCah.root --database TsUJ6Yw3YnqZMgGDEG5xKg --execute SHOW COLUMNS FROM users WHERE Field = 'role';",
+  "rows": [
+    {
+      "Field": "role",
+      "Type": "enum('user','admin','hr','finance')",
+      "Null": "NO",
+      "Key": "",
+      "Default": "user",
+      "Extra": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nrole\tenum('user','admin','hr','finance')\tNO\t\tuser\t\n",
+  "stderr": "",
+  "execution_time_ms": 1580
+}

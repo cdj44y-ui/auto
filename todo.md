@@ -22,7 +22,7 @@
 - [x] 풀스택 업그레이드 (web-db-user)
 - [x] 데이터베이스 스키마 (직원, 급여, 이메일 로그)
 - [x] 백엔드 API (tRPC)
-- [x] 권한 세분화 (RBAC: admin, hr, finance, user)
+- [x] 권한 세분화 (RBAC: 6단계 → super_admin/consultant/company_admin/company_hr/company_finance/employee)
 - [x] 역할 기반 메뉴 표시/숨김
 
 ## 진행 중
@@ -47,11 +47,11 @@
 
 - [x] 고객사(clients) 테이블 스키마 추가
 - [x] 자문 이력(consultations) 테이블 스키마 추가
-- [ ] 직원 테이블에 client_id 외래키 추가
-- [ ] 5단계 권한 체계 (super_admin, consultant, company_admin, company_hr, employee)
+- [x] 직원 테이블에 client_id 외래키 추가 (users.clientId)
+- [x] 6단계 권한 체계 (super_admin, consultant, company_admin, company_hr, company_finance, employee)
 - [x] 고객사 CRUD API
 - [x] 자문 이력 CRUD API
-- [ ] 권한 검증 미들웨어
+- [x] 권한 검증 미들웨어 (tenantProcedure + 도메인별 프로시저)
 
 - [x] 고객사 관리 페이지 (ClientsPage.tsx) UI 구현
 
@@ -97,7 +97,7 @@
 ### 2차 경쟁력
 - [x] A-3: 이상 징후 탐지 API (analytics.anomalies)
 - [ ] B-3: 개인정보 다운로드/삭제 요청
-- [ ] C-2: 에러 핸들링 + 헬스체크 API
+- [x] C-2: 에러 핸들링 + 헬스체크 API
 - [x] E-1: Webhook 테이블 + 발송 로직 (db.sendWebhook)
 - [ ] E-2: 엑셀 내보내기
 - [x] F-1: 고객사 헬스 스코어 API (clientHealth.scores)
@@ -111,3 +111,9 @@
 - [ ] F-3: 변경 이력 / 릴리스 노트
 - [ ] G-1: 키보드 네비게이션 + 포커스
 - [ ] G-2: 색상 대비 + aria 라벨
+
+## 권한 체계 + 테넌트 격리 + 서버 분리 (P-01~P-03)
+
+- [x] P-01: 권한 체계 6단계 통일 (super_admin/consultant/company_admin/company_hr/company_finance/employee) + users.clientId
+- [x] P-02: 테넌트 격리 미들웨어 완성 (clientFilter 실제 동작)
+- [x] P-03: 서버 코드 도메인 분리 (routers/ 폴더) + 헬스체크 + 에러 핸들링

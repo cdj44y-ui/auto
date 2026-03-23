@@ -40,38 +40,42 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
+/** P-01: 6단계 권한 체계에 맞는 메뉴 구성 */
 const allMenuItems = [
-  { icon: Clock, label: "대시보드", path: "/admin-dashboard", roles: ["admin"] as UserRole[] },
+  { icon: Clock, label: "대시보드", path: "/admin-dashboard", roles: ["super_admin", "company_admin", "company_hr", "company_finance"] as UserRole[] },
   { icon: Clock, label: "대시보드", path: "/consultant-dashboard", roles: ["consultant"] as UserRole[] },
   { icon: Clock, label: "대시보드", path: "/employee-dashboard", roles: ["employee"] as UserRole[] },
-  { icon: Clock, label: "대시보드", path: "/developer-dashboard", roles: ["developer"] as UserRole[] },
-  { icon: Building2, label: "고객사 관리", path: "/clients", roles: ["admin", "consultant"] as UserRole[] },
-  { icon: ClipboardList, label: "자문 이력", path: "/consultations", roles: ["admin", "consultant"] as UserRole[] },
-  { icon: Users, label: "직원 관리", path: "/employees", roles: ["admin", "consultant"] as UserRole[] },
-  { icon: Calendar, label: "근태 관리", path: "/attendance", roles: ["admin", "consultant"] as UserRole[] },
-  { icon: CheckCircle2, label: "승인 관리", path: "/approvals", roles: ["admin"] as UserRole[] },
-  { icon: FileSignature, label: "전자 근로계약서", path: "/contract", roles: ["admin"] as UserRole[] },
-  { icon: FileText, label: "전자 결재", path: "/workflow", roles: ["admin"] as UserRole[] },
-  { icon: DollarSign, label: "급여 관리", path: "/payroll", roles: ["admin", "consultant"] as UserRole[] },
-  { icon: BarChart3, label: "통계 보고서", path: "/reports", roles: ["admin", "consultant"] as UserRole[] },
-  { icon: BrainCircuit, label: "AI 인사이트", path: "/insights", roles: ["admin"] as UserRole[] },
+  { icon: Building2, label: "고객사 관리", path: "/clients", roles: ["super_admin", "consultant"] as UserRole[] },
+  { icon: ClipboardList, label: "자문 이력", path: "/consultations", roles: ["super_admin", "consultant"] as UserRole[] },
+  { icon: Users, label: "직원 관리", path: "/employees", roles: ["super_admin", "consultant", "company_admin", "company_hr"] as UserRole[] },
+  { icon: Calendar, label: "근태 관리", path: "/attendance", roles: ["super_admin", "consultant", "company_admin", "company_hr"] as UserRole[] },
+  { icon: CheckCircle2, label: "승인 관리", path: "/approvals", roles: ["super_admin", "company_admin"] as UserRole[] },
+  { icon: FileSignature, label: "전자 근로계약서", path: "/contract", roles: ["super_admin", "company_admin", "company_hr"] as UserRole[] },
+  { icon: FileText, label: "전자 결재", path: "/workflow", roles: ["super_admin", "company_admin"] as UserRole[] },
+  { icon: DollarSign, label: "급여 관리", path: "/payroll", roles: ["super_admin", "consultant", "company_admin", "company_finance"] as UserRole[] },
+  { icon: BarChart3, label: "통계 보고서", path: "/reports", roles: ["super_admin", "consultant", "company_admin"] as UserRole[] },
+  { icon: BrainCircuit, label: "AI 인사이트", path: "/insights", roles: ["super_admin", "company_admin"] as UserRole[] },
   { icon: Clock, label: "내 근태", path: "/employee-dashboard", roles: ["employee"] as UserRole[] },
   { icon: Wallet, label: "내 급여", path: "/employee-dashboard", roles: ["employee"] as UserRole[] },
-  { icon: Settings, label: "설정", path: "/settings", roles: ["admin"] as UserRole[] },
+  { icon: Settings, label: "설정", path: "/settings", roles: ["super_admin"] as UserRole[] },
 ];
 
 const roleLabels: Record<string, string> = {
-  admin: "최고관리자",
+  super_admin: "최고관리자",
   consultant: "노무사",
+  company_admin: "회사관리자",
+  company_hr: "인사담당",
+  company_finance: "재무담당",
   employee: "직원",
-  developer: "개발자",
 };
 
 const roleBadgeColors: Record<string, string> = {
-  admin: "bg-indigo-400/20 text-indigo-200",
+  super_admin: "bg-indigo-400/20 text-indigo-200",
   consultant: "bg-sky-400/20 text-sky-200",
+  company_admin: "bg-emerald-400/20 text-emerald-200",
+  company_hr: "bg-amber-400/20 text-amber-200",
+  company_finance: "bg-violet-400/20 text-violet-200",
   employee: "bg-slate-400/20 text-slate-300",
-  developer: "bg-violet-400/20 text-violet-200",
 };
 
 export default function Layout({ children }: LayoutProps) {

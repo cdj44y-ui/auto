@@ -339,8 +339,8 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
                       {/* Monthly Usage */}
                       {Array.from({ length: 12 }, (_, i) => (
                         <TableCell key={i} className="text-center text-xs text-muted-foreground">
-                          {row.usage[i + 1] > 0 ? (
-                            <span className="text-slate-900 dark:text-slate-100 font-medium">{row.usage[i + 1]}</span>
+                          {(row.usage as Record<number, number>)[i + 1] > 0 ? (
+                            <span className="text-slate-900 dark:text-slate-100 font-medium">{(row.usage as Record<number, number>)[i + 1]}</span>
                           ) : "-"}
                         </TableCell>
                       ))}

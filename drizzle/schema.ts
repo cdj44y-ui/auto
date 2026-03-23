@@ -1,7 +1,8 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, bigint, decimal, boolean, index } from "drizzle-orm/mysql-core";
+import { mysqlTable, int, varchar, text, timestamp, boolean, bigint, mysqlEnum, index } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
+ * P-01: 6단계 권한 체계 통일 + clientId FK 추가
  */
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -9,8 +10,10 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  /** Role for RBAC */
-  role: mysqlEnum("role", ["user", "admin", "hr", "finance"]).default("user").notNull(),
+  /** P-01: 6단계 RBAC — super_admin > consultant > company_admin > company_hr > company_finance > employee */
+  role: mysqlEnum("role", ["super_admin", "consultant", "company_admin", "company_hr", "company_finance", "employee"]).default("employee").notNull(),
+  /** P-01: 소속 고객사 (멀티테넌트 FK) */
+  clientId: int("clientId"),
   department: varchar("department", { length: 64 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -21,7 +24,9 @@ export const users = mysqlTable("users", {
   lockedUntil: bigint("lockedUntil", { mode: "number" }),
   /** 비밀번호 변경 시간 (Unix ms) */
   passwordChangedAt: bigint("passwordChangedAt", { mode: "number" }),
-});
+}, (table) => ({
+  clientIdIdx: index("idx_users_client_id").on(table.clientId),
+}));
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
@@ -159,9 +164,9 @@ export type Consultation = typeof consultations.$inferSelect;
 export type InsertConsultation = typeof consultations.$inferInsert;
 
 /**
- * 5단계 권한 타입
+ * P-01: 6단계 권한 타입 (DB enum과 일치)
  */
-export type UserRole = "super_admin" | "consultant" | "company_admin" | "company_hr" | "employee";
+export type UserRole = "super_admin" | "consultant" | "company_admin" | "company_hr" | "company_finance" | "employee";
 
 /**
  * 감사 로그 (Audit Logs) — C-1 인덱스 추가

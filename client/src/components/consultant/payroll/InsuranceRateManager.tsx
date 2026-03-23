@@ -66,7 +66,7 @@ export default function InsuranceRateManager() {
             <CardDescription>매년 변동되는 보험요율을 관리하고 급여 계산에 반영합니다.</CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <Select value={year} onValueChange={(v) => { setYear(v); setRates(initialRates[v as keyof typeof initialRates]); }}>
+            <Select value={year} onValueChange={(v) => { setYear(v); setRates(initialRates[v as unknown as keyof typeof initialRates]); }}>
               <SelectTrigger className="w-[100px]">
                 <SelectValue />
               </SelectTrigger>

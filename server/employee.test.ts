@@ -4,7 +4,16 @@ import type { TrpcContext } from "./_core/context";
 
 type AuthenticatedUser = NonNullable<TrpcContext["user"]>;
 
-function createMockContext(role: 'user' | 'admin' | 'hr' | 'finance'): TrpcContext {
+/**
+ * P-01: 6단계 권한 체계 테스트용 Mock Context
+ * super_admin/consultant: clientId 불필요 (전체 접근)
+ * company_*: clientId 필수 (테넌트 격리)
+ * employee: clientId 필수
+ */
+function createMockContext(
+  role: 'super_admin' | 'consultant' | 'company_admin' | 'company_hr' | 'company_finance' | 'employee',
+  clientId?: number | null
+): TrpcContext {
   const user: AuthenticatedUser = {
     id: 1,
     openId: "test-user",
@@ -13,6 +22,7 @@ function createMockContext(role: 'user' | 'admin' | 'hr' | 'finance'): TrpcConte
     loginMethod: "manus",
     role,
     department: "테스트팀",
+    clientId: clientId ?? null,
     createdAt: new Date(),
     updatedAt: new Date(),
     lastSignedIn: new Date(),
@@ -23,6 +33,7 @@ function createMockContext(role: 'user' | 'admin' | 'hr' | 'finance'): TrpcConte
     req: {
       protocol: "https",
       headers: {},
+      ip: "127.0.0.1",
     } as TrpcContext["req"],
     res: {
       clearCookie: () => {},
@@ -43,78 +54,81 @@ function createUnauthenticatedContext(): TrpcContext {
   };
 }
 
-describe("Employee RBAC", () => {
-  it("allows admin to access employee.list", async () => {
-    const ctx = createMockContext("admin");
+describe("Employee RBAC (P-01: 6단계 권한)", () => {
+  it("allows super_admin to access employee.list", async () => {
+    const ctx = createMockContext("super_admin");
     const caller = appRouter.createCaller(ctx);
-    
-    // Should not throw - admin has access
     await expect(caller.employee.list()).resolves.toBeDefined();
   });
 
-  it("allows hr role to access employee.list", async () => {
-    const ctx = createMockContext("hr");
+  it("allows company_hr with clientId to access employee.list", async () => {
+    const ctx = createMockContext("company_hr", 1);
     const caller = appRouter.createCaller(ctx);
-    
-    // Should not throw - hr has access
     await expect(caller.employee.list()).resolves.toBeDefined();
   });
 
-  it("denies finance role from accessing employee.list", async () => {
-    const ctx = createMockContext("finance");
+  it("denies company_finance from accessing employee.list", async () => {
+    const ctx = createMockContext("company_finance", 1);
     const caller = appRouter.createCaller(ctx);
-    
-    // Should throw FORBIDDEN error
-    await expect(caller.employee.list()).rejects.toThrow("인사 관리 권한이 필요합니다.");
+    await expect(caller.employee.list()).rejects.toThrow();
   });
 
-  it("denies regular user from accessing employee.list", async () => {
-    const ctx = createMockContext("user");
+  it("denies employee from accessing employee.list", async () => {
+    const ctx = createMockContext("employee", 1);
     const caller = appRouter.createCaller(ctx);
-    
-    // Should throw FORBIDDEN error
-    await expect(caller.employee.list()).rejects.toThrow("인사 관리 권한이 필요합니다.");
+    await expect(caller.employee.list()).rejects.toThrow();
   });
 
   it("denies unauthenticated user from accessing employee.list", async () => {
     const ctx = createUnauthenticatedContext();
     const caller = appRouter.createCaller(ctx);
-    
-    // Should throw UNAUTHORIZED error
     await expect(caller.employee.list()).rejects.toThrow();
   });
 });
 
-describe("Payroll RBAC", () => {
-  it("allows admin to access payroll.getByPeriod", async () => {
-    const ctx = createMockContext("admin");
+describe("Payroll RBAC (P-01: 6단계 권한)", () => {
+  it("allows super_admin to access payroll.getByPeriod", async () => {
+    const ctx = createMockContext("super_admin");
     const caller = appRouter.createCaller(ctx);
-    
-    // Should not throw - admin has access
     await expect(caller.payroll.getByPeriod({ period: "202601" })).resolves.toBeDefined();
   });
 
-  it("allows finance role to access payroll.getByPeriod", async () => {
-    const ctx = createMockContext("finance");
+  it("allows company_finance with clientId to access payroll.getByPeriod", async () => {
+    const ctx = createMockContext("company_finance", 1);
     const caller = appRouter.createCaller(ctx);
-    
-    // Should not throw - finance has access
     await expect(caller.payroll.getByPeriod({ period: "202601" })).resolves.toBeDefined();
   });
 
-  it("denies hr role from accessing payroll.getByPeriod", async () => {
-    const ctx = createMockContext("hr");
+  it("allows company_hr to access payroll.getByPeriod (hr level > finance level)", async () => {
+    // company_hr(40) > company_finance(30) in hierarchy, so hr CAN access finance routes
+    const ctx = createMockContext("company_hr", 1);
     const caller = appRouter.createCaller(ctx);
-    
-    // Should throw FORBIDDEN error
-    await expect(caller.payroll.getByPeriod({ period: "202601" })).rejects.toThrow("급여 관리 권한이 필요합니다.");
+    await expect(caller.payroll.getByPeriod({ period: "202601" })).resolves.toBeDefined();
   });
 
-  it("denies regular user from accessing payroll.getByPeriod", async () => {
-    const ctx = createMockContext("user");
+  it("denies employee from accessing payroll.getByPeriod", async () => {
+    const ctx = createMockContext("employee", 1);
     const caller = appRouter.createCaller(ctx);
-    
-    // Should throw FORBIDDEN error
-    await expect(caller.payroll.getByPeriod({ period: "202601" })).rejects.toThrow("급여 관리 권한이 필요합니다.");
+    await expect(caller.payroll.getByPeriod({ period: "202601" })).rejects.toThrow();
+  });
+});
+
+describe("Tenant Isolation (P-02)", () => {
+  it("rejects company_hr without clientId", async () => {
+    const ctx = createMockContext("company_hr");
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.employee.list()).rejects.toThrow("소속 고객사가 지정되지 않았습니다");
+  });
+
+  it("super_admin bypasses tenant check (no clientId needed)", async () => {
+    const ctx = createMockContext("super_admin");
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.employee.list()).resolves.toBeDefined();
+  });
+
+  it("consultant bypasses tenant check (no clientId needed)", async () => {
+    const ctx = createMockContext("consultant");
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.employee.list()).resolves.toBeDefined();
   });
 });

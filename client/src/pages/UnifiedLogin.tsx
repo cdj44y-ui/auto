@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Lock, Mail, User, ShieldCheck, Briefcase, Code2, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, User, ShieldCheck, Briefcase, Building2, DollarSign, Users, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
 export default function UnifiedLogin() {
@@ -38,9 +38,11 @@ export default function UnifiedLogin() {
     setSelectedDemoRole(role);
     // 역할에 따른 데모 계정 자동 입력
     if (role === "employee") setEmail("employee@company.com");
-    else if (role === "admin") setEmail("admin@company.com");
+    else if (role === "super_admin") setEmail("admin@company.com");
     else if (role === "consultant") setEmail("consultant@partner.com");
-    else if (role === "developer") setEmail("dev@manus.system");
+    else if (role === "company_admin") setEmail("companyadmin@company.com");
+    else if (role === "company_hr") setEmail("hr@company.com");
+    else if (role === "company_finance") setEmail("finance@company.com");
     
     setPassword("password123");
   };
@@ -198,24 +200,15 @@ export default function UnifiedLogin() {
                 <p className="text-xs text-center text-muted-foreground mb-4">
                   [테스트용] 로그인할 역할을 선택하세요 (자동 입력)
                 </p>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <Button 
-                    variant={selectedDemoRole === "employee" ? "default" : "outline"} 
+                    variant={selectedDemoRole === "super_admin" ? "default" : "outline"} 
                     size="sm" 
                     className="h-auto py-2 flex flex-col gap-1"
-                    onClick={() => handleDemoRoleSelect("employee")}
-                  >
-                    <User className="h-4 w-4" />
-                    <span className="text-[10px]">직원</span>
-                  </Button>
-                  <Button 
-                    variant={selectedDemoRole === "admin" ? "default" : "outline"} 
-                    size="sm" 
-                    className="h-auto py-2 flex flex-col gap-1"
-                    onClick={() => handleDemoRoleSelect("admin")}
+                    onClick={() => handleDemoRoleSelect("super_admin")}
                   >
                     <ShieldCheck className="h-4 w-4" />
-                    <span className="text-[10px]">관리자</span>
+                    <span className="text-[10px]">최고관리자</span>
                   </Button>
                   <Button 
                     variant={selectedDemoRole === "consultant" ? "default" : "outline"} 
@@ -224,16 +217,43 @@ export default function UnifiedLogin() {
                     onClick={() => handleDemoRoleSelect("consultant")}
                   >
                     <Briefcase className="h-4 w-4" />
-                    <span className="text-[10px]">자문사</span>
+                    <span className="text-[10px]">노무사</span>
                   </Button>
                   <Button 
-                    variant={selectedDemoRole === "developer" ? "default" : "outline"} 
+                    variant={selectedDemoRole === "company_admin" ? "default" : "outline"} 
                     size="sm" 
                     className="h-auto py-2 flex flex-col gap-1"
-                    onClick={() => handleDemoRoleSelect("developer")}
+                    onClick={() => handleDemoRoleSelect("company_admin")}
                   >
-                    <Code2 className="h-4 w-4" />
-                    <span className="text-[10px]">개발자</span>
+                    <Building2 className="h-4 w-4" />
+                    <span className="text-[10px]">회사관리자</span>
+                  </Button>
+                  <Button 
+                    variant={selectedDemoRole === "company_hr" ? "default" : "outline"} 
+                    size="sm" 
+                    className="h-auto py-2 flex flex-col gap-1"
+                    onClick={() => handleDemoRoleSelect("company_hr")}
+                  >
+                    <Users className="h-4 w-4" />
+                    <span className="text-[10px]">인사담당</span>
+                  </Button>
+                  <Button 
+                    variant={selectedDemoRole === "company_finance" ? "default" : "outline"} 
+                    size="sm" 
+                    className="h-auto py-2 flex flex-col gap-1"
+                    onClick={() => handleDemoRoleSelect("company_finance")}
+                  >
+                    <DollarSign className="h-4 w-4" />
+                    <span className="text-[10px]">재무담당</span>
+                  </Button>
+                  <Button 
+                    variant={selectedDemoRole === "employee" ? "default" : "outline"} 
+                    size="sm" 
+                    className="h-auto py-2 flex flex-col gap-1"
+                    onClick={() => handleDemoRoleSelect("employee")}
+                  >
+                    <User className="h-4 w-4" />
+                    <span className="text-[10px]">직원</span>
                   </Button>
                 </div>
               </div>

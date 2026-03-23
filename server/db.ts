@@ -1,11 +1,17 @@
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, desc, and, sql, gte, lte, count, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, 
   employees, InsertEmployee, Employee,
   payrollRecords, InsertPayrollRecord, PayrollRecord,
   emailLogs, InsertEmailLog,
-  auditLogs, InsertAuditLog, AuditLog
+  auditLogs, InsertAuditLog, AuditLog,
+  clients, InsertClient, Client,
+  consultations, InsertConsultation, Consultation,
+  attendanceRecords, InsertAttendanceRecord, AttendanceRecord,
+  notifications, InsertNotification, Notification,
+  privacyConsents, InsertPrivacyConsent, PrivacyConsent,
+  webhooks, InsertWebhook, Webhook
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -23,6 +29,8 @@ export async function getDb() {
   }
   return _db;
 }
+
+// ============ User Queries ============
 
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) {
@@ -62,8 +70,9 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       values.role = user.role;
       updateSet.role = user.role;
     } else if (user.openId === ENV.ownerOpenId) {
-      values.role = 'admin';
-      updateSet.role = 'admin';
+      // P-01: owner는 super_admin으로 설정
+      values.role = 'super_admin';
+      updateSet.role = 'super_admin';
     }
 
     if (!values.lastSignedIn) {
@@ -95,13 +104,18 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// ============ Employee Queries ============
+// ============ Employee Queries (P-02: clientId 필터 추가) ============
 
-export async function getAllEmployees(): Promise<Employee[]> {
+export async function getAllEmployees(clientId?: number | null): Promise<Employee[]> {
   const db = await getDb();
   if (!db) return [];
   
-  return db.select().from(employees).orderBy(desc(employees.createdAt));
+  const conditions = [];
+  if (clientId) conditions.push(eq(employees.clientId, clientId));
+  
+  return db.select().from(employees)
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .orderBy(desc(employees.createdAt));
 }
 
 export async function getEmployeeById(id: number): Promise<Employee | undefined> {
@@ -144,11 +158,21 @@ export async function deleteEmployee(id: number): Promise<void> {
   await db.delete(employees).where(eq(employees.id, id));
 }
 
-// ============ Payroll Queries ============
+// ============ Payroll Queries (P-02: clientId 필터 추가) ============
 
-export async function getPayrollByPeriod(period: string): Promise<PayrollRecord[]> {
+export async function getPayrollByPeriod(period: string, clientId?: number | null): Promise<PayrollRecord[]> {
   const db = await getDb();
   if (!db) return [];
+  
+  if (clientId) {
+    // clientId 기반 필터: employees 테이블과 JOIN
+    const empIds = await db.select({ id: employees.id }).from(employees)
+      .where(eq(employees.clientId, clientId));
+    const ids = empIds.map(e => e.id);
+    if (ids.length === 0) return [];
+    return db.select().from(payrollRecords)
+      .where(and(eq(payrollRecords.period, period), inArray(payrollRecords.employeeId, ids)));
+  }
   
   return db.select().from(payrollRecords).where(eq(payrollRecords.period, period));
 }
@@ -219,10 +243,7 @@ export async function getEmailLogsByReference(referenceId: number, emailType: st
     ));
 }
 
-
 // ============ Client (고객사) Queries ============
-
-import { clients, InsertClient, Client } from "../drizzle/schema";
 
 export async function getAllClients(): Promise<Client[]> {
   const db = await getDb();
@@ -261,15 +282,41 @@ export async function deleteClient(id: number): Promise<void> {
   await db.delete(clients).where(eq(clients.id, id));
 }
 
+// ============ Consultation (자문이력) Queries (P-02: clientId 필터 추가) ============
 
-// ============ Consultation (자문이력) Queries ============
-
-import { consultations, InsertConsultation, Consultation } from "../drizzle/schema";
-
-export async function getAllConsultations(): Promise<Consultation[]> {
+export async function getAllConsultations(clientId?: number | null): Promise<Consultation[]> {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(consultations).orderBy(desc(consultations.consultationDate));
+  
+  const conditions = [];
+  if (clientId) conditions.push(eq(consultations.clientId, clientId));
+  
+  return db.select().from(consultations)
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .orderBy(desc(consultations.consultationDate));
+}
+
+/**
+ * P-02: consultant 역할 전용 — 자신이 담당한 고객사의 자문이력만 조회
+ */
+export async function getConsultationsByConsultant(consultantId: number): Promise<Consultation[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(consultations)
+    .where(eq(consultations.consultantId, consultantId))
+    .orderBy(desc(consultations.consultationDate));
+}
+
+/**
+ * P-02: consultant가 담당하는 고객사 ID 목록 조회
+ */
+export async function getClientIdsByConsultant(consultantId: number): Promise<number[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.selectDistinct({ clientId: consultations.clientId })
+    .from(consultations)
+    .where(eq(consultations.consultantId, consultantId));
+  return rows.map(r => r.clientId);
 }
 
 export async function getConsultationById(id: number): Promise<Consultation | undefined> {
@@ -313,9 +360,7 @@ export async function getAuditLogs(limit: number = 50, offset: number = 0): Prom
   return db.select().from(auditLogs).orderBy(desc(auditLogs.createdAt)).limit(limit).offset(offset);
 }
 
-// ============ Attendance (출퇴근) Queries - D-5 ============
-
-import { attendanceRecords, InsertAttendanceRecord, AttendanceRecord } from "../drizzle/schema";
+// ============ Attendance (출퇴근) Queries (P-02: clientId 필터 추가) ============
 
 export async function clockIn(userId: number, clientId?: number | null): Promise<number> {
   const db = await getDb();
@@ -353,18 +398,20 @@ export async function getTodayAttendance(userId: number): Promise<AttendanceReco
   return result[0];
 }
 
-export async function getAttendanceByUser(userId: number, limit: number = 30): Promise<AttendanceRecord[]> {
+export async function getAttendanceByUser(userId: number, limit: number = 30, clientId?: number | null): Promise<AttendanceRecord[]> {
   const db = await getDb();
   if (!db) return [];
+  
+  const conditions = [eq(attendanceRecords.userId, userId)];
+  if (clientId) conditions.push(eq(attendanceRecords.clientId, clientId));
+  
   return db.select().from(attendanceRecords)
-    .where(eq(attendanceRecords.userId, userId))
+    .where(and(...conditions))
     .orderBy(desc(attendanceRecords.clockIn))
     .limit(limit);
 }
 
-// ============ Notification (알림) Queries - D-6 ============
-
-import { notifications, InsertNotification, Notification } from "../drizzle/schema";
+// ============ Notification (알림) Queries ============
 
 export async function createNotification(data: Omit<InsertNotification, 'createdAt'>): Promise<number> {
   const db = await getDb();
@@ -402,10 +449,7 @@ export async function getUnreadNotificationCount(userId: number): Promise<number
   return result[0]?.count ?? 0;
 }
 
-
 // ============ Privacy Consents (B-1) ============
-
-import { privacyConsents, InsertPrivacyConsent, PrivacyConsent } from "../drizzle/schema";
 
 export async function savePrivacyConsent(data: InsertPrivacyConsent): Promise<number> {
   const db = await getDb();
@@ -421,8 +465,6 @@ export async function getPrivacyConsents(userId: string): Promise<PrivacyConsent
 }
 
 // ============ Webhooks (E-1) ============
-
-import { webhooks, InsertWebhook, Webhook } from "../drizzle/schema";
 
 export async function getActiveWebhooks(clientId: number | null, event: string): Promise<Webhook[]> {
   const db = await getDb();
@@ -451,9 +493,7 @@ export async function sendWebhook(params: { event: string; timestamp: number; cl
   }
 }
 
-// ============ Analytics Queries (A-1, A-2, A-3) ============
-
-import { gte, lte, count, between } from "drizzle-orm";
+// ============ Analytics Queries (A-1, A-2, A-3) — P-02: clientId 필터 적용 ============
 
 export async function getMonthlyAttendanceSummary(year: number, month: number, clientId?: number | null) {
   const db = await getDb();
@@ -624,4 +664,18 @@ export async function getClientHealthScores() {
   }
   
   return scores;
+}
+
+// ============ DB Health Check (P-03) ============
+
+export async function checkDbHealth(): Promise<{ connected: boolean; latencyMs: number }> {
+  const start = Date.now();
+  try {
+    const db = await getDb();
+    if (!db) return { connected: false, latencyMs: 0 };
+    await db.execute(sql`SELECT 1`);
+    return { connected: true, latencyMs: Date.now() - start };
+  } catch {
+    return { connected: false, latencyMs: Date.now() - start };
+  }
 }

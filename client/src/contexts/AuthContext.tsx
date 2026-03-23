@@ -2,7 +2,11 @@ import { createContext, useContext, useState, ReactNode, useEffect } from "react
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 
-export type UserRole = "employee" | "admin" | "consultant" | "developer" | null;
+/**
+ * P-01: 6단계 권한 체계 통일
+ * super_admin(100) > consultant(80) > company_admin(60) > company_hr(40) > company_finance(30) > employee(10)
+ */
+export type UserRole = "super_admin" | "consultant" | "company_admin" | "company_hr" | "company_finance" | "employee" | "user" | null;
 
 interface User {
   id: number;
@@ -10,6 +14,7 @@ interface User {
   role: UserRole;
   department?: string;
   position?: string;
+  clientId?: number | null;
 }
 
 interface AuthContextType {
@@ -39,7 +44,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch (error) {
         console.error("Failed to restore auth session:", error);
       } finally {
-        // 짧은 지연을 주어 로딩 상태가 너무 빨리 끝나는 것 방지 (UX)
         setTimeout(() => setIsLoading(false), 500);
       }
     };
@@ -51,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!user) return;
 
-    const SESSION_TIMEOUT = 8 * 60 * 60 * 1000; // 8시간
+    const SESSION_TIMEOUT = 8 * 60 * 60 * 1000;
     const timer = setTimeout(() => {
       logout();
       toast.error("세션이 만료되었습니다. 다시 로그인해주세요.");
@@ -66,32 +70,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     switch (role) {
       case "employee":
-        mockUser = { id: 1, name: "이영희", role: "employee", department: "개발팀", position: "대리" };
+        mockUser = { id: 1, name: "이영희", role: "employee", department: "개발팀", position: "대리", clientId: 1 };
         break;
-      case "admin":
-        mockUser = { id: 2, name: "김관리", role: "admin", department: "인사팀", position: "팀장" };
+      case "super_admin":
+        mockUser = { id: 2, name: "김관리", role: "super_admin", department: "인사팀", position: "팀장" };
         break;
       case "consultant":
         mockUser = { id: 3, name: "박노무", role: "consultant", department: "노무법인", position: "대표노무사" };
         break;
-      case "developer":
-        mockUser = { id: 999, name: "최개발", role: "developer" };
+      case "company_admin":
+        mockUser = { id: 4, name: "최회사", role: "company_admin", department: "관리팀", position: "관리자", clientId: 1 };
+        break;
+      case "company_hr":
+        mockUser = { id: 5, name: "정인사", role: "company_hr", department: "인사팀", position: "인사담당", clientId: 1 };
+        break;
+      case "company_finance":
+        mockUser = { id: 6, name: "한재무", role: "company_finance", department: "재무팀", position: "재무담당", clientId: 1 };
         break;
       default:
         setIsLoading(false);
         return;
     }
 
-    // 로그인 처리 시뮬레이션 (약간의 지연)
     setTimeout(() => {
       setUser(mockUser);
       sessionStorage.setItem("currentUser", JSON.stringify(mockUser));
       
-      // 로그인 후 역할에 맞는 대시보드로 이동
-      if (role === "employee") setLocation("/employee-dashboard");
-      else if (role === "consultant") setLocation("/consultant-dashboard");
-      else if (role === "developer") setLocation("/developer-dashboard");
-      else if (role === "admin") setLocation("/admin-dashboard");
+      // P-01: 역할별 대시보드 라우팅
+      const dashboardRoutes: Record<string, string> = {
+        super_admin: "/admin-dashboard",
+        consultant: "/consultant-dashboard",
+        company_admin: "/admin-dashboard",
+        company_hr: "/admin-dashboard",
+        company_finance: "/admin-dashboard",
+        employee: "/employee-dashboard",
+      };
+      setLocation(dashboardRoutes[role as string] || "/employee-dashboard");
       
       setIsLoading(false);
       toast.success(`${mockUser.name}님 환영합니다.`);

@@ -13,7 +13,7 @@ import ComprehensiveWageDetail from "./ComprehensiveWageDetail";
 // 2025년 최저임금
 const MINIMUM_WAGE_2025 = 10030;
 
-export default function ConsultantWorkerSettings() {
+export default function ConsultantWorkerSettings({ companyId }: { companyId?: string }) {
   const [selectedCompany, setSelectedCompany] = useState("");
   const [selectedWorker, setSelectedWorker] = useState("");
   

@@ -40,26 +40,30 @@ type TabConfig = {
   roles: string[]; // Which roles can see this tab
 };
 
+/** P-01: 6단계 권한 체계에 맞는 탭 구성 */
 const TAB_CONFIG: TabConfig[] = [
-  { id: "dashboard", label: "대시보드", roles: ["admin", "hr", "finance", "user"] },
-  { id: "employees", label: "직원 관리", roles: ["admin", "hr"] },
-  { id: "payroll", label: "급여 관리", roles: ["admin", "finance"] },
-  { id: "attendance", label: "근태 관리", roles: ["admin", "hr"] },
-  { id: "calendar", label: "휴가 캘린더", roles: ["admin", "hr", "finance", "user"] },
-  { id: "flexible", label: "유연근무", roles: ["admin", "hr"] },
-  { id: "leave", label: "연차 관리", roles: ["admin", "hr"] },
-  { id: "shift", label: "교대 근무", roles: ["admin", "hr"] },
-  { id: "work-hours", label: "주 52시간", roles: ["admin", "hr", "finance"] },
-  { id: "security", label: "보안 및 감사", roles: ["admin"] },
-  { id: "integration", label: "외부 연동", roles: ["admin"] },
+  { id: "dashboard", label: "대시보드", roles: ["super_admin", "company_admin", "company_hr", "company_finance"] },
+  { id: "employees", label: "직원 관리", roles: ["super_admin", "company_admin", "company_hr"] },
+  { id: "payroll", label: "급여 관리", roles: ["super_admin", "company_admin", "company_finance"] },
+  { id: "attendance", label: "근태 관리", roles: ["super_admin", "company_admin", "company_hr"] },
+  { id: "calendar", label: "휴가 캘린더", roles: ["super_admin", "company_admin", "company_hr", "company_finance"] },
+  { id: "flexible", label: "유연근무", roles: ["super_admin", "company_admin", "company_hr"] },
+  { id: "leave", label: "연차 관리", roles: ["super_admin", "company_admin", "company_hr"] },
+  { id: "shift", label: "교대 근무", roles: ["super_admin", "company_admin", "company_hr"] },
+  { id: "work-hours", label: "주 52시간", roles: ["super_admin", "company_admin", "company_hr", "company_finance"] },
+  { id: "security", label: "보안 및 감사", roles: ["super_admin"] },
+  { id: "integration", label: "외부 연동", roles: ["super_admin"] },
 ];
 
 // Role display info
+/** P-01: 6단계 권한 체계 레이블 */
 const ROLE_INFO: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-  admin: { label: "관리자", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400", icon: Shield },
-  hr: { label: "인사팀", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400", icon: Users },
-  finance: { label: "재무팀", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400", icon: DollarSign },
-  user: { label: "일반", color: "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400", icon: Briefcase },
+  super_admin: { label: "최고관리자", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400", icon: Shield },
+  consultant: { label: "노무사", color: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400", icon: Briefcase },
+  company_admin: { label: "회사관리자", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400", icon: Shield },
+  company_hr: { label: "인사담당", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400", icon: Users },
+  company_finance: { label: "재무담당", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400", icon: DollarSign },
+  employee: { label: "직원", color: "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400", icon: Briefcase },
 };
 
 export default function AdminDashboard() {
@@ -203,7 +207,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Role-based access notice */}
-            {userRole !== 'admin' && (
+            {userRole !== 'super_admin' && (
               <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
                 <CardContent className="py-4">
                   <div className="flex items-start gap-3">
@@ -212,9 +216,9 @@ export default function AdminDashboard() {
                       <p className="font-medium text-blue-800 dark:text-blue-200">권한 안내</p>
                       <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
                         현재 <strong>{roleInfo.label}</strong> 권한으로 로그인되어 있습니다. 
-                        {userRole === 'hr' && " 직원 관리, 근태 관리, 휴가 관리 메뉴에 접근할 수 있습니다."}
-                        {userRole === 'finance' && " 급여 관리, 주 52시간 관리 메뉴에 접근할 수 있습니다."}
-                        {userRole === 'user' && " 대시보드와 휴가 캘린더를 확인할 수 있습니다."}
+                        {userRole === 'company_hr' && " 직원 관리, 근태 관리, 휴가 관리 메뉴에 접근할 수 있습니다."}
+                        {userRole === 'company_finance' && " 급여 관리, 주 52시간 관리 메뉴에 접근할 수 있습니다."}
+                        {userRole === 'employee' && " 대시보드와 휴가 캘린더를 확인할 수 있습니다."}
                       </p>
                     </div>
                   </div>
