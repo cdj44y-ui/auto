@@ -1,8 +1,9 @@
-import { mysqlTable, int, varchar, text, timestamp, boolean, bigint, mysqlEnum, index } from "drizzle-orm/mysql-core";
+import { mysqlTable, int, varchar, text, timestamp, boolean, bigint, mysqlEnum, index, decimal } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
  * P-01: 6단계 권한 체계 통일 + clientId FK 추가
+ * P-06: passwordHash, refreshToken 관련 필드 추가
  */
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -15,6 +16,10 @@ export const users = mysqlTable("users", {
   /** P-01: 소속 고객사 (멀티테넌트 FK) */
   clientId: int("clientId"),
   department: varchar("department", { length: 64 }),
+  /** P-06: 비밀번호 해시 (bcrypt) */
+  passwordHash: varchar("passwordHash", { length: 255 }),
+  /** P-06: 이전 비밀번호 해시 3개 (JSON 배열) — 재사용 금지 */
+  previousPasswords: text("previousPasswords"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -30,6 +35,23 @@ export const users = mysqlTable("users", {
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+
+/**
+ * P-06: Refresh Tokens 테이블
+ */
+export const refreshTokens = mysqlTable("refresh_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  tokenHash: varchar("tokenHash", { length: 255 }).notNull(),
+  expiresAt: bigint("expiresAt", { mode: "number" }).notNull(),
+  createdAt: bigint("createdAt", { mode: "number" }).notNull(),
+  revokedAt: bigint("revokedAt", { mode: "number" }),
+}, (table) => ({
+  userIdIdx: index("idx_refresh_tokens_user_id").on(table.userId),
+}));
+
+export type RefreshToken = typeof refreshTokens.$inferSelect;
+export type InsertRefreshToken = typeof refreshTokens.$inferInsert;
 
 /**
  * Employee table — C-1 인덱스, B-2 retentionExpiry 추가
@@ -49,6 +71,8 @@ export const employees = mysqlTable("employees", {
   /** 소속 고객사 (멀티테넌트 외래키) */
   clientId: int("clientId"),
   salary: bigint("salary", { mode: "number" }),
+  /** P-04: 부양가족 수 (본인 포함, 기본 1) */
+  dependents: int("dependents").default(1),
   bankName: varchar("bankName", { length: 64 }),
   bankAccount: varchar("bankAccount", { length: 64 }),
   /** B-2: 퇴직일 + 3년 (근로기준법 제42조) */
@@ -64,7 +88,7 @@ export type Employee = typeof employees.$inferSelect;
 export type InsertEmployee = typeof employees.$inferInsert;
 
 /**
- * Payroll table
+ * Payroll table — P-04: 4대보험/소득세 컬럼 추가
  */
 export const payrollRecords = mysqlTable("payroll_records", {
   id: int("id").autoincrement().primaryKey(),
@@ -73,6 +97,24 @@ export const payrollRecords = mysqlTable("payroll_records", {
   baseSalary: bigint("baseSalary", { mode: "number" }).notNull(),
   overtimePay: bigint("overtimePay", { mode: "number" }).default(0),
   bonus: bigint("bonus", { mode: "number" }).default(0),
+  /** P-04: 수당 */
+  allowances: bigint("allowances", { mode: "number" }).default(0),
+  /** P-04: 지급 합계 */
+  grossPay: bigint("grossPay", { mode: "number" }).default(0),
+  /** P-04: 국민연금 (근로자 부담분) */
+  nationalPension: bigint("nationalPension", { mode: "number" }).default(0),
+  /** P-04: 건강보험 */
+  healthInsurance: bigint("healthInsurance", { mode: "number" }).default(0),
+  /** P-04: 장기요양보험 */
+  longTermCare: bigint("longTermCare", { mode: "number" }).default(0),
+  /** P-04: 고용보험 */
+  employmentInsurance: bigint("employmentInsurance", { mode: "number" }).default(0),
+  /** P-04: 소득세 */
+  incomeTax: bigint("incomeTax", { mode: "number" }).default(0),
+  /** P-04: 지방소득세 */
+  localIncomeTax: bigint("localIncomeTax", { mode: "number" }).default(0),
+  /** P-04: 부양가족 수 */
+  dependents: int("dependents").default(1),
   deductions: bigint("deductions", { mode: "number" }).default(0),
   netPay: bigint("netPay", { mode: "number" }).notNull(),
   slipSent: boolean("slipSent").default(false),
@@ -109,7 +151,7 @@ export type InsertEmailLog = typeof emailLogs.$inferInsert;
 // ============================================
 
 /**
- * 고객사 (Clients) 테이블
+ * 고객사 (Clients) 테이블 — P-07: geofences 추가
  */
 export const clients = mysqlTable("clients", {
   id: int("id").autoincrement().primaryKey(),
@@ -123,6 +165,10 @@ export const clients = mysqlTable("clients", {
   contractEndDate: timestamp("contractEndDate"),
   contractStatus: mysqlEnum("contractStatus", ["active", "pending", "expired", "terminated"]).default("pending").notNull(),
   maxEmployees: int("maxEmployees").default(100),
+  /** P-07: Geofence 설정 (JSON: [{name, lat, lng, radiusMeters}]) */
+  geofences: text("geofences"),
+  /** 5인 미만 사업장 여부 */
+  isUnder5: boolean("isUnder5").default(false),
   isActive: boolean("isActive").default(true).notNull(),
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -191,7 +237,7 @@ export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = typeof auditLogs.$inferInsert;
 
 /**
- * 출퇴근 기록 (Attendance) — C-1 인덱스, B-2 retentionExpiry 추가
+ * 출퇴근 기록 (Attendance) — P-07: authMethod, lat/lng 추가
  */
 export const attendanceRecords = mysqlTable("attendance_records", {
   id: int("id").autoincrement().primaryKey(),
@@ -199,6 +245,12 @@ export const attendanceRecords = mysqlTable("attendance_records", {
   clientId: int("clientId"),
   clockIn: bigint("clockIn", { mode: "number" }).notNull(),
   clockOut: bigint("clockOut", { mode: "number" }),
+  /** P-07: 인증 방식 */
+  authMethod: mysqlEnum("authMethod", ["ip", "gps", "qr", "manual"]).default("ip"),
+  /** P-07: GPS 위도 */
+  latitude: varchar("latitude", { length: 20 }),
+  /** P-07: GPS 경도 */
+  longitude: varchar("longitude", { length: 20 }),
   /** B-2: 생성일 + 3년 */
   retentionExpiry: bigint("retentionExpiry", { mode: "number" }),
   createdAt: bigint("createdAt", { mode: "number" }).notNull(),

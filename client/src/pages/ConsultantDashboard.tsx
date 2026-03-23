@@ -35,6 +35,8 @@ import ClientOnboardingWizard from "@/components/partner/ClientOnboardingWizard"
 import PermissionMatrixEditor from "@/components/partner/PermissionMatrixEditor";
 import FlexibleWorkPolicyManager from "@/components/flexible-work/FlexibleWorkPolicyManager";
 import AnnualLeaveLedger from "@/components/admin/AnnualLeaveLedger";
+import ClientHealthScorePanel from "@/components/consultant/ClientHealthScorePanel";
+import { trpc } from "@/lib/trpc";
 
 export default function ConsultantDashboard() {
   const { user, logout } = useAuth();
@@ -80,7 +82,7 @@ export default function ConsultantDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 lg:w-[1000px] bg-white dark:bg-slate-900 h-auto p-1">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-8 lg:w-[1100px] bg-white dark:bg-slate-900 h-auto p-1">
             <TabsTrigger value="dashboard" className="py-2">통합 대시보드</TabsTrigger>
             <TabsTrigger value="partner" className="py-2">파트너 관리</TabsTrigger>
             <TabsTrigger value="clients" className="py-2">고객사 현황</TabsTrigger>
@@ -88,6 +90,7 @@ export default function ConsultantDashboard() {
             <TabsTrigger value="flexible" className="py-2">유연근무 컨설팅</TabsTrigger>
             <TabsTrigger value="leave" className="py-2">연차 관리</TabsTrigger>
             <TabsTrigger value="insurance" className="py-2">4대보험 신고</TabsTrigger>
+            <TabsTrigger value="healthscore" className="py-2">헬스스코어</TabsTrigger>
           </TabsList>
 
           {/* 통합 대시보드 탭 */}
@@ -169,6 +172,11 @@ export default function ConsultantDashboard() {
           {/* 4대보험 신고 탭 */}
           <TabsContent value="insurance">
             <InsuranceReportingCenter />
+          </TabsContent>
+
+          {/* P-10: 고객사 헬스스코어 탭 */}
+          <TabsContent value="healthscore">
+            <ClientHealthScorePanel />
           </TabsContent>
         </Tabs>
       </main>

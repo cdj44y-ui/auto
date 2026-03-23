@@ -64,6 +64,13 @@
       "when": 1774238832402,
       "tag": "0008_gifted_jack_flag",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1774240201705,
+      "tag": "0009_lush_pestilence",
+      "breakpoints": true
     }
   ]
 }

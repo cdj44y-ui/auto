@@ -49,6 +49,21 @@ export const appRouter = router({
         
         return { success: true };
       }),
+    updateUserClientId: adminProcedure
+      .input(z.object({
+        userId: z.number(),
+        clientId: z.number().nullable(),
+      }))
+      .mutation(async ({ input }) => {
+        const db_instance = await db.getDb();
+        if (!db_instance) throw new Error("Database not available");
+        const { users } = await import('../../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+        await db_instance.update(users)
+          .set({ clientId: input.clientId })
+          .where(eq(users.id, input.userId));
+        return { success: true };
+      }),
   }),
 
   // ============ Audit Log Viewer (super_admin Only) ============

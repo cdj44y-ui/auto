@@ -27,13 +27,13 @@
 
 ## 진행 중
 
-- [ ] 실제 이메일 발송 연동 (SMTP/SendGrid)
+- [x] 실제 이메일 발송 연동 (email.service.ts — SMTP 설정 시 실발송 가능)
 
 ## 예정된 기능
 
 - [x] 직원 개별 등록/수정 폼 (EmployeeDetailForm)
-- [ ] 급여 대장 엑셀 다운로드
-- [ ] 실시간 알림 시스템
+- [x] 급여 대장 엑셀 다운로드 (payroll.exportExcel)
+- [x] 실시간 알림 시스템 (SSE + /api/sse)
 - [ ] 메신저 연동 (Slack/Teams)
 - [ ] AI 이상 징후 탐지
 
@@ -99,7 +99,7 @@
 - [ ] B-3: 개인정보 다운로드/삭제 요청
 - [x] C-2: 에러 핸들링 + 헬스체크 API
 - [x] E-1: Webhook 테이블 + 발송 로직 (db.sendWebhook)
-- [ ] E-2: 엑셀 내보내기
+- [x] E-2: 엑셀 내보내기 (excel.service.ts + payroll.exportExcel + payroll.exportAttendanceExcel)
 - [x] F-1: 고객사 헬스 스코어 API (clientHealth.scores)
 - [ ] G-3: 반응형 모바일 레이아웃
 
@@ -117,3 +117,15 @@
 - [x] P-01: 권한 체계 6단계 통일 (super_admin/consultant/company_admin/company_hr/company_finance/employee) + users.clientId
 - [x] P-02: 테넌트 격리 미들웨어 완성 (clientFilter 실제 동작)
 - [x] P-03: 서버 코드 도메인 분리 (routers/ 폴더) + 헬스체크 + 에러 핸들링
+
+## 고도화 프롬프트 (P-04~P-12)
+
+- [x] P-04: 급여 계산 엔진 서버 이관 + 4대보험/소득세 (salary.service.ts, tax-table.ts)
+- [x] P-05: 이메일 실발송 + 백그라운드 큐 (email.service.ts, payslip 템플릿)
+- [x] P-06: 인증 강화 (Refresh Token 스키마 + 비밀번호 정책 컨텍스트)
+- [x] P-07: GPS 출퇴근 인증 + QR 코드 (geofence.service.ts, GPSCheckIn, QRCheckIn)
+- [x] P-08: 실시간 통신 (SSE) + 알림 시스템 (sse.service.ts, useSSE, /api/sse)
+- [x] P-09: 근로시간 정밀 엔진 — 탄력/선택/재량 (worktime.service.ts)
+- [x] P-10: 자문사 대시보드 + 고객사 헬스스코어 (ClientHealthScorePanel)
+- [x] P-11: 엑셀 내보내기 + 더존/위하고 호환 (excel.service.ts)
+- [ ] P-12: UI 리디자인 (Calm Authority 디자인 시스템) — 다음 단계

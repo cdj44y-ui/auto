@@ -35,6 +35,46 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+
+  // P-08: SSE endpoint for real-time notifications
+  app.get("/api/sse", async (req, res) => {
+    try {
+      const { sdk } = await import("./sdk");
+      const user = await sdk.authenticateRequest(req);
+      if (!user) { res.status(401).end(); return; }
+
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+        "X-Accel-Buffering": "no",
+      });
+      res.write("data: {\"type\":\"connected\"}\n\n");
+
+      const { addConnection } = await import("../services/sse.service");
+      addConnection(user.id, res);
+    } catch {
+      res.status(401).end();
+    }
+  });
+
+  // P-03: Health check endpoint
+  app.get("/api/health", async (_req, res) => {
+    try {
+      const { checkDbHealth } = await import("../db");
+      const dbHealth = await checkDbHealth();
+      const { getConnectionCount } = await import("../services/sse.service");
+      res.json({
+        status: dbHealth.connected ? "healthy" : "degraded",
+        uptime: process.uptime(),
+        db: dbHealth,
+        sse: { connections: getConnectionCount() },
+        timestamp: Date.now(),
+      });
+    } catch (e) {
+      res.status(500).json({ status: "error", error: String(e) });
+    }
+  });
   // tRPC API
   app.use(
     "/api/trpc",
