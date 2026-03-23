@@ -50,7 +50,7 @@ export default function UnifiedLogin() {
   return (
     <div className="min-h-screen w-full flex">
       {/* 좌측 브랜딩 영역 (데스크탑) */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-slate-900 text-white overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-stone-900 text-white overflow-hidden">
         {branding.loginBackgroundUrl ? (
           <>
             <img 
@@ -61,7 +61,7 @@ export default function UnifiedLogin() {
             <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
           </>
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
+          <div className="absolute inset-0 bg-gradient-to-br from-stone-900 via-stone-800 to-stone-900" />
         )}
         
         <div className="relative z-10 flex flex-col justify-between p-12 w-full h-full">
@@ -82,7 +82,7 @@ export default function UnifiedLogin() {
             <h1 className="text-4xl font-bold tracking-tight mb-4 leading-tight">
               {branding.welcomeMessage}
             </h1>
-            <p className="text-lg text-slate-300 max-w-md leading-relaxed">
+            <p className="text-lg text-stone-300 max-w-md leading-relaxed">
               스마트한 근태관리와 급여 정산, <br/>
               이제 하나의 플랫폼에서 효율적으로 관리하세요.
             </p>
@@ -92,14 +92,14 @@ export default function UnifiedLogin() {
             <div className="flex gap-4">
               <div className="flex-1 bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10">
                 <h3 className="font-semibold mb-1">통합 관리</h3>
-                <p className="text-sm text-slate-300">근태, 휴가, 급여를 한 곳에서</p>
+                <p className="text-sm text-stone-300">근태, 휴가, 급여를 한 곳에서</p>
               </div>
               <div className="flex-1 bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10">
                 <h3 className="font-semibold mb-1">법적 준수</h3>
-                <p className="text-sm text-slate-300">최신 노동법 자동 반영</p>
+                <p className="text-sm text-stone-300">최신 노동법 자동 반영</p>
               </div>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-stone-400">
               © 2026 {branding.companyName}. All rights reserved.
             </p>
           </div>
@@ -107,7 +107,7 @@ export default function UnifiedLogin() {
       </div>
 
       {/* 우측 로그인 폼 영역 */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-slate-50">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-stone-50">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center lg:hidden">
             {branding.logoUrl && (
@@ -115,7 +115,7 @@ export default function UnifiedLogin() {
                 <img src={branding.logoUrl} alt="Logo" className="w-full h-full object-contain" />
               </div>
             )}
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-2xl font-bold tracking-tight text-stone-900">
               {branding.welcomeMessage}
             </h2>
             <p className="text-sm text-muted-foreground mt-2">
@@ -123,7 +123,7 @@ export default function UnifiedLogin() {
             </p>
           </div>
 
-          <Card className="border-0 shadow-xl ring-1 ring-slate-200/50">
+          <Card className="border-0 shadow-xl ring-1 ring-stone-200/50">
             <CardHeader className="space-y-1 pb-6">
               <CardTitle className="text-2xl font-bold text-center">로그인</CardTitle>
               <CardDescription className="text-center">
@@ -258,7 +258,7 @@ export default function UnifiedLogin() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex justify-center border-t bg-slate-50/50 py-4">
+            <CardFooter className="flex justify-center border-t bg-stone-50/50 py-4">
               <p className="text-xs text-muted-foreground">
                 계정이 없으신가요?{" "}
                 <Button variant="link" className="p-0 h-auto text-xs" onClick={() => toast.info("관리자에게 계정 생성을 요청하세요.")}>

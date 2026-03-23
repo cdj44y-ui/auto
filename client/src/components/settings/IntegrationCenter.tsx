@@ -45,7 +45,7 @@ export function IntegrationCenter() {
       id: 'outlook-calendar',
       name: 'Outlook Calendar',
       description: 'Microsoft Outlook 일정과 양방향으로 동기화합니다.',
-      icon: <Calendar className="h-6 w-6 text-blue-500" />,
+      icon: <Calendar className="h-6 w-6 text-orange-500" />,
       status: 'disconnected',
       category: 'calendar'
     },
@@ -62,7 +62,7 @@ export function IntegrationCenter() {
       id: 'teams',
       name: 'Microsoft Teams',
       description: 'Teams 봇을 통해 근태 관리 기능을 채팅창에서 사용합니다.',
-      icon: <MessageSquare className="h-6 w-6 text-indigo-500" />,
+      icon: <MessageSquare className="h-6 w-6 text-orange-500" />,
       status: 'disconnected',
       category: 'messenger'
     }
@@ -103,7 +103,7 @@ export function IntegrationCenter() {
             캘린더, 메신저 등 업무에 사용하는 외부 도구와 근태관리 시스템을 연결하세요.
           </p>
         </div>
-        <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-2 rounded-lg">
+        <div className="flex items-center gap-2 bg-stone-100 dark:bg-stone-800 p-2 rounded-lg">
           <Label htmlFor="auto-sync" className="text-sm font-medium cursor-pointer">자동 동기화</Label>
           <Switch 
             id="auto-sync" 
@@ -116,12 +116,12 @@ export function IntegrationCenter() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {integrations.map((item) => (
           <Card key={item.id} className={`border-l-4 ${
-            item.status === 'connected' ? 'border-l-green-500' : 'border-l-slate-300'
+            item.status === 'connected' ? 'border-l-green-500' : 'border-l-stone-300'
           }`}>
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-md">
+                  <div className="p-2 bg-stone-50 dark:bg-stone-800 rounded-md">
                     {item.icon}
                   </div>
                   <div>
@@ -158,7 +158,7 @@ export function IntegrationCenter() {
               </CardDescription>
               
               {item.status === 'connected' && (
-                <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-900 rounded-md text-xs flex items-center justify-between">
+                <div className="mt-4 p-3 bg-stone-50 dark:bg-stone-900 rounded-md text-xs flex items-center justify-between">
                   <span className="text-muted-foreground flex items-center gap-1">
                     <CheckCircle2 className="h-3 w-3 text-green-500" />
                     정상 작동 중
@@ -181,13 +181,13 @@ export function IntegrationCenter() {
         ))}
       </div>
 
-      <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900">
+      <Card className="bg-orange-50/30 dark:bg-stone-800/30 border-orange-200/30 dark:border-stone-700">
         <CardContent className="pt-6">
           <div className="flex items-start gap-4">
-            <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+            <AlertCircle className="h-5 w-5 text-primary mt-0.5" />
             <div>
-              <h4 className="font-medium text-blue-900 dark:text-blue-100">캘린더 연동 안내</h4>
-              <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+              <h4 className="font-medium text-stone-800 dark:text-orange-100">캘린더 연동 안내</h4>
+              <p className="text-sm text-orange-700 dark:text-orange-300 mt-1">
                 Google Calendar 연동 시, '근태관리'라는 이름의 새 캘린더가 생성되며 승인된 휴가와 출장 일정만 동기화됩니다.
                 개인 일정은 수집되지 않으니 안심하세요.
               </p>

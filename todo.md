@@ -128,4 +128,13 @@
 - [x] P-09: 근로시간 정밀 엔진 — 탄력/선택/재량 (worktime.service.ts)
 - [x] P-10: 자문사 대시보드 + 고객사 헬스스코어 (ClientHealthScorePanel)
 - [x] P-11: 엑셀 내보내기 + 더존/위하고 호환 (excel.service.ts)
-- [ ] P-12: UI 리디자인 (Calm Authority 디자인 시스템) — 다음 단계
+- [x] P-12: UI 리디자인 (Warm Authority 디자인 시스템 전환 완료)
+
+## P-DESIGN: Warm Authority 디자인 시스템 전환
+
+- [x] STEP 1: index.css 디자인 토큰 전면 교체 (Indigo→Stone+Burnt Sienna)
+- [x] STEP 2: 전체 컴포넌트 하드코딩 컨러 치환 (blue/indigo/slate→stone/orange/primary)
+- [x] STEP 3: 레이아웃 컴포넌트 수정 (Layout.tsx, DashboardLayout.tsx)
+- [x] STEP 4: 페이지별 수정 (24개 페이지)
+- [x] STEP 5: 커스텀 컴포넌트 수정 (StatusBadge, DataTable, NotificationCenter 등)
+- [x] STEP 6-7: shadcn/ui 확인 + 다크모드 검증

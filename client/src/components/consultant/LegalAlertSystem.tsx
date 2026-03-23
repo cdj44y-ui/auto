@@ -47,21 +47,21 @@ export default function LegalAlertSystem() {
       <CardContent>
         <div className="space-y-4">
           {alerts.map((alert) => (
-            <div key={alert.id} className="bg-white dark:bg-slate-900 p-4 rounded-lg border shadow-sm hover:shadow-md transition-shadow">
+            <div key={alert.id} className="bg-white dark:bg-stone-900 p-4 rounded-lg border shadow-sm hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center gap-2">
                   {alert.type === 'urgent' && <Badge variant="destructive">긴급</Badge>}
                   {alert.type === 'warning' && <Badge className="bg-orange-500 hover:bg-orange-600">중요</Badge>}
                   {alert.type === 'info' && <Badge variant="secondary">안내</Badge>}
-                  <h4 className="font-bold text-slate-900 dark:text-slate-100">{alert.title}</h4>
+                  <h4 className="font-bold text-stone-900 dark:text-stone-100">{alert.title}</h4>
                 </div>
-                <span className="text-xs text-slate-500">{alert.date}</span>
+                <span className="text-xs text-stone-500">{alert.date}</span>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
+              <p className="text-sm text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
                 {alert.summary}
               </p>
               <div className="flex justify-end">
-                <Button size="sm" variant="outline" className="text-xs h-8 border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-300 dark:hover:bg-indigo-900/30">
+                <Button size="sm" variant="outline" className="text-xs h-8 border-orange-200/30 text-orange-700 hover:bg-orange-50/30 dark:border-stone-700 dark:text-orange-300 dark:hover:bg-stone-900/30">
                   {alert.action} <ExternalLink className="w-3 h-3 ml-1" />
                 </Button>
               </div>

@@ -64,12 +64,12 @@ export default function WorkHoursMonitor() {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-blue-50 border-blue-100 dark:bg-blue-900/20 dark:border-blue-900">
+          <Card className="bg-orange-50/30 border-orange-200/30 dark:bg-stone-800/30 dark:border-stone-700">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-blue-600 dark:text-blue-400">정상</CardTitle>
+              <CardTitle className="text-sm font-medium text-primary dark:text-orange-400">정상</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+              <div className="text-2xl font-bold text-orange-700 dark:text-orange-300">
                 {EMPLOYEE_HOURS.filter(e => e.status === 'safe').length}명
               </div>
             </CardContent>
@@ -103,7 +103,7 @@ export default function WorkHoursMonitor() {
                       className={`h-2 ${
                         emp.status === 'danger' ? '[&>div]:bg-red-500' : 
                         emp.status === 'warning' ? '[&>div]:bg-orange-500' : 
-                        '[&>div]:bg-blue-600'
+                        '[&>div]:bg-primary'
                       }`} 
                     />
                   </div>
@@ -121,7 +121,7 @@ export default function WorkHoursMonitor() {
                     </Badge>
                   )}
                   {emp.status === 'safe' && (
-                    <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50">
+                    <Badge variant="outline" className="text-primary border-orange-200/30 bg-orange-50/30">
                       정상
                     </Badge>
                   )}

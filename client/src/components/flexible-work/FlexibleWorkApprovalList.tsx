@@ -105,18 +105,18 @@ export default function FlexibleWorkApprovalList() {
               </div>
             ) : (
               applications.filter(a => a.status === ApprovalStatus.PENDING).map((app) => (
-                <div key={app.id} className="flex items-center justify-between p-4 border rounded-lg bg-white dark:bg-slate-950 dark:border-slate-800">
+                <div key={app.id} className="flex items-center justify-between p-4 border rounded-lg bg-white dark:bg-stone-950 dark:border-stone-800">
                   <div className="flex items-start gap-4">
-                    <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full mt-1">
-                      <User className="w-5 h-5 text-slate-600" />
+                    <div className="p-2 bg-stone-100 dark:bg-stone-800 rounded-full mt-1">
+                      <User className="w-5 h-5 text-stone-600" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-bold dark:text-slate-200">{app.applicant}</span>
+                        <span className="font-bold dark:text-stone-200">{app.applicant}</span>
                         <span className="text-sm text-muted-foreground">({app.department})</span>
                         {getStatusBadge(app.status)}
                       </div>
-                      <p className="text-sm font-medium dark:text-slate-300 mb-1">
+                      <p className="text-sm font-medium dark:text-stone-300 mb-1">
                         {app.type === FlexibleWorkType.STAGGERED_COMMUTE ? "시차출퇴근제" : "선택적 근로시간제"} - {app.detail}
                       </p>
                       <p className="text-xs text-muted-foreground">신청일: {app.submittedAt} | 기간: {app.period}</p>
@@ -150,7 +150,7 @@ export default function FlexibleWorkApprovalList() {
                         
                         <div className="space-y-2">
                           <div className="text-sm text-muted-foreground">신청 사유</div>
-                          <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-md text-sm">
+                          <div className="p-3 bg-stone-50 dark:bg-stone-900 rounded-md text-sm">
                             {app.reason}
                           </div>
                         </div>
@@ -166,7 +166,7 @@ export default function FlexibleWorkApprovalList() {
                       </div>
                       <DialogFooter className="gap-2 sm:gap-0">
                         <Button variant="destructive" onClick={() => handleReject(app.id)}>반려</Button>
-                        <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={() => handleApprove(app.id)}>승인</Button>
+                        <Button className="bg-primary hover:bg-orange-800" onClick={() => handleApprove(app.id)}>승인</Button>
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
@@ -177,14 +177,14 @@ export default function FlexibleWorkApprovalList() {
 
           <TabsContent value="history" className="space-y-4">
             {applications.map((app) => (
-              <div key={app.id} className="flex items-center justify-between p-4 border rounded-lg bg-slate-50 dark:bg-slate-900 dark:border-slate-800 opacity-80 hover:opacity-100 transition-opacity">
+              <div key={app.id} className="flex items-center justify-between p-4 border rounded-lg bg-stone-50 dark:bg-stone-900 dark:border-stone-800 opacity-80 hover:opacity-100 transition-opacity">
                 <div className="flex items-start gap-4">
-                  <div className="p-2 bg-white dark:bg-slate-800 rounded-full mt-1 border">
-                    <FileText className="w-4 h-4 text-slate-500" />
+                  <div className="p-2 bg-white dark:bg-stone-800 rounded-full mt-1 border">
+                    <FileText className="w-4 h-4 text-stone-500" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-bold dark:text-slate-200">{app.applicant}</span>
+                      <span className="font-bold dark:text-stone-200">{app.applicant}</span>
                       {getStatusBadge(app.status)}
                     </div>
                     <p className="text-sm text-muted-foreground">

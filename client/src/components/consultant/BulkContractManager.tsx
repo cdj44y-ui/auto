@@ -52,53 +52,53 @@ export default function BulkContractManager() {
     <div className="space-y-6">
       {/* 상단 통계 카드 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-white dark:bg-slate-900 border-none shadow-sm">
+        <Card className="bg-white dark:bg-stone-900 border-none shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
-            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-              <Send className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="p-3 bg-orange-100/30 dark:bg-stone-800/30 rounded-full">
+              <Send className="w-6 h-6 text-primary dark:text-orange-400" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">이번 달 발송</p>
-              <p className="text-2xl font-bold dark:text-slate-100">142건</p>
+              <p className="text-2xl font-bold dark:text-stone-100">142건</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-white dark:bg-slate-900 border-none shadow-sm">
+        <Card className="bg-white dark:bg-stone-900 border-none shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
               <FileSignature className="w-6 h-6 text-green-600 dark:text-green-400" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">서명 완료율</p>
-              <p className="text-2xl font-bold dark:text-slate-100">84%</p>
+              <p className="text-2xl font-bold dark:text-stone-100">84%</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-white dark:bg-slate-900 border-none shadow-sm">
+        <Card className="bg-white dark:bg-stone-900 border-none shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-full">
               <Clock className="w-6 h-6 text-orange-600 dark:text-orange-400" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">서명 대기중</p>
-              <p className="text-2xl font-bold dark:text-slate-100">23건</p>
+              <p className="text-2xl font-bold dark:text-stone-100">23건</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* 대량 발송 액션 카드 */}
-      <Card className="border-indigo-100 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-900/10">
+      <Card className="border-orange-200/30 dark:border-stone-700 bg-orange-50/30/50 dark:bg-stone-900/10">
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle className="text-indigo-900 dark:text-indigo-100">전자계약 일괄 발송</CardTitle>
+              <CardTitle className="text-stone-800 dark:text-orange-100">전자계약 일괄 발송</CardTitle>
               <CardDescription>여러 고객사의 계약서를 한 번에 생성하고 발송합니다.</CardDescription>
             </div>
             <Button 
               onClick={handleBulkSend} 
               disabled={isProcessing}
-              className="bg-indigo-600 hover:bg-indigo-700"
+              className="bg-primary hover:bg-orange-800"
             >
               {isProcessing ? "발송 중..." : "선택 항목 일괄 발송"}
             </Button>
@@ -107,7 +107,7 @@ export default function BulkContractManager() {
         {isProcessing && (
           <CardContent>
             <div className="space-y-2">
-              <div className="flex justify-between text-sm text-indigo-600 dark:text-indigo-300">
+              <div className="flex justify-between text-sm text-primary dark:text-orange-300">
                 <span>발송 진행률</span>
                 <span>{progress}%</span>
               </div>
@@ -118,10 +118,10 @@ export default function BulkContractManager() {
       </Card>
 
       {/* 계약 관리 테이블 */}
-      <Card className="dark:bg-slate-900 border-none shadow-sm">
+      <Card className="dark:bg-stone-900 border-none shadow-sm">
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle className="dark:text-slate-100">계약 진행 현황</CardTitle>
+            <CardTitle className="dark:text-stone-100">계약 진행 현황</CardTitle>
             <div className="flex gap-2">
               <div className="relative w-64">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -134,9 +134,9 @@ export default function BulkContractManager() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border dark:border-slate-800">
+          <div className="rounded-md border dark:border-stone-800">
             <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 dark:bg-slate-950 text-slate-500 dark:text-slate-400 font-medium">
+              <thead className="bg-stone-50 dark:bg-stone-950 text-stone-500 dark:text-stone-400 font-medium">
                 <tr>
                   <th className="p-4 w-10"><Checkbox /></th>
                   <th className="p-4">고객사</th>
@@ -147,14 +147,14 @@ export default function BulkContractManager() {
                   <th className="p-4 text-right">관리</th>
                 </tr>
               </thead>
-              <tbody className="divide-y dark:divide-slate-800">
+              <tbody className="divide-y dark:divide-stone-800">
                 {contracts.map((contract) => (
-                  <tr key={contract.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  <tr key={contract.id} className="hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors">
                     <td className="p-4"><Checkbox /></td>
-                    <td className="p-4 font-medium dark:text-slate-200">{contract.company}</td>
-                    <td className="p-4 dark:text-slate-300">{contract.employee}</td>
-                    <td className="p-4 dark:text-slate-300">{contract.type}</td>
-                    <td className="p-4 text-slate-500">{contract.sentDate}</td>
+                    <td className="p-4 font-medium dark:text-stone-200">{contract.company}</td>
+                    <td className="p-4 dark:text-stone-300">{contract.employee}</td>
+                    <td className="p-4 dark:text-stone-300">{contract.type}</td>
+                    <td className="p-4 text-stone-500">{contract.sentDate}</td>
                     <td className="p-4">
                       {contract.status === 'signed' && (
                         <Badge className="bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400">
@@ -173,7 +173,7 @@ export default function BulkContractManager() {
                       )}
                     </td>
                     <td className="p-4 text-right">
-                      <Button variant="ghost" size="sm" className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/20">
+                      <Button variant="ghost" size="sm" className="text-primary hover:text-orange-700 hover:bg-orange-50/30 dark:text-orange-400 dark:hover:bg-stone-900/20">
                         상세보기
                       </Button>
                     </td>

@@ -104,7 +104,7 @@ export default function BrandingSettings() {
             <div className="space-y-2">
               <Label>회사 로고</Label>
               <div className="flex items-center gap-4">
-                <div className="relative w-24 h-24 border rounded-lg overflow-hidden bg-slate-50 flex items-center justify-center">
+                <div className="relative w-24 h-24 border rounded-lg overflow-hidden bg-stone-50 flex items-center justify-center">
                   {branding.logoUrl ? (
                     <img
                       src={branding.logoUrl}
@@ -166,7 +166,7 @@ export default function BrandingSettings() {
                 <div className="space-y-2">
                   <Label>배경 이미지</Label>
                   <div className="flex flex-col gap-4">
-                    <div className="relative w-full h-48 border rounded-lg overflow-hidden bg-slate-100 flex items-center justify-center group">
+                    <div className="relative w-full h-48 border rounded-lg overflow-hidden bg-stone-100 flex items-center justify-center group">
                       {branding.loginBackgroundUrl ? (
                         <img
                           src={branding.loginBackgroundUrl}
@@ -213,7 +213,7 @@ export default function BrandingSettings() {
                 </div>
               </div>
               
-              <div className="border rounded-lg p-4 bg-slate-50">
+              <div className="border rounded-lg p-4 bg-stone-50">
                 <Label className="mb-2 block">미리보기</Label>
                 <div className="relative w-full aspect-video rounded-md overflow-hidden border shadow-sm">
                   {branding.loginBackgroundUrl ? (
@@ -222,7 +222,7 @@ export default function BrandingSettings() {
                       className="absolute inset-0 w-full h-full object-cover" 
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-orange-50 to-stone-50" />
                   )}
                   <div className="absolute inset-0 flex items-center justify-center p-8">
                     <div className="bg-white/90 backdrop-blur shadow-lg rounded-lg p-6 w-full max-w-xs text-center space-y-4">
@@ -234,7 +234,7 @@ export default function BrandingSettings() {
                         )}
                       </div>
                       <h3 className="font-bold text-lg">{welcomeMessage}</h3>
-                      <div className="h-8 bg-slate-100 rounded w-full" />
+                      <div className="h-8 bg-stone-100 rounded w-full" />
                       <div className="h-8 bg-primary rounded w-full" />
                     </div>
                   </div>

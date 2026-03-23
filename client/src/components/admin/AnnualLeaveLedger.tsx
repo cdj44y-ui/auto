@@ -176,7 +176,7 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
                   </DialogDescription>
                 </DialogHeader>
                 <div className="py-4">
-                  <div className="bg-slate-50 p-4 rounded-lg border mb-4">
+                  <div className="bg-stone-50 p-4 rounded-lg border mb-4">
                     <h4 className="font-semibold mb-2 flex items-center gap-2">
                       <AlertCircle className="w-4 h-4 text-orange-500" /> 발송 대상자 (잔여 연차 보유자)
                     </h4>
@@ -215,18 +215,18 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
       <CardContent>
         <div className="space-y-6">
           {/* Controls */}
-          <div className="flex flex-col md:flex-row gap-4 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border">
+          <div className="flex flex-col md:flex-row gap-4 p-4 bg-stone-50 dark:bg-stone-900 rounded-lg border">
             {isConsultant && (
               <>
                 <div className="w-full md:w-56 space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-1 text-indigo-600">
+                  <label className="text-sm font-medium flex items-center gap-1 text-primary">
                     <Building2 className="w-4 h-4" /> 고객사 선택
                   </label>
                   <Select value={selectedCompany} onValueChange={(val) => {
                     setSelectedCompany(val);
                     setSelectedSite("all"); // Reset site when company changes
                   }}>
-                    <SelectTrigger className="bg-white dark:bg-slate-950 border-indigo-200">
+                    <SelectTrigger className="bg-white dark:bg-stone-950 border-orange-200/30">
                       <SelectValue placeholder="고객사 선택" />
                     </SelectTrigger>
                     <SelectContent>
@@ -238,7 +238,7 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
                 </div>
 
                 <div className="w-full md:w-48 space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-1 text-indigo-600">
+                  <label className="text-sm font-medium flex items-center gap-1 text-primary">
                     <MapPin className="w-4 h-4" /> 사업장 선택
                   </label>
                   <Select 
@@ -246,7 +246,7 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
                     onValueChange={setSelectedSite}
                     disabled={selectedCompany === "all"}
                   >
-                    <SelectTrigger className="bg-white dark:bg-slate-950 border-indigo-200">
+                    <SelectTrigger className="bg-white dark:bg-stone-950 border-orange-200/30">
                       <SelectValue placeholder="사업장 선택" />
                     </SelectTrigger>
                     <SelectContent>
@@ -295,16 +295,16 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
           {/* Ledger Table */}
           <div className="rounded-md border overflow-x-auto">
             <Table>
-              <TableHeader className="bg-slate-100 dark:bg-slate-800">
+              <TableHeader className="bg-stone-100 dark:bg-stone-800">
                 <TableRow>
-                  <TableHead className="w-[50px] text-center fixed-col bg-slate-100 dark:bg-slate-800 z-10">No</TableHead>
+                  <TableHead className="w-[50px] text-center fixed-col bg-stone-100 dark:bg-stone-800 z-10">No</TableHead>
                   {isConsultant && <TableHead className="w-[120px] text-center">고객사/사업장</TableHead>}
-                  <TableHead className="w-[100px] text-center fixed-col-2 bg-slate-100 dark:bg-slate-800 z-10">성명</TableHead>
+                  <TableHead className="w-[100px] text-center fixed-col-2 bg-stone-100 dark:bg-stone-800 z-10">성명</TableHead>
                   <TableHead className="w-[100px] text-center">입사일</TableHead>
                   <TableHead className="w-[80px] text-center">근속년수</TableHead>
-                  <TableHead className="w-[80px] text-center bg-blue-50 dark:bg-blue-900/20">기본발생</TableHead>
+                  <TableHead className="w-[80px] text-center bg-orange-50/30 dark:bg-stone-800/30">기본발생</TableHead>
                   <TableHead className="w-[80px] text-center bg-purple-50 dark:bg-purple-900/20">대체휴무</TableHead>
-                  <TableHead className="w-[80px] text-center bg-blue-100 dark:bg-blue-900/40 font-bold">총계</TableHead>
+                  <TableHead className="w-[80px] text-center bg-orange-100/30 dark:bg-stone-800/40 font-bold">총계</TableHead>
                   {Array.from({ length: 12 }, (_, i) => (
                     <TableHead key={i} className="w-[50px] text-center text-xs text-muted-foreground">{i + 1}월</TableHead>
                   ))}
@@ -316,31 +316,31 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
               <TableBody>
                 {ledgerData.length > 0 ? (
                   ledgerData.map((row) => (
-                    <TableRow key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-900">
-                      <TableCell className="text-center font-medium fixed-col bg-white dark:bg-slate-950">{row.no}</TableCell>
+                    <TableRow key={row.id} className="hover:bg-stone-50 dark:hover:bg-stone-900">
+                      <TableCell className="text-center font-medium fixed-col bg-white dark:bg-stone-950">{row.no}</TableCell>
                       {isConsultant && (
                         <TableCell className="text-center text-xs text-muted-foreground">
-                          <div className="font-medium text-slate-700 dark:text-slate-300">{MOCK_CLIENTS.find(c => c.id === row.companyId)?.name}</div>
+                          <div className="font-medium text-stone-700 dark:text-stone-300">{MOCK_CLIENTS.find(c => c.id === row.companyId)?.name}</div>
                           <div className="text-[10px]">{MOCK_SITES.find(s => s.id === row.siteId)?.name}</div>
                         </TableCell>
                       )}
-                      <TableCell className="text-center font-medium fixed-col-2 bg-white dark:bg-slate-950">
+                      <TableCell className="text-center font-medium fixed-col-2 bg-white dark:bg-stone-950">
                         <div>{row.name}</div>
                         <div className="text-xs text-muted-foreground">{row.position}</div>
                       </TableCell>
                       <TableCell className="text-center text-sm text-muted-foreground">{row.joinDate}</TableCell>
                       <TableCell className="text-center">{row.yearsOfService}년</TableCell>
-                      <TableCell className="text-center text-blue-600 dark:text-blue-400 bg-blue-50/30">{row.generated}</TableCell>
+                      <TableCell className="text-center text-primary dark:text-orange-400 bg-orange-50/30/30">{row.generated}</TableCell>
                       <TableCell className="text-center text-purple-600 dark:text-purple-400 bg-purple-50/30">
                         {row.substitute > 0 ? `+${row.substitute}` : '-'}
                       </TableCell>
-                      <TableCell className="text-center font-bold bg-blue-100/30">{row.total}</TableCell>
+                      <TableCell className="text-center font-bold bg-orange-100/30/30">{row.total}</TableCell>
                       
                       {/* Monthly Usage */}
                       {Array.from({ length: 12 }, (_, i) => (
                         <TableCell key={i} className="text-center text-xs text-muted-foreground">
                           {(row.usage as Record<number, number>)[i + 1] > 0 ? (
-                            <span className="text-slate-900 dark:text-slate-100 font-medium">{(row.usage as Record<number, number>)[i + 1]}</span>
+                            <span className="text-stone-900 dark:text-stone-100 font-medium">{(row.usage as Record<number, number>)[i + 1]}</span>
                           ) : "-"}
                         </TableCell>
                       ))}
@@ -372,7 +372,7 @@ export default function AnnualLeaveLedger({ isConsultant = false }: AnnualLeaveL
             </Table>
           </div>
 
-          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-slate-50 dark:bg-slate-900 p-4 rounded-lg">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-stone-50 dark:bg-stone-900 p-4 rounded-lg">
             <Calculator className="w-4 h-4" />
             <span>
               <strong>계산 로직 안내:</strong> 

@@ -350,10 +350,10 @@ export default function Employees() {
             accept=".xlsx, .xls" 
             onChange={handleFileUpload}
           />
-          <Button variant="outline" onClick={handleDownloadTemplate} className="rounded-xl bg-white border-none shadow-sm hover:bg-gray-50">
+          <Button variant="outline" onClick={handleDownloadTemplate} className="rounded-xl bg-white border-none shadow-sm hover:bg-stone-50">
             <FileText className="w-4 h-4 mr-2" /> 템플릿
           </Button>
-          <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="rounded-xl bg-white border-none shadow-sm hover:bg-gray-50">
+          <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="rounded-xl bg-white border-none shadow-sm hover:bg-stone-50">
             <Upload className="w-4 h-4 mr-2" /> 엑셀 업로드
           </Button>
           <Button className="rounded-xl shadow-lg shadow-primary/20" onClick={handleOpenAddDialog}>
@@ -576,10 +576,10 @@ export default function Employees() {
                             : employee.status === "휴식중"
                             ? "bg-orange-100 text-orange-700 hover:bg-orange-100"
                             : employee.status === "퇴근"
-                            ? "bg-gray-100 text-gray-700 hover:bg-gray-100"
+                            ? "bg-stone-100 text-stone-700 hover:bg-stone-100"
                             : employee.status === "결근"
                             ? "bg-red-100 text-red-700 hover:bg-red-100"
-                            : "bg-gray-100 text-gray-700"
+                            : "bg-stone-100 text-stone-700"
                         }
                       >
                         {employee.status}

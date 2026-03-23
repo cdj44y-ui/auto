@@ -48,17 +48,17 @@ export default function Insights() {
             <Progress value={75} className="h-2 bg-purple-100 [&>div]:bg-purple-500" />
           </CardContent>
         </Card>
-        <Card className="border-none shadow-sm bg-gradient-to-br from-blue-50 to-white">
+        <Card className="border-none shadow-sm bg-gradient-to-br from-orange-50 to-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-blue-600 flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-primary flex items-center gap-2">
               <Users className="w-4 h-4" /> 적정 인원 분석
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-900 mb-1">2명 부족</div>
+            <div className="text-2xl font-bold text-stone-800 mb-1">2명 부족</div>
             <p className="text-xs text-muted-foreground mb-4">개발팀 업무 부하가 높습니다.</p>
             <div className="flex gap-2">
-              <Badge variant="secondary" className="bg-blue-100 text-blue-700">채용 권장</Badge>
+              <Badge variant="secondary" className="bg-orange-100/30 text-orange-700">채용 권장</Badge>
             </div>
           </CardContent>
         </Card>

@@ -52,19 +52,19 @@ export default function ConsultantDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950 transition-colors duration-200">
       {/* 헤더 */}
-      <header className="bg-white dark:bg-slate-900 border-b dark:border-slate-800 sticky top-0 z-10">
+      <header className="bg-white dark:bg-stone-900 border-b dark:border-stone-800 sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-indigo-600" />
-            <span className="font-bold text-lg dark:text-slate-100">자문사 파트너 센터</span>
+            <ShieldCheck className="w-6 h-6 text-primary" />
+            <span className="font-bold text-lg dark:text-stone-100">자문사 파트너 센터</span>
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-full">
-              <Briefcase className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-orange-50/30 dark:bg-stone-900/20 rounded-full">
+              <Briefcase className="w-4 h-4 text-primary dark:text-orange-400" />
+              <span className="text-sm font-medium text-orange-700 dark:text-orange-300">
                 {user?.department} | {user?.name} {user?.position}
               </span>
             </div>
@@ -74,7 +74,7 @@ export default function ConsultantDashboard() {
             </Button>
 
             <Button variant="ghost" size="icon" onClick={logout} title="로그아웃">
-              <LogOut className="w-5 h-5 text-slate-500" />
+              <LogOut className="w-5 h-5 text-stone-500" />
             </Button>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function ConsultantDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-8 lg:w-[1100px] bg-white dark:bg-slate-900 h-auto p-1">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-8 lg:w-[1100px] bg-white dark:bg-stone-900 h-auto p-1">
             <TabsTrigger value="dashboard" className="py-2">통합 대시보드</TabsTrigger>
             <TabsTrigger value="partner" className="py-2">파트너 관리</TabsTrigger>
             <TabsTrigger value="clients" className="py-2">고객사 현황</TabsTrigger>
@@ -111,7 +111,7 @@ export default function ConsultantDashboard() {
             <div className="flex justify-end mb-4">
               <Dialog open={isOnboardingOpen} onOpenChange={setIsOnboardingOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-indigo-600 hover:bg-indigo-700">
+                  <Button className="bg-primary hover:bg-orange-800">
                     <Plus className="w-4 h-4 mr-2" /> 신규 고객사 등록 (Onboarding)
                   </Button>
                 </DialogTrigger>
@@ -156,9 +156,9 @@ export default function ConsultantDashboard() {
 
           {/* 고객사 현황 탭 */}
           <TabsContent value="clients">
-            <Card className="border-none shadow-sm dark:bg-slate-900">
+            <Card className="border-none shadow-sm dark:bg-stone-900">
               <CardHeader>
-                <CardTitle className="dark:text-slate-100">고객사 리스크 모니터링</CardTitle>
+                <CardTitle className="dark:text-stone-100">고객사 리스크 모니터링</CardTitle>
                 <CardDescription>계약된 고객사의 노무 리스크 및 계약 상태를 관리합니다.</CardDescription>
               </CardHeader>
               <CardContent>

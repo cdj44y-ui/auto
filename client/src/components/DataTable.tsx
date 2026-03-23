@@ -49,17 +49,17 @@ export default function DataTable<T extends Record<string, any>>({
     <div className="space-y-4">
       {searchKeys.length > 0 && (
         <div className="relative w-full max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
           <Input placeholder="검색..." className="pl-10 h-11 text-base" value={search} onChange={(e) => { setSearch(e.target.value); setPage(0); }} />
         </div>
       )}
 
       <div className="border rounded-lg overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-stone-50">
             <tr>
               {columns.map(col => (
-                <th key={String(col.key)} className="text-left px-4 py-3 text-sm font-medium text-gray-600 cursor-pointer select-none hover:bg-gray-100"
+                <th key={String(col.key)} className="text-left px-4 py-3 text-sm font-medium text-stone-600 cursor-pointer select-none hover:bg-stone-100"
                   onClick={() => { if (sortKey === col.key) { setSortAsc(!sortAsc); } else { setSortKey(col.key); setSortAsc(true); } }}>
                   <span className="flex items-center gap-1">
                     {col.label}
@@ -71,13 +71,13 @@ export default function DataTable<T extends Record<string, any>>({
           </thead>
           <tbody>
             {paged.length === 0 && (
-              <tr><td colSpan={columns.length} className="text-center py-12 text-gray-400 text-base">{emptyMessage}</td></tr>
+              <tr><td colSpan={columns.length} className="text-center py-12 text-stone-400 text-base">{emptyMessage}</td></tr>
             )}
             {paged.map((row, i) => (
-              <tr key={i} className={`border-t hover:bg-blue-50 transition-colors ${onRowClick ? "cursor-pointer" : ""}`}
+              <tr key={i} className={`border-t hover:bg-orange-50/30 transition-colors ${onRowClick ? "cursor-pointer" : ""}`}
                 onClick={() => onRowClick?.(row)}>
                 {columns.map(col => (
-                  <td key={String(col.key)} className="px-4 py-3 text-base text-gray-900">
+                  <td key={String(col.key)} className="px-4 py-3 text-base text-stone-900">
                     {col.render ? col.render(row[col.key], row) : String(row[col.key] ?? "-")}
                   </td>
                 ))}
@@ -89,10 +89,10 @@ export default function DataTable<T extends Record<string, any>>({
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">총 {sorted.length}건 중 {page * pageSize + 1}~{Math.min((page + 1) * pageSize, sorted.length)}건</p>
+          <p className="text-sm text-stone-500">총 {sorted.length}건 중 {page * pageSize + 1}~{Math.min((page + 1) * pageSize, sorted.length)}건</p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setPage(page - 1)}><ChevronLeft className="h-4 w-4" /></Button>
-            <span className="flex items-center text-sm text-gray-600 px-2">{page + 1} / {totalPages}</span>
+            <span className="flex items-center text-sm text-stone-600 px-2">{page + 1} / {totalPages}</span>
             <Button variant="outline" size="sm" disabled={page >= totalPages - 1} onClick={() => setPage(page + 1)}><ChevronRight className="h-4 w-4" /></Button>
           </div>
         </div>

@@ -60,7 +60,7 @@ const statusLabels: Record<string, string> = {
   scheduled: "예정", in_progress: "진행중", completed: "완료", cancelled: "취소", rescheduled: "재조정"
 };
 const statusColors: Record<string, string> = {
-  scheduled: "bg-blue-100 text-blue-800", in_progress: "bg-yellow-100 text-yellow-800",
+  scheduled: "bg-orange-100/30 text-orange-800", in_progress: "bg-yellow-100 text-yellow-800",
   completed: "bg-green-100 text-green-800", cancelled: "bg-red-100 text-red-800", rescheduled: "bg-purple-100 text-purple-800"
 };
 

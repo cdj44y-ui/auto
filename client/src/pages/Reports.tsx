@@ -63,7 +63,7 @@ export default function Reports() {
               <SelectItem value="this_year">올해</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" className="rounded-xl bg-white border-none shadow-sm hover:bg-gray-50">
+          <Button variant="outline" className="rounded-xl bg-white border-none shadow-sm hover:bg-stone-50">
             <Share2 className="w-4 h-4 mr-2" /> 공유
           </Button>
           <Button className="rounded-xl shadow-lg shadow-primary/20">

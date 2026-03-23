@@ -70,7 +70,7 @@ export default function ContractSigning() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 py-8 px-4">
+    <div className="min-h-screen bg-stone-100 dark:bg-stone-950 py-8 px-4">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <Button variant="ghost" onClick={() => setLocation("/employee-dashboard")}>
@@ -91,7 +91,7 @@ export default function ContractSigning() {
           )}
         </div>
 
-        <Card className="sticky bottom-4 z-50 shadow-xl border-t-4 border-indigo-500">
+        <Card className="sticky bottom-4 z-50 shadow-xl border-t-4 border-primary">
           <CardContent className="p-4 flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
               {signature 
@@ -102,7 +102,7 @@ export default function ContractSigning() {
               {!signature ? (
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-indigo-600 hover:bg-indigo-700">
+                    <Button className="bg-primary hover:bg-orange-800">
                       <PenTool className="w-4 h-4 mr-2" /> 서명하기
                     </Button>
                   </DialogTrigger>

@@ -72,9 +72,9 @@ export default function IpAccessManager() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border">
+          <div className="flex items-center justify-between p-4 bg-stone-50 rounded-lg border">
             <div className="flex items-center gap-3">
-              <Monitor className="h-5 w-5 text-slate-500" />
+              <Monitor className="h-5 w-5 text-stone-500" />
               <div>
                 <p className="text-sm font-medium">현재 접속 IP</p>
                 <p className="text-lg font-bold text-primary">{currentIp}</p>

@@ -51,7 +51,7 @@ export default function InsuranceRateManager() {
   };
 
   return (
-    <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
+    <Card className="border-none shadow-sm bg-white dark:bg-stone-900">
       <CardHeader>
         <div className="flex justify-between items-center">
           <div>
@@ -84,7 +84,7 @@ export default function InsuranceRateManager() {
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-stone-50 dark:bg-stone-800 rounded-lg">
               <div className="space-y-0.5">
                 <Label className="text-base">국민연금</Label>
                 <p className="text-xs text-muted-foreground">근로자 부담분 (총 9%)</p>
@@ -100,7 +100,7 @@ export default function InsuranceRateManager() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-stone-50 dark:bg-stone-800 rounded-lg">
               <div className="space-y-0.5">
                 <Label className="text-base">건강보험</Label>
                 <p className="text-xs text-muted-foreground">근로자 부담분 (총 7.09%)</p>
@@ -118,7 +118,7 @@ export default function InsuranceRateManager() {
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-stone-50 dark:bg-stone-800 rounded-lg">
               <div className="space-y-0.5">
                 <Label className="text-base">장기요양보험</Label>
                 <p className="text-xs text-muted-foreground">건강보험료 대비 비율</p>
@@ -134,7 +134,7 @@ export default function InsuranceRateManager() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-stone-50 dark:bg-stone-800 rounded-lg">
               <div className="space-y-0.5">
                 <Label className="text-base">고용보험</Label>
                 <p className="text-xs text-muted-foreground">실업급여 근로자 부담분</p>
@@ -166,7 +166,7 @@ export default function InsuranceRateManager() {
         </div>
 
         <div className="mt-6 flex justify-end">
-          <Button onClick={handleSave} className="bg-indigo-600 hover:bg-indigo-700">
+          <Button onClick={handleSave} className="bg-primary hover:bg-orange-800">
             <Save className="w-4 h-4 mr-2" /> 설정 저장하기
           </Button>
         </div>

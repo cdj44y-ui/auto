@@ -31,7 +31,7 @@ export default function SignaturePad({ onSave }: SignaturePadProps) {
 
   return (
     <div className="flex flex-col gap-4 w-full max-w-md mx-auto">
-      <div className="border-2 border-dashed border-slate-300 rounded-lg bg-white overflow-hidden relative">
+      <div className="border-2 border-dashed border-stone-300 rounded-lg bg-white overflow-hidden relative">
         <SignatureCanvas
           ref={sigCanvas}
           penColor="black"
@@ -41,7 +41,7 @@ export default function SignaturePad({ onSave }: SignaturePadProps) {
           onEnd={handleEnd}
         />
         {isEmpty && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-400">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-stone-400">
             여기에 서명하세요
           </div>
         )}
@@ -51,7 +51,7 @@ export default function SignaturePad({ onSave }: SignaturePadProps) {
         <Button variant="outline" onClick={clear} size="sm">
           <Eraser className="w-4 h-4 mr-2" /> 지우기
         </Button>
-        <Button onClick={save} disabled={isEmpty} size="sm" className="bg-indigo-600 hover:bg-indigo-700">
+        <Button onClick={save} disabled={isEmpty} size="sm" className="bg-primary hover:bg-orange-800">
           <Check className="w-4 h-4 mr-2" /> 서명 완료
         </Button>
       </div>

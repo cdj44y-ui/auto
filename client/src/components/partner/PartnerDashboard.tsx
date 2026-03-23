@@ -78,11 +78,11 @@ export default function PartnerDashboard() {
       case "active":
         return <Badge className="bg-green-500 hover:bg-green-600"><CheckCircle2 className="w-3 h-3 mr-1" /> 활성</Badge>;
       case "trial":
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200"><Clock className="w-3 h-3 mr-1" /> 체험판</Badge>;
+        return <Badge variant="secondary" className="bg-orange-100/30 text-orange-800 hover:bg-stone-200"><Clock className="w-3 h-3 mr-1" /> 체험판</Badge>;
       case "expired":
         return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" /> 만료됨</Badge>;
       case "suspended":
-        return <Badge variant="outline" className="text-gray-500">정지됨</Badge>;
+        return <Badge variant="outline" className="text-stone-500">정지됨</Badge>;
     }
   };
 
@@ -91,9 +91,9 @@ export default function PartnerDashboard() {
       case "premium":
         return <Badge variant="outline" className="border-purple-500 text-purple-600">Premium</Badge>;
       case "standard":
-        return <Badge variant="outline" className="border-blue-500 text-blue-600">Standard</Badge>;
+        return <Badge variant="outline" className="border-primary text-primary">Standard</Badge>;
       case "basic":
-        return <Badge variant="outline" className="border-gray-400 text-gray-600">Basic</Badge>;
+        return <Badge variant="outline" className="border-stone-400 text-stone-600">Basic</Badge>;
     }
   };
 
@@ -139,7 +139,7 @@ export default function PartnerDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">총 관리 직원</CardTitle>
-            <Users className="h-4 w-4 text-blue-500" />
+            <Users className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">

@@ -47,7 +47,7 @@ export default function AttendanceCorrection() {
   };
 
   return (
-    <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
+    <Card className="border-none shadow-sm bg-white dark:bg-stone-900">
       <CardHeader>
         <div className="flex justify-between items-center">
           <div>
@@ -65,7 +65,7 @@ export default function AttendanceCorrection() {
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow className="bg-slate-50 dark:bg-slate-800">
+            <TableRow className="bg-stone-50 dark:bg-stone-800">
               <TableHead>이름</TableHead>
               <TableHead>날짜</TableHead>
               <TableHead>출근시간</TableHead>
@@ -86,14 +86,14 @@ export default function AttendanceCorrection() {
                   {record.status === "normal" && <Badge variant="outline" className="text-green-600 border-green-200">정상</Badge>}
                   {record.status === "late" && <Badge variant="outline" className="text-orange-600 border-orange-200">지각</Badge>}
                   {record.status === "missing_out" && <Badge variant="destructive">퇴근미체크</Badge>}
-                  {record.status === "corrected" && <Badge variant="secondary" className="bg-blue-100 text-blue-700">수정됨</Badge>}
+                  {record.status === "corrected" && <Badge variant="secondary" className="bg-orange-100/30 text-orange-700">수정됨</Badge>}
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">
                   {record.note || "-"}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button size="sm" variant="ghost" onClick={() => handleEditClick(record)}>
-                    <Edit2 className="w-4 h-4 text-slate-500" />
+                    <Edit2 className="w-4 h-4 text-stone-500" />
                   </Button>
                 </TableCell>
               </TableRow>
@@ -161,7 +161,7 @@ export default function AttendanceCorrection() {
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>취소</Button>
-              <Button onClick={handleSave} className="bg-indigo-600 hover:bg-indigo-700">
+              <Button onClick={handleSave} className="bg-primary hover:bg-orange-800">
                 <Save className="w-4 h-4 mr-2" /> 수정사항 저장
               </Button>
             </DialogFooter>

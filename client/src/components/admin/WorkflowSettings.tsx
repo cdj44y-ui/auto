@@ -107,19 +107,19 @@ export function WorkflowSettings() {
 
   return (
     <div className="space-y-6">
-      <Card className="border-t-4 border-t-indigo-500">
+      <Card className="border-t-4 border-t-primary">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <GitMerge className="h-5 w-5 text-indigo-600" />
+                <GitMerge className="h-5 w-5 text-primary" />
                 지능형 결재 워크플로우 (Intelligent Workflow)
               </CardTitle>
               <CardDescription>
                 조건에 따라 결재 라인이 자동으로 변경되는 규칙을 설정합니다.
               </CardDescription>
             </div>
-            <Button className="bg-indigo-600 hover:bg-indigo-700">
+            <Button className="bg-primary hover:bg-orange-800">
               <Plus className="h-4 w-4 mr-2" /> 새 규칙 추가
             </Button>
           </div>
@@ -130,17 +130,17 @@ export function WorkflowSettings() {
               <div key={rule.id} className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-full ${rule.isActive ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-400'}`}>
+                    <div className={`p-2 rounded-full ${rule.isActive ? 'bg-orange-100/30 text-primary' : 'bg-stone-100 text-stone-400'}`}>
                       <GitMerge className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-900">{rule.name}</h3>
-                      <p className="text-sm text-slate-500">{getConditionText(rule)}</p>
+                      <h3 className="font-semibold text-stone-900">{rule.name}</h3>
+                      <p className="text-sm text-stone-500">{getConditionText(rule)}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                      <Label htmlFor={`switch-${rule.id}`} className="text-sm text-slate-600">
+                      <Label htmlFor={`switch-${rule.id}`} className="text-sm text-stone-600">
                         {rule.isActive ? '사용 중' : '사용 안함'}
                       </Label>
                       <Switch 
@@ -149,7 +149,7 @@ export function WorkflowSettings() {
                         onCheckedChange={() => handleToggleRule(rule.id, rule.isActive)}
                       />
                     </div>
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-500">
+                    <Button variant="ghost" size="icon" className="text-stone-400 hover:text-red-500">
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -158,23 +158,23 @@ export function WorkflowSettings() {
                 <Separator className="my-3" />
                 
                 <div className="flex items-center gap-2 overflow-x-auto py-2">
-                  <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200 px-3 py-1">
+                  <Badge variant="outline" className="bg-stone-50 text-stone-600 border-stone-200 px-3 py-1">
                     신청자
                   </Badge>
                   
                   {rule.steps.map((step, index) => (
                     <React.Fragment key={step.id}>
-                      <div className="h-px w-8 bg-slate-300 relative">
-                        <div className="absolute right-0 -top-1 w-2 h-2 border-t border-r border-slate-300 rotate-45"></div>
+                      <div className="h-px w-8 bg-stone-300 relative">
+                        <div className="absolute right-0 -top-1 w-2 h-2 border-t border-r border-stone-300 rotate-45"></div>
                       </div>
-                      <Badge className="bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 px-3 py-1">
+                      <Badge className="bg-orange-50/30 text-orange-700 border-orange-200/30 hover:bg-orange-100/30 px-3 py-1">
                         {index + 1}. {step.label}
                       </Badge>
                     </React.Fragment>
                   ))}
                   
-                  <div className="h-px w-8 bg-slate-300 relative">
-                    <div className="absolute right-0 -top-1 w-2 h-2 border-t border-r border-slate-300 rotate-45"></div>
+                  <div className="h-px w-8 bg-stone-300 relative">
+                    <div className="absolute right-0 -top-1 w-2 h-2 border-t border-r border-stone-300 rotate-45"></div>
                   </div>
                   <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 px-3 py-1 flex items-center gap-1">
                     <CheckCircle2 className="h-3 w-3" /> 최종 승인
@@ -198,24 +198,24 @@ export function WorkflowSettings() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 border rounded-md bg-slate-50">
+            <div className="flex items-center justify-between p-3 border rounded-md bg-stone-50">
               <div>
                 <h4 className="font-medium text-sm">잔여 연차 초과 신청</h4>
-                <p className="text-xs text-slate-500">보유한 연차 일수보다 많은 기간을 신청할 경우</p>
+                <p className="text-xs text-stone-500">보유한 연차 일수보다 많은 기간을 신청할 경우</p>
               </div>
               <Switch defaultChecked />
             </div>
-            <div className="flex items-center justify-between p-3 border rounded-md bg-slate-50">
+            <div className="flex items-center justify-between p-3 border rounded-md bg-stone-50">
               <div>
                 <h4 className="font-medium text-sm">과거 날짜 신청 제한</h4>
-                <p className="text-xs text-slate-500">이미 지난 날짜에 대해 휴가/근태 신청 시 (소명 신청 제외)</p>
+                <p className="text-xs text-stone-500">이미 지난 날짜에 대해 휴가/근태 신청 시 (소명 신청 제외)</p>
               </div>
               <Switch defaultChecked />
             </div>
-            <div className="flex items-center justify-between p-3 border rounded-md bg-slate-50">
+            <div className="flex items-center justify-between p-3 border rounded-md bg-stone-50">
               <div>
                 <h4 className="font-medium text-sm">중복 일정 차단</h4>
-                <p className="text-xs text-slate-500">이미 승인된 휴가/출장 기간과 겹치는 신청 시</p>
+                <p className="text-xs text-stone-500">이미 승인된 휴가/출장 기간과 겹치는 신청 시</p>
               </div>
               <Switch defaultChecked />
             </div>

@@ -97,10 +97,10 @@ export default function FlexibleWorkPolicyManager() {
 
   const getPolicyIcon = (type: FlexibleWorkType) => {
     switch (type) {
-      case FlexibleWorkType.SELECTIVE_WORKING_HOURS: return <Clock className="w-5 h-5 text-blue-500" />;
+      case FlexibleWorkType.SELECTIVE_WORKING_HOURS: return <Clock className="w-5 h-5 text-orange-500" />;
       case FlexibleWorkType.FLEXIBLE_WORKING_HOURS: return <Calendar className="w-5 h-5 text-green-500" />;
       case FlexibleWorkType.STAGGERED_COMMUTE: return <Users className="w-5 h-5 text-purple-500" />;
-      default: return <FileText className="w-5 h-5 text-slate-500" />;
+      default: return <FileText className="w-5 h-5 text-stone-500" />;
     }
   };
 
@@ -108,12 +108,12 @@ export default function FlexibleWorkPolicyManager() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight dark:text-slate-100">유연근무제 정책 관리</h2>
+          <h2 className="text-2xl font-bold tracking-tight dark:text-stone-100">유연근무제 정책 관리</h2>
           <p className="text-muted-foreground">회사별 유연근무제 유형 및 운영 규칙을 설정합니다.</p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-indigo-600 hover:bg-indigo-700">
+            <Button className="bg-primary hover:bg-orange-800">
               <Plus className="w-4 h-4 mr-2" /> 새 정책 만들기
             </Button>
           </DialogTrigger>
@@ -146,8 +146,8 @@ export default function FlexibleWorkPolicyManager() {
                 <Label>적용 대상 부서</Label>
                 <div className="flex gap-2">
                   <Badge variant="secondary" className="cursor-pointer">전사 공통</Badge>
-                  <Badge variant="outline" className="cursor-pointer hover:bg-slate-100">R&D 센터</Badge>
-                  <Badge variant="outline" className="cursor-pointer hover:bg-slate-100">영업본부</Badge>
+                  <Badge variant="outline" className="cursor-pointer hover:bg-stone-100">R&D 센터</Badge>
+                  <Badge variant="outline" className="cursor-pointer hover:bg-stone-100">영업본부</Badge>
                 </div>
               </div>
 
@@ -162,7 +162,7 @@ export default function FlexibleWorkPolicyManager() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-4 border rounded-lg bg-slate-50 dark:bg-slate-900">
+              <div className="flex items-center justify-between p-4 border rounded-lg bg-stone-50 dark:bg-stone-900">
                 <div className="space-y-0.5">
                   <Label className="text-base">근로자대표 서면합의 필요</Label>
                   <p className="text-sm text-muted-foreground">선택적/탄력적 근로시간제는 서면합의가 필수입니다.</p>
@@ -183,15 +183,15 @@ export default function FlexibleWorkPolicyManager() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {policies.map((policy) => (
-          <Card key={policy.policy_id} className="hover:border-indigo-500 transition-colors cursor-pointer">
+          <Card key={policy.policy_id} className="hover:border-primary transition-colors cursor-pointer">
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                  <div className="p-2 bg-stone-100 dark:bg-stone-800 rounded-lg">
                     {getPolicyIcon(policy.policy_type)}
                   </div>
                   <div>
-                    <CardTitle className="text-lg font-bold dark:text-slate-100">{policy.policy_name}</CardTitle>
+                    <CardTitle className="text-lg font-bold dark:text-stone-100">{policy.policy_name}</CardTitle>
                     <CardDescription>{getPolicyTypeName(policy.policy_type)}</CardDescription>
                   </div>
                 </div>
@@ -205,13 +205,13 @@ export default function FlexibleWorkPolicyManager() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-muted-foreground mb-1">운영 기간</p>
-                    <p className="font-medium dark:text-slate-200">
+                    <p className="font-medium dark:text-stone-200">
                       {policy.effective_start_date} ~ {policy.effective_end_date}
                     </p>
                   </div>
                   <div>
                     <p className="text-muted-foreground mb-1">적용 대상</p>
-                    <p className="font-medium dark:text-slate-200">
+                    <p className="font-medium dark:text-stone-200">
                       {policy.eligibility_criteria.eligible_departments?.join(", ") || "전사"}
                       {policy.eligibility_criteria.min_tenure_months ? ` (근속 ${policy.eligibility_criteria.min_tenure_months}개월↑)` : ""}
                     </p>
@@ -219,11 +219,11 @@ export default function FlexibleWorkPolicyManager() {
                 </div>
 
                 {policy.policy_type === FlexibleWorkType.STAGGERED_COMMUTE && (
-                  <div className="bg-slate-50 dark:bg-slate-900 p-3 rounded-md">
+                  <div className="bg-stone-50 dark:bg-stone-900 p-3 rounded-md">
                     <p className="text-xs font-semibold text-muted-foreground mb-2">운영 근무조</p>
                     <div className="flex flex-wrap gap-2">
                       {policy.legal_requirements.staggered?.shift_patterns.map(shift => (
-                        <Badge key={shift.shift_id} variant="outline" className="bg-white dark:bg-slate-800">
+                        <Badge key={shift.shift_id} variant="outline" className="bg-white dark:bg-stone-800">
                           {shift.shift_name}
                         </Badge>
                       ))}
@@ -232,23 +232,23 @@ export default function FlexibleWorkPolicyManager() {
                 )}
 
                 {policy.policy_type === FlexibleWorkType.SELECTIVE_WORKING_HOURS && (
-                  <div className="bg-slate-50 dark:bg-slate-900 p-3 rounded-md">
+                  <div className="bg-stone-50 dark:bg-stone-900 p-3 rounded-md">
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-muted-foreground">의무 근로시간(Core Time)</span>
-                      <span className="font-medium dark:text-slate-200">
+                      <span className="font-medium dark:text-stone-200">
                         {policy.legal_requirements.selective?.core_time_start} ~ {policy.legal_requirements.selective?.core_time_end}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">선택 가능시간</span>
-                      <span className="font-medium dark:text-slate-200">
+                      <span className="font-medium dark:text-stone-200">
                         {policy.legal_requirements.selective?.flexible_time_start} ~ {policy.legal_requirements.selective?.flexible_time_end}
                       </span>
                     </div>
                   </div>
                 )}
 
-                <div className="flex items-center gap-2 pt-2 border-t dark:border-slate-800">
+                <div className="flex items-center gap-2 pt-2 border-t dark:border-stone-800">
                   <CheckCircle2 className="w-4 h-4 text-green-500" />
                   <span className="text-xs text-muted-foreground">
                     {policy.legal_requirements.selective?.requires_labor_agreement || policy.legal_requirements.flexible?.requires_labor_agreement 

@@ -90,7 +90,7 @@ export default function DeductionDetailPopup({ workerName, totalSalary, deductio
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-6 text-xs text-muted-foreground hover:text-indigo-600">
+        <Button variant="ghost" size="sm" className="h-6 text-xs text-muted-foreground hover:text-primary">
           <Info className="w-3 h-3 mr-1" /> 공제산출근거
         </Button>
       </DialogTrigger>
@@ -104,7 +104,7 @@ export default function DeductionDetailPopup({ workerName, totalSalary, deductio
         
         <Table>
           <TableHeader>
-            <TableRow className="bg-slate-50 dark:bg-slate-800">
+            <TableRow className="bg-stone-50 dark:bg-stone-800">
               <TableHead>항목</TableHead>
               <TableHead className="text-right">공제액</TableHead>
               <TableHead className="text-right">적용요율</TableHead>
@@ -120,7 +120,7 @@ export default function DeductionDetailPopup({ workerName, totalSalary, deductio
                 <TableCell className="text-xs text-muted-foreground">{item.formula}</TableCell>
               </TableRow>
             ))}
-            <TableRow className="border-t-2 border-slate-200 dark:border-slate-700 bg-slate-50/50">
+            <TableRow className="border-t-2 border-stone-200 dark:border-stone-700 bg-stone-50/50">
               <TableCell colSpan={1} className="font-bold">공제 계</TableCell>
               <TableCell className="text-right font-bold text-red-600 text-lg">
                 {totalDeduction.toLocaleString()}원

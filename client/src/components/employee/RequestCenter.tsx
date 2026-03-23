@@ -55,7 +55,7 @@ export default function RequestCenter() {
       case "rejected":
         return <Badge className="bg-red-100 text-red-700 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400">반려됨</Badge>;
       default:
-        return <Badge variant="outline" className="text-slate-500 border-slate-200 dark:text-slate-400 dark:border-slate-700">결재 대기</Badge>;
+        return <Badge variant="outline" className="text-stone-500 border-stone-200 dark:text-stone-400 dark:border-stone-700">결재 대기</Badge>;
     }
   };
 
@@ -63,17 +63,17 @@ export default function RequestCenter() {
     switch (type) {
       case "vacation": return <Calendar className="w-5 h-5 text-green-600" />;
       case "overtime": return <Clock className="w-5 h-5 text-orange-600" />;
-      case "business_trip": return <Plane className="w-5 h-5 text-blue-600" />;
-      default: return <FileText className="w-5 h-5 text-slate-600" />;
+      case "business_trip": return <Plane className="w-5 h-5 text-primary" />;
+      default: return <FileText className="w-5 h-5 text-stone-600" />;
     }
   };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* 신청 폼 */}
-      <Card className="lg:col-span-1 border-none shadow-sm dark:bg-slate-900 dark:border dark:border-slate-800">
+      <Card className="lg:col-span-1 border-none shadow-sm dark:bg-stone-900 dark:border dark:border-stone-800">
         <CardHeader>
-          <CardTitle className="dark:text-slate-100">새 근태 신청</CardTitle>
+          <CardTitle className="dark:text-stone-100">새 근태 신청</CardTitle>
           <CardDescription>연차, 출장, 시간외 근무 등을 신청합니다.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -119,7 +119,7 @@ export default function RequestCenter() {
 
             <div className="pt-2">
               <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700" 
+                className="w-full bg-primary hover:bg-orange-800" 
                 onClick={() => {
                   if (requestType === "overtime" && currentWeeklyHours >= 50) {
                     toast.error("주 52시간 초과 위험으로 인해 연장근무 신청이 제한됩니다. 관리자에게 문의하세요.");
@@ -145,29 +145,29 @@ export default function RequestCenter() {
       </Card>
 
       {/* 신청 내역 리스트 */}
-      <Card className="lg:col-span-2 border-none shadow-sm dark:bg-slate-900 dark:border dark:border-slate-800">
+      <Card className="lg:col-span-2 border-none shadow-sm dark:bg-stone-900 dark:border dark:border-stone-800">
         <CardHeader>
-          <CardTitle className="dark:text-slate-100">나의 신청 현황</CardTitle>
+          <CardTitle className="dark:text-stone-100">나의 신청 현황</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {requests.map((req) => (
-              <div key={req.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg bg-white dark:bg-slate-950 dark:border-slate-800 gap-4">
+              <div key={req.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg bg-white dark:bg-stone-950 dark:border-stone-800 gap-4">
                 <div className="flex items-start gap-4">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
                     req.type === 'vacation' ? 'bg-green-100 dark:bg-green-900/30' :
                     req.type === 'overtime' ? 'bg-orange-100 dark:bg-orange-900/30' :
-                    'bg-blue-100 dark:bg-blue-900/30'
+                    'bg-orange-100/30 dark:bg-stone-800/30'
                   }`}>
                     {getIcon(req.type)}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <p className="font-bold dark:text-slate-200">{req.title}</p>
+                      <p className="font-bold dark:text-stone-200">{req.title}</p>
                       {getStatusBadge(req.status)}
                     </div>
                     <p className="text-sm text-muted-foreground mb-1">{req.date}</p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 px-2 py-1 rounded inline-block">
+                    <p className="text-sm text-stone-600 dark:text-stone-400 bg-stone-50 dark:bg-stone-900 px-2 py-1 rounded inline-block">
                       사유: {req.reason}
                     </p>
                   </div>

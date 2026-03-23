@@ -34,7 +34,7 @@ export default function PayrollSettings() {
       <Card className="border-none shadow-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-blue-600" />
+            <Building2 className="w-5 h-5 text-primary" />
             사업장 기본 설정
           </CardTitle>
         </CardHeader>
@@ -47,7 +47,7 @@ export default function PayrollSettings() {
             />
           </div>
           
-          <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+          <div className="flex items-center justify-between p-4 bg-stone-50 rounded-lg">
             <div className="space-y-1">
               <Label className="text-base">5인 미만 사업장</Label>
               <p className="text-xs text-muted-foreground">
@@ -73,7 +73,7 @@ export default function PayrollSettings() {
             </div>
           </div>
 
-          <Button onClick={handleSave} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+          <Button onClick={handleSave} className="w-full bg-primary hover:bg-orange-800 text-white">
             <Save className="w-4 h-4 mr-2" /> 설정 저장
           </Button>
         </CardContent>

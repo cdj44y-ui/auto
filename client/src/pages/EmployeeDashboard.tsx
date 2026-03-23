@@ -29,7 +29,7 @@ function EmployeeLayout({ children }: { children: React.ReactNode }) {
       <header className="hidden md:block bg-[var(--macos-card)]/80 backdrop-blur-md border-b border-black/5 dark:border-white/10 sticky top-0 z-50">
         <div className="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-[12px] flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-stone-700 rounded-[12px] flex items-center justify-center text-white font-bold shadow-lg shadow-stone-500/20">
               A
             </div>
             <span className="font-semibold text-xl tracking-tight text-[var(--macos-text-primary)]">AES</span>
@@ -50,7 +50,7 @@ function EmployeeLayout({ children }: { children: React.ReactNode }) {
                 <p className="font-semibold text-sm text-[var(--macos-text-primary)]">{user?.name}</p>
                 <p className="text-xs text-[var(--macos-text-secondary)]">{user?.department}</p>
               </div>
-              <Button variant="ghost" size="icon" onClick={logout} className="rounded-full hover:bg-red-50 text-slate-400 hover:text-red-500">
+              <Button variant="ghost" size="icon" onClick={logout} className="rounded-full hover:bg-red-50 text-stone-400 hover:text-red-500">
                 <LogOut className="w-5 h-5" />
               </Button>
             </div>
@@ -61,7 +61,7 @@ function EmployeeLayout({ children }: { children: React.ReactNode }) {
       {/* Mobile Header */}
       <header className="md:hidden flex items-center justify-between px-6 py-4 bg-[var(--macos-bg)] sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-[10px] flex items-center justify-center text-white font-bold shadow-md">
+          <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-stone-700 rounded-[10px] flex items-center justify-center text-white font-bold shadow-md">
             A
           </div>
           <span className="font-semibold text-lg text-[var(--macos-text-primary)]">AES</span>
@@ -85,7 +85,7 @@ function EmployeeLayout({ children }: { children: React.ReactNode }) {
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--macos-card)]/90 backdrop-blur-xl border-t border-black/5 dark:border-white/10 pb-safe z-50">
         <div className="flex justify-around items-center h-16 px-2">
-          <Button variant="ghost" className="flex flex-col items-center gap-1 h-auto py-2 text-[var(--macos-primary)]">
+          <Button variant="ghost" className="flex flex-col items-center gap-1 h-auto py-2 text-primary">
             <Clock className="w-6 h-6" />
             <span className="text-[10px] font-medium">근태</span>
           </Button>
@@ -200,7 +200,7 @@ export default function EmployeeDashboard() {
                 <Label className="text-sm font-medium text-[var(--macos-text-secondary)]">사유</Label>
                 <Textarea 
                   placeholder="상세 사유를 입력하세요" 
-                  className="bg-[#F5F5F7] dark:bg-[#2C2C2E] border-none rounded-[12px] p-4 min-h-[120px] resize-none focus:ring-2 focus:ring-[var(--macos-primary)]"
+                  className="bg-[#F5F5F7] dark:bg-[#2C2C2E] border-none rounded-[12px] p-4 min-h-[120px] resize-none focus:ring-2 focus:ring-primary"
                   value={requestReason}
                   onChange={(e) => setRequestReason(e.target.value)}
                 />
@@ -235,7 +235,7 @@ export default function EmployeeDashboard() {
                 {currentTime.toLocaleTimeString('ko-KR', { hour12: false, hour: '2-digit', minute: '2-digit' })}
               </h2>
               <div className="flex items-center gap-2 justify-center md:justify-start">
-                <span className={`inline-block w-2.5 h-2.5 rounded-full ${workLog.status === 'working' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-slate-300'}`}></span>
+                <span className={`inline-block w-2.5 h-2.5 rounded-full ${workLog.status === 'working' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-stone-300'}`}></span>
                 <span className="font-medium text-[var(--macos-text-secondary)]">
                   {workLog.status === 'working' ? '업무 중' : '업무 종료'}
                 </span>
@@ -247,7 +247,7 @@ export default function EmployeeDashboard() {
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full md:w-auto">
                   <Button 
                     onClick={handleClockIn}
-                    className="w-full md:w-40 h-14 rounded-[16px] bg-[var(--macos-primary)] hover:bg-blue-700 text-white text-lg font-semibold shadow-lg shadow-blue-500/20"
+                    className="w-full md:w-40 h-14 rounded-[16px] bg-primary hover:bg-orange-800 text-white text-lg font-semibold shadow-lg shadow-stone-500/20"
                   >
                     출근하기
                   </Button>
@@ -257,7 +257,7 @@ export default function EmployeeDashboard() {
                   <Button 
                     onClick={handleClockOut}
                     disabled={!!workLog.clockOut}
-                    className="w-full md:w-40 h-14 rounded-[16px] bg-slate-100 hover:bg-slate-200 text-slate-900 text-lg font-semibold"
+                    className="w-full md:w-40 h-14 rounded-[16px] bg-stone-100 hover:bg-stone-200 text-stone-900 text-lg font-semibold"
                   >
                     {workLog.clockOut ? "퇴근완료" : "퇴근하기"}
                   </Button>
@@ -287,17 +287,17 @@ export default function EmployeeDashboard() {
             <Card className="macos-card">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-semibold">최근 신청 내역</CardTitle>
-              <Button variant="ghost" className="text-[var(--macos-primary)] hover:bg-blue-50">전체보기</Button>
+              <Button variant="ghost" className="text-primary hover:bg-orange-50/30">전체보기</Button>
             </CardHeader>
             <CardContent className="space-y-4">
               {[
-                { type: "연차", date: "2026.01.20", status: "승인완료", icon: Plane, color: "bg-blue-100 text-blue-600" },
+                { type: "연차", date: "2026.01.20", status: "승인완료", icon: Plane, color: "bg-orange-100/30 text-primary" },
                 { type: "반차", date: "2026.01.15", status: "대기중", icon: Coffee, color: "bg-orange-100 text-orange-600" },
                 { type: "연장", date: "2026.01.10", status: "반려", icon: Briefcase, color: "bg-red-100 text-red-600" },
               ].map((item, idx) => (
                 <motion.div 
                   key={idx} 
-                  className="flex items-center justify-between p-4 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-[16px] hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                  className="flex items-center justify-between p-4 bg-[#F5F5F7] dark:bg-[#2C2C2E] rounded-[16px] hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors cursor-pointer"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >

@@ -65,7 +65,7 @@ export default function InsuranceReportingCenter() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending': return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">접수대기</Badge>;
-      case 'processing': return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">처리중</Badge>;
+      case 'processing': return <Badge variant="outline" className="bg-orange-50/30 text-orange-700 border-orange-200/30">처리중</Badge>;
       case 'completed': return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">신고완료</Badge>;
       case 'rejected': return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">신고반려</Badge>;
       default: return <Badge variant="outline">미정</Badge>;
@@ -107,7 +107,7 @@ export default function InsuranceReportingCenter() {
             <CardTitle className="text-sm font-medium">공단 전송 중</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold text-primary">
               {tasks.filter(t => t.status === 'processing').length}건
             </div>
           </CardContent>
@@ -209,7 +209,7 @@ export default function InsuranceReportingCenter() {
                             </Select>
                           </div>
 
-                          <div className="bg-slate-50 p-4 rounded-lg border text-sm space-y-2">
+                          <div className="bg-stone-50 p-4 rounded-lg border text-sm space-y-2">
                             <p className="font-semibold flex items-center gap-2">
                               <FileText className="h-4 w-4" /> 자동 생성된 신고서 미리보기
                             </p>

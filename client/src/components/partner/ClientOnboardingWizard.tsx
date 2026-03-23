@@ -192,7 +192,7 @@ function Step2Subscription({ onNext, onBack, data, updateData }: WizardStepProps
 function Step3AdminAccount({ onNext, onBack, data, updateData }: WizardStepProps) {
   return (
     <div className="space-y-4">
-      <div className="bg-blue-50 p-4 rounded-md text-sm text-blue-800 mb-4">
+      <div className="bg-orange-50/30 p-4 rounded-md text-sm text-orange-800 mb-4">
         <p>고객사의 최초 최고관리자(Super Admin) 계정을 생성합니다. 이 계정으로 모든 설정이 가능합니다.</p>
       </div>
 
@@ -230,7 +230,7 @@ function Step3AdminAccount({ onNext, onBack, data, updateData }: WizardStepProps
 
       <div className="space-y-2">
         <Label htmlFor="temp_pw">임시 비밀번호</Label>
-        <Input id="temp_pw" value="Welcome123!" readOnly className="bg-gray-100" />
+        <Input id="temp_pw" value="Welcome123!" readOnly className="bg-stone-100" />
         <p className="text-xs text-muted-foreground">최초 로그인 시 비밀번호 변경이 요구됩니다.</p>
       </div>
 
@@ -258,7 +258,7 @@ function Step4Review({ onNext, onBack, data }: WizardStepProps) {
           </div>
           <div>
             <span className="text-muted-foreground">구독 플랜:</span>
-            <span className="font-medium ml-2 uppercase text-blue-600">{data.subscription_plan}</span>
+            <span className="font-medium ml-2 uppercase text-primary">{data.subscription_plan}</span>
           </div>
           <div>
             <span className="text-muted-foreground">관리자:</span>
@@ -327,9 +327,9 @@ export default function ClientOnboardingWizard({ onClose }: { onClose: () => voi
           {step === 4 && " 최종 확인"}
         </CardDescription>
         {/* Progress Bar */}
-        <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
+        <div className="w-full bg-stone-200 h-2 rounded-full mt-2">
           <div 
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+            className="bg-primary h-2 rounded-full transition-all duration-300" 
             style={{ width: `${(step / 4) * 100}%` }}
           />
         </div>

@@ -96,7 +96,7 @@ export default function ConsultantWorkerSettings({ companyId }: { companyId?: st
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* 좌측: 설정 입력 패널 */}
-        <Card className="border-t-4 border-t-blue-600 shadow-sm">
+        <Card className="border-t-4 border-t-primary shadow-sm">
           <CardHeader>
             <CardTitle>근로자 급여 및 근로시간 설정</CardTitle>
             <CardDescription>
@@ -131,7 +131,7 @@ export default function ConsultantWorkerSettings({ companyId }: { companyId?: st
               </div>
             </div>
 
-            <div className="space-y-4 border p-4 rounded-lg bg-slate-50 dark:bg-slate-900">
+            <div className="space-y-4 border p-4 rounded-lg bg-stone-50 dark:bg-stone-900">
               <h3 className="font-semibold flex items-center gap-2">
                 <Calculator className="w-4 h-4" /> 임금 총액 설정
               </h3>
@@ -157,13 +157,13 @@ export default function ConsultantWorkerSettings({ companyId }: { companyId?: st
                       onChange={(e) => setTotalMonthlySalary(Number(e.target.value))}
                       className="pl-8 font-bold text-lg"
                     />
-                    <span className="absolute left-3 top-2.5 text-slate-500">₩</span>
+                    <span className="absolute left-3 top-2.5 text-stone-500">₩</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4 border p-4 rounded-lg bg-slate-50 dark:bg-slate-900">
+            <div className="space-y-4 border p-4 rounded-lg bg-stone-50 dark:bg-stone-900">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Info className="w-4 h-4" /> 포괄임금 구성 (월 단위)
@@ -205,7 +205,7 @@ export default function ConsultantWorkerSettings({ companyId }: { companyId?: st
               </p>
             </div>
 
-            <Button className="w-full bg-indigo-600 hover:bg-indigo-700" onClick={calculateReverseSalary}>
+            <Button className="w-full bg-primary hover:bg-orange-800" onClick={calculateReverseSalary}>
               <Calculator className="w-4 h-4 mr-2" /> 급여 역산 시뮬레이션 실행
             </Button>
           </CardContent>
@@ -235,7 +235,7 @@ export default function ConsultantWorkerSettings({ companyId }: { companyId?: st
                         ? "최저임금법 위반 위험" 
                         : "최저임금법 준수"}
                     </h3>
-                    <p className="text-sm mt-1 text-slate-700 dark:text-slate-300">
+                    <p className="text-sm mt-1 text-stone-700 dark:text-stone-300">
                       산출된 통상시급: <strong>{calculationResult.baseHourlyRate.toLocaleString()}원</strong> 
                       (2025년 최저시급 {MINIMUM_WAGE_2025.toLocaleString()}원 {calculationResult.isMinimumWageViolation ? "미달" : "이상"})
                     </p>

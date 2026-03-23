@@ -134,11 +134,11 @@ export default function PayrollManager() {
       </div>
 
       {isSending && (
-        <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800">
+        <Card className="bg-orange-50/30 dark:bg-stone-800/30 border-orange-200/30 dark:border-stone-700">
           <CardContent className="py-4">
             <div className="flex justify-between text-sm mb-2">
-              <span className="font-medium text-blue-700 dark:text-blue-300">명세서 발송 진행 중...</span>
-              <span className="text-blue-600 dark:text-blue-400">{sentCount} / {payrollData.filter(p => !p.slipSent || p.status === 'sent').length}</span>
+              <span className="font-medium text-orange-700 dark:text-orange-300">명세서 발송 진행 중...</span>
+              <span className="text-primary dark:text-orange-400">{sentCount} / {payrollData.filter(p => !p.slipSent || p.status === 'sent').length}</span>
             </div>
             <Progress value={progress} className="h-2" />
           </CardContent>

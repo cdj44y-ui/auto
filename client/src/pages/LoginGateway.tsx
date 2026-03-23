@@ -20,7 +20,7 @@ export default function LoginGateway() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-stone-50 flex items-center justify-center p-4 relative overflow-hidden">
       {branding.loginBackgroundUrl && (
         <div className="absolute inset-0 z-0">
           <img 
@@ -41,7 +41,7 @@ export default function LoginGateway() {
               </div>
             </div>
           )}
-          <h1 className={`text-4xl font-bold tracking-tight ${branding.loginBackgroundUrl ? 'text-white drop-shadow-md' : 'text-slate-900'}`}>
+          <h1 className={`text-4xl font-bold tracking-tight ${branding.loginBackgroundUrl ? 'text-white drop-shadow-md' : 'text-stone-900'}`}>
             {branding.welcomeMessage}
           </h1>
           <p className={`text-lg ${branding.loginBackgroundUrl ? 'text-white/90 drop-shadow-sm' : 'text-muted-foreground'}`}>
@@ -51,10 +51,10 @@ export default function LoginGateway() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* 직원용 */}
-          <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-blue-500 group" onClick={() => handleRoleSelect("employee")}>
+          <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-primary group" onClick={() => handleRoleSelect("employee")}>
             <CardHeader className="text-center pb-2">
-              <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
-                <User className="w-8 h-8 text-blue-600 group-hover:text-white" />
+              <div className="mx-auto w-16 h-16 bg-orange-100/30 rounded-full flex items-center justify-center mb-4 group-hover:bg-primary transition-colors">
+                <User className="w-8 h-8 text-primary group-hover:text-white" />
               </div>
               <CardTitle>직원용</CardTitle>
               <CardDescription>일반 임직원 접속</CardDescription>
@@ -66,10 +66,10 @@ export default function LoginGateway() {
                 <li>전자 근로계약서 서명</li>
                 <li>연차 사용 내역 조회</li>
               </ul>
-              <Button className="w-full mt-6 bg-blue-600 hover:bg-blue-700">직원 로그인</Button>
+              <Button className="w-full mt-6 bg-primary hover:bg-orange-800">직원 로그인</Button>
               <Button 
                 variant="outline" 
-                className="w-full mt-2 border-blue-200 text-blue-700 hover:bg-blue-50"
+                className="w-full mt-2 border-orange-200/30 text-orange-700 hover:bg-orange-50/30"
                 onClick={(e) => { e.stopPropagation(); setLocation("/employee-signup"); }}
               >
                 신규 입사자 회원가입
@@ -98,10 +98,10 @@ export default function LoginGateway() {
           </Card>
 
           {/* 자문사용 */}
-          <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-indigo-500 group" onClick={() => handleRoleSelect("consultant")}>
+          <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-primary group" onClick={() => handleRoleSelect("consultant")}>
             <CardHeader className="text-center pb-2">
-              <div className="mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-600 transition-colors">
-                <Briefcase className="w-8 h-8 text-indigo-600 group-hover:text-white" />
+              <div className="mx-auto w-16 h-16 bg-orange-100/30 rounded-full flex items-center justify-center mb-4 group-hover:bg-primary transition-colors">
+                <Briefcase className="w-8 h-8 text-primary group-hover:text-white" />
               </div>
               <CardTitle>자문사용</CardTitle>
               <CardDescription>노무법인/세무사 접속</CardDescription>
@@ -113,7 +113,7 @@ export default function LoginGateway() {
                 <li>노무 리스크 모니터링</li>
                 <li>법정 의무 교육 관리</li>
               </ul>
-              <Button className="w-full mt-6 bg-indigo-600 hover:bg-indigo-700">자문사 로그인</Button>
+              <Button className="w-full mt-6 bg-primary hover:bg-orange-800">자문사 로그인</Button>
             </CardContent>
           </Card>
         </div>

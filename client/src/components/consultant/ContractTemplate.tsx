@@ -34,14 +34,14 @@ export default function ContractTemplate({
 
   return (
     <Card className="w-full max-w-[210mm] mx-auto bg-white shadow-lg print:shadow-none print:border-none">
-      <CardContent className="p-[20mm] space-y-8 font-serif text-[10.5pt] leading-[1.8] text-slate-900 tracking-tight">
+      <CardContent className="p-[20mm] space-y-8 font-serif text-[10.5pt] leading-[1.8] text-stone-900 tracking-tight">
         
         {/* 헤더 */}
         <div className="text-center space-y-4 mb-12">
           <h1 className="text-[24pt] font-bold tracking-[0.2em] border-b-[3px] border-black pb-4 inline-block">
             표준 근로계약서
           </h1>
-          <p className="text-[11pt] text-slate-600 font-medium">(포괄임금제 적용)</p>
+          <p className="text-[11pt] text-stone-600 font-medium">(포괄임금제 적용)</p>
         </div>
 
         {/* 서문 */}
@@ -84,44 +84,44 @@ export default function ContractTemplate({
             </p>
             
             {/* 임금 구성 테이블 (세분화 반영) */}
-            <table className="w-full border-collapse border border-slate-800 text-[10pt] mb-4">
+            <table className="w-full border-collapse border border-stone-800 text-[10pt] mb-4">
               <thead>
-                <tr className="bg-slate-50">
-                  <th className="border border-slate-400 p-2 w-1/3 font-bold">구분</th>
-                  <th className="border border-slate-400 p-2 w-1/3 font-bold">금액 (원)</th>
-                  <th className="border border-slate-400 p-2 w-1/3 font-bold">비고</th>
+                <tr className="bg-stone-50">
+                  <th className="border border-stone-400 p-2 w-1/3 font-bold">구분</th>
+                  <th className="border border-stone-400 p-2 w-1/3 font-bold">금액 (원)</th>
+                  <th className="border border-stone-400 p-2 w-1/3 font-bold">비고</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td className="border border-slate-400 p-2 text-center">기본급</td>
-                  <td className="border border-slate-400 p-2 text-right font-medium">{baseSalary.toLocaleString()}</td>
-                  <td className="border border-slate-400 p-2 text-center text-[9pt]">주 40시간분</td>
+                  <td className="border border-stone-400 p-2 text-center">기본급</td>
+                  <td className="border border-stone-400 p-2 text-right font-medium">{baseSalary.toLocaleString()}</td>
+                  <td className="border border-stone-400 p-2 text-center text-[9pt]">주 40시간분</td>
                 </tr>
                 <tr>
-                  <td className="border border-slate-400 p-2 text-center">고정 연장근로수당</td>
-                  <td className="border border-slate-400 p-2 text-right font-medium">{fixedOvertimeAllowance.toLocaleString()}</td>
-                  <td className="border border-slate-400 p-2 text-center text-[9pt]">연장근로 포함</td>
+                  <td className="border border-stone-400 p-2 text-center">고정 연장근로수당</td>
+                  <td className="border border-stone-400 p-2 text-right font-medium">{fixedOvertimeAllowance.toLocaleString()}</td>
+                  <td className="border border-stone-400 p-2 text-center text-[9pt]">연장근로 포함</td>
                 </tr>
                 <tr>
-                  <td className="border border-slate-400 p-2 text-center">고정 야간근로수당</td>
-                  <td className="border border-slate-400 p-2 text-right font-medium">{fixedNightAllowance.toLocaleString()}</td>
-                  <td className="border border-slate-400 p-2 text-center text-[9pt]">야간가산 포함</td>
+                  <td className="border border-stone-400 p-2 text-center">고정 야간근로수당</td>
+                  <td className="border border-stone-400 p-2 text-right font-medium">{fixedNightAllowance.toLocaleString()}</td>
+                  <td className="border border-stone-400 p-2 text-center text-[9pt]">야간가산 포함</td>
                 </tr>
                 <tr>
-                  <td className="border border-slate-400 p-2 text-center">고정 휴일근로수당</td>
-                  <td className="border border-slate-400 p-2 text-right font-medium">{fixedHolidayAllowance.toLocaleString()}</td>
-                  <td className="border border-slate-400 p-2 text-center text-[9pt]">휴일근로 포함</td>
+                  <td className="border border-stone-400 p-2 text-center">고정 휴일근로수당</td>
+                  <td className="border border-stone-400 p-2 text-right font-medium">{fixedHolidayAllowance.toLocaleString()}</td>
+                  <td className="border border-stone-400 p-2 text-center text-[9pt]">휴일근로 포함</td>
                 </tr>
                 <tr>
-                  <td className="border border-slate-400 p-2 text-center">식대 (비과세)</td>
-                  <td className="border border-slate-400 p-2 text-right font-medium">{mealAllowance.toLocaleString()}</td>
-                  <td className="border border-slate-400 p-2 text-center text-[9pt]">월 20만원 한도</td>
+                  <td className="border border-stone-400 p-2 text-center">식대 (비과세)</td>
+                  <td className="border border-stone-400 p-2 text-right font-medium">{mealAllowance.toLocaleString()}</td>
+                  <td className="border border-stone-400 p-2 text-center text-[9pt]">월 20만원 한도</td>
                 </tr>
-                <tr className="bg-slate-50 font-bold">
-                  <td className="border border-slate-400 p-2 text-center">월 지급총액</td>
-                  <td className="border border-slate-400 p-2 text-right text-black">{totalSalary.toLocaleString()}</td>
-                  <td className="border border-slate-400 p-2 text-center text-[9pt]">세전 금액</td>
+                <tr className="bg-stone-50 font-bold">
+                  <td className="border border-stone-400 p-2 text-center">월 지급총액</td>
+                  <td className="border border-stone-400 p-2 text-right text-black">{totalSalary.toLocaleString()}</td>
+                  <td className="border border-stone-400 p-2 text-center text-[9pt]">세전 금액</td>
                 </tr>
               </tbody>
             </table>
@@ -191,7 +191,7 @@ export default function ContractTemplate({
         </div>
 
         {/* 서명란 */}
-        <div className="mt-16 pt-8 border-t border-slate-300">
+        <div className="mt-16 pt-8 border-t border-stone-300">
           <div className="text-center mb-12">
             <p className="text-[14pt] font-bold tracking-wide">상기 계약사항으로 근로계약을 체결하며, 상호 확인한다.</p>
             <p className="mt-6 text-[12pt]">{formattedDate}</p>
@@ -199,12 +199,12 @@ export default function ContractTemplate({
 
           <div className="flex justify-between items-start px-8">
             <div className="space-y-3 w-1/2">
-              <p className="font-bold text-[12pt] mb-4 border-b border-slate-400 pb-2 inline-block">[사업주]</p>
+              <p className="font-bold text-[12pt] mb-4 border-b border-stone-400 pb-2 inline-block">[사업주]</p>
               <p>상 호 : {companyName}</p>
               <p>대 표 자 : {representative} (인)</p>
             </div>
             <div className="space-y-3 w-1/2">
-              <p className="font-bold text-[12pt] mb-4 border-b border-slate-400 pb-2 inline-block">[직 원]</p>
+              <p className="font-bold text-[12pt] mb-4 border-b border-stone-400 pb-2 inline-block">[직 원]</p>
               <p>성 명 : {employeeName} (인)</p>
               <p>생년월일 : _________________</p>
               <p>연 락 처 : _________________</p>

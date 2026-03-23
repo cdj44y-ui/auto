@@ -215,7 +215,7 @@ export default function EmployeeManagement() {
               </DialogHeader>
               
               <div className="space-y-4 py-4">
-                <div className="flex items-center justify-between p-4 border-2 border-dashed rounded-lg bg-slate-50 dark:bg-slate-900">
+                <div className="flex items-center justify-between p-4 border-2 border-dashed rounded-lg bg-stone-50 dark:bg-stone-900">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
                       <FileSpreadsheet className="w-6 h-6 text-green-600 dark:text-green-400" />

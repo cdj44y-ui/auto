@@ -70,12 +70,12 @@ const roleLabels: Record<string, string> = {
 };
 
 const roleBadgeColors: Record<string, string> = {
-  super_admin: "bg-indigo-400/20 text-indigo-200",
+  super_admin: "bg-orange-400/20 text-orange-200",
   consultant: "bg-sky-400/20 text-sky-200",
   company_admin: "bg-emerald-400/20 text-emerald-200",
   company_hr: "bg-amber-400/20 text-amber-200",
   company_finance: "bg-violet-400/20 text-violet-200",
-  employee: "bg-slate-400/20 text-slate-300",
+  employee: "bg-stone-400/20 text-stone-300",
 };
 
 export default function Layout({ children }: LayoutProps) {
@@ -88,9 +88,9 @@ export default function Layout({ children }: LayoutProps) {
   const filteredMenuItems = allMenuItems.filter(item => item.roles.includes(userRole));
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex">
+    <div className="min-h-screen bg-[#F5F0EB] flex">
       {/* ═══ P-2: Premium Dark Sidebar ═══ */}
-      <aside className="hidden md:flex w-[260px] flex-col bg-slate-900 fixed h-full z-30">
+      <aside className="hidden md:flex w-[260px] flex-col bg-stone-900 fixed h-full z-30">
         {/* Logo */}
         <div className="px-5 py-6 flex items-center gap-3">
           {branding.logoUrl ? (
@@ -98,7 +98,7 @@ export default function Layout({ children }: LayoutProps) {
               <img src={branding.logoUrl} alt="Logo" className="w-full h-full object-contain" />
             </div>
           ) : (
-            <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-base shadow-lg shadow-indigo-600/30">
+            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-base shadow-lg shadow-orange-600/30">
               {branding.companyName.charAt(0)}
             </div>
           )}
@@ -119,12 +119,12 @@ export default function Layout({ children }: LayoutProps) {
                       "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-150 group",
                       isActive
                         ? "bg-white/10 text-white"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
+                        : "text-stone-400 hover:text-stone-200 hover:bg-white/5"
                     )}
                   >
-                    <item.icon className={cn("w-[18px] h-[18px] flex-shrink-0", isActive ? "text-indigo-400" : "text-slate-500 group-hover:text-slate-400")} />
+                    <item.icon className={cn("w-[18px] h-[18px] flex-shrink-0", isActive ? "text-orange-400" : "text-stone-500 group-hover:text-stone-400")} />
                     <span className="truncate">{item.label}</span>
-                    {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto text-slate-500" />}
+                    {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto text-stone-500" />}
                   </button>
                 </Link>
               );
@@ -137,8 +137,8 @@ export default function Layout({ children }: LayoutProps) {
           {/* Notification Button */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-all">
-                <Bell className="w-[18px] h-[18px] text-slate-500" />
+              <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium text-stone-400 hover:text-stone-200 hover:bg-white/5 transition-all">
+                <Bell className="w-[18px] h-[18px] text-stone-500" />
                 <span>알림</span>
                 <span className="ml-auto inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold">3</span>
               </button>
@@ -178,9 +178,9 @@ export default function Layout({ children }: LayoutProps) {
           </DropdownMenu>
 
           {/* User Profile */}
-          <div className="border-t border-slate-700/50 pt-3">
+          <div className="border-t border-stone-700/50 pt-3">
             <div className="flex items-center gap-3 px-2">
-              <div className="w-9 h-9 rounded-full bg-slate-700 overflow-hidden ring-2 ring-slate-600 flex-shrink-0">
+              <div className="w-9 h-9 rounded-full bg-stone-700 overflow-hidden ring-2 ring-stone-600 flex-shrink-0">
                 <img
                   src="https://d2xsxph8kpxj0f.cloudfront.net/310519663276387564/TsUJ6Yw3YnqZMgGDEG5xKg/profile-placeholder_20e3dd66.jpg"
                   alt="User"
@@ -188,16 +188,16 @@ export default function Layout({ children }: LayoutProps) {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-medium text-slate-200 truncate">{user?.name || "사용자"}</p>
+                <p className="text-[13px] font-medium text-stone-200 truncate">{user?.name || "사용자"}</p>
                 <span className={cn(
                   "inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold mt-0.5",
-                  roleBadgeColors[userRole] || "bg-slate-400/20 text-slate-300"
+                  roleBadgeColors[userRole] || "bg-stone-400/20 text-stone-300"
                 )}>
                   {roleLabels[userRole] || "사용자"}
                 </span>
               </div>
               <button onClick={logout} className="p-1.5 rounded-md hover:bg-white/10 transition-colors" title="로그아웃">
-                <LogOut className="w-4 h-4 text-slate-500 hover:text-slate-300" />
+                <LogOut className="w-4 h-4 text-stone-500 hover:text-stone-300" />
               </button>
             </div>
           </div>
@@ -205,30 +205,30 @@ export default function Layout({ children }: LayoutProps) {
       </aside>
 
       {/* ═══ Mobile Header ═══ */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-14 bg-white/80 backdrop-blur-md border-b border-slate-200 z-40 flex items-center justify-between px-4">
+      <div className="md:hidden fixed top-0 left-0 right-0 h-14 bg-white/80 backdrop-blur-md border-b border-stone-200 z-40 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           {branding.logoUrl ? (
-            <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-slate-50">
+            <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-stone-50">
               <img src={branding.logoUrl} alt="Logo" className="w-full h-full object-contain" />
             </div>
           ) : (
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold shadow-md">
               {branding.companyName.charAt(0)}
             </div>
           )}
-          <span className="font-semibold text-[15px] text-slate-900 truncate max-w-[200px]">{branding.companyName}</span>
+          <span className="font-semibold text-[15px] text-stone-900 truncate max-w-[200px]">{branding.companyName}</span>
         </div>
-        <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-slate-600">
+        <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-stone-600">
           <Menu className="w-5 h-5" />
         </Button>
       </div>
 
       {/* ═══ Mobile Menu Overlay ═══ */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900 md:hidden flex flex-col animate-in slide-in-from-top-10 duration-200">
-          <div className="h-14 flex items-center justify-between px-4 border-b border-slate-700/50">
+        <div className="fixed inset-0 z-50 bg-stone-900 md:hidden flex flex-col animate-in slide-in-from-top-10 duration-200">
+          <div className="h-14 flex items-center justify-between px-4 border-b border-stone-700/50">
             <span className="font-semibold text-[15px] text-white">메뉴</span>
-            <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-400 hover:text-white">
+            <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)} className="text-stone-400 hover:text-white">
               <X className="w-5 h-5" />
             </Button>
           </div>
@@ -240,18 +240,18 @@ export default function Layout({ children }: LayoutProps) {
                     "w-full flex items-center gap-3 px-3 py-3 rounded-lg text-[14px] font-medium transition-all",
                     location === item.path
                       ? "bg-white/10 text-white"
-                      : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
+                      : "text-stone-400 hover:text-stone-200 hover:bg-white/5"
                   )}
                 >
-                  <item.icon className={cn("w-5 h-5", location === item.path ? "text-indigo-400" : "text-slate-500")} />
+                  <item.icon className={cn("w-5 h-5", location === item.path ? "text-orange-400" : "text-stone-500")} />
                   {item.label}
                 </button>
               </Link>
             ))}
           </nav>
-          <div className="p-4 border-t border-slate-700/50">
+          <div className="p-4 border-t border-stone-700/50">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-slate-700 overflow-hidden ring-2 ring-slate-600">
+              <div className="w-10 h-10 rounded-full bg-stone-700 overflow-hidden ring-2 ring-stone-600">
                 <img
                   src="https://d2xsxph8kpxj0f.cloudfront.net/310519663276387564/TsUJ6Yw3YnqZMgGDEG5xKg/profile-placeholder_20e3dd66.jpg"
                   alt="User"
@@ -259,16 +259,16 @@ export default function Layout({ children }: LayoutProps) {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-200 truncate">{user?.name || "사용자"}</p>
+                <p className="text-sm font-medium text-stone-200 truncate">{user?.name || "사용자"}</p>
                 <span className={cn(
                   "inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold mt-0.5",
-                  roleBadgeColors[userRole] || "bg-slate-400/20 text-slate-300"
+                  roleBadgeColors[userRole] || "bg-stone-400/20 text-stone-300"
                 )}>
                   {roleLabels[userRole] || "사용자"}
                 </span>
               </div>
               <button onClick={logout} className="p-2 rounded-md hover:bg-white/10">
-                <LogOut className="w-5 h-5 text-slate-500" />
+                <LogOut className="w-5 h-5 text-stone-500" />
               </button>
             </div>
           </div>

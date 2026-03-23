@@ -48,7 +48,7 @@ export default function Home() {
   return (
     <Layout>
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-white/50 shadow-sm mb-8">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-50 to-stone-50 border border-white/50 shadow-sm mb-8">
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-30 pointer-events-none">
           <img 
             src="/images/dashboard-hero-white.jpg" 
@@ -69,7 +69,7 @@ export default function Home() {
               {formatTime(currentTime)}
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-white/50 backdrop-blur-sm border-indigo-200 text-indigo-700">
+              <Badge variant="outline" className="bg-white/50 backdrop-blur-sm border-orange-200/30 text-orange-700">
                 현재 근무제: 시차출퇴근제 (A조 08:00-17:00)
               </Badge>
             </div>
@@ -116,7 +116,7 @@ export default function Home() {
 
           <Dialog open={isFlexibleWorkDialogOpen} onOpenChange={setIsFlexibleWorkDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="bg-white hover:bg-slate-50 border-indigo-200 text-indigo-700">
+              <Button variant="outline" className="bg-white hover:bg-stone-50 border-orange-200/30 text-orange-700">
                 <Briefcase className="w-4 h-4 mr-2" /> 유연근무제 신청
               </Button>
             </DialogTrigger>
@@ -130,7 +130,7 @@ export default function Home() {
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
-          { title: "총 직원", value: "142명", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
+          { title: "총 직원", value: "142명", icon: Users, color: "text-orange-500", bg: "bg-orange-50/30" },
           { title: "정상 출근", value: "128명", icon: Clock, color: "text-green-500", bg: "bg-green-50" },
           { title: "지각", value: "12명", icon: ArrowUpRight, color: "text-orange-500", bg: "bg-orange-50" },
           { title: "결근", value: "2명", icon: LogOut, color: "text-red-500", bg: "bg-red-50" },
@@ -160,13 +160,13 @@ export default function Home() {
             <div className="space-y-6">
               {[
                 { name: "이영희", action: "출근 완료", time: "08:58", status: "정상", img: "bg-pink-100" },
-                { name: "김철수", action: "출근 완료", time: "09:02", status: "지각", img: "bg-blue-100" },
+                { name: "김철수", action: "출근 완료", time: "09:02", status: "지각", img: "bg-orange-100/30" },
                 { name: "박지민", action: "휴식 시작", time: "10:30", status: "휴식", img: "bg-green-100" },
                 { name: "최민수", action: "퇴근 완료", time: "18:00", status: "초과근무", img: "bg-yellow-100" },
               ].map((item, i) => (
                 <div key={i} className="flex items-center justify-between group hover:bg-secondary/50 p-2 rounded-xl transition-colors -mx-2">
                   <div className="flex items-center gap-4">
-                    <div className={cn("w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-gray-600", item.img)}>
+                    <div className={cn("w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-stone-600", item.img)}>
                       {item.name.charAt(0)}
                     </div>
                     <div>
@@ -180,7 +180,7 @@ export default function Home() {
                       "text-xs px-2 py-1 rounded-full font-medium",
                       item.status === "정상" ? "bg-green-100 text-green-700" :
                       item.status === "지각" ? "bg-orange-100 text-orange-700" :
-                      "bg-gray-100 text-gray-700"
+                      "bg-stone-100 text-stone-700"
                     )}>
                       {item.status}
                     </span>

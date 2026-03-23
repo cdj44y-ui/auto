@@ -81,22 +81,22 @@ export function AuditLogViewer() {
   const getActionBadgeColor = (action: AuditAction) => {
     switch (action) {
       case 'CREATE': return 'bg-green-100 text-green-800 hover:bg-green-200';
-      case 'UPDATE': return 'bg-blue-100 text-blue-800 hover:bg-blue-200';
+      case 'UPDATE': return 'bg-orange-100/30 text-orange-800 hover:bg-stone-200';
       case 'DELETE': return 'bg-red-100 text-red-800 hover:bg-red-200';
-      case 'APPROVE': return 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200';
+      case 'APPROVE': return 'bg-orange-100/30 text-orange-800 hover:bg-orange-200';
       case 'REJECT': return 'bg-orange-100 text-orange-800 hover:bg-orange-200';
       case 'ACCESS_SENSITIVE_DATA': return 'bg-purple-100 text-purple-800 hover:bg-purple-200';
-      default: return 'bg-gray-100 text-gray-800 hover:bg-gray-200';
+      default: return 'bg-stone-100 text-stone-800 hover:bg-stone-200';
     }
   };
 
   return (
-    <Card className="w-full shadow-sm border-t-4 border-t-slate-600">
+    <Card className="w-full shadow-sm border-t-4 border-t-stone-600">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-xl flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5 text-slate-600" />
+              <ShieldAlert className="h-5 w-5 text-stone-600" />
               보안 감사 로그 (Audit Trail)
             </CardTitle>
             <CardDescription>
@@ -183,7 +183,7 @@ export function AuditLogViewer() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <span className="text-sm font-medium text-slate-700">{log.targetType}</span>
+                      <span className="text-sm font-medium text-stone-700">{log.targetType}</span>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col gap-1">
@@ -200,7 +200,7 @@ export function AuditLogViewer() {
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Eye className="h-4 w-4 text-slate-500" />
+                              <Eye className="h-4 w-4 text-stone-500" />
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="sm:max-w-[500px]">
@@ -213,7 +213,7 @@ export function AuditLogViewer() {
                             <div className="mt-4 space-y-4">
                               {log.changes.map((change, idx) => (
                                 <div key={idx} className="bg-muted/30 p-3 rounded-md border">
-                                  <div className="text-sm font-semibold mb-2 text-slate-700">
+                                  <div className="text-sm font-semibold mb-2 text-stone-700">
                                     필드: {change.field}
                                   </div>
                                   <div className="flex items-center gap-3 text-sm">
@@ -221,7 +221,7 @@ export function AuditLogViewer() {
                                       <span className="text-xs text-red-400 block mb-1">변경 전</span>
                                       {String(change.oldValue)}
                                     </div>
-                                    <ArrowRight className="h-4 w-4 text-slate-400" />
+                                    <ArrowRight className="h-4 w-4 text-stone-400" />
                                     <div className="flex-1 bg-green-50 p-2 rounded text-green-700 border border-green-100">
                                       <span className="text-xs text-green-400 block mb-1">변경 후</span>
                                       {String(change.newValue)}

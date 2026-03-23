@@ -59,7 +59,7 @@ export default function ConsultantWorkRecordGrid({ companyId }: { companyId: str
           <Button variant="outline" onClick={handleRecalculate}>
             <RefreshCw className="w-4 h-4 mr-2" /> 수당 재계산
           </Button>
-          <Button onClick={handleSave} className="bg-indigo-600 hover:bg-indigo-700">
+          <Button onClick={handleSave} className="bg-primary hover:bg-orange-800">
             <Save className="w-4 h-4 mr-2" /> 변경사항 저장
           </Button>
         </div>
@@ -69,13 +69,13 @@ export default function ConsultantWorkRecordGrid({ companyId }: { companyId: str
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="bg-slate-50 dark:bg-slate-900">
+              <TableRow className="bg-stone-50 dark:bg-stone-900">
                 <TableHead className="w-[120px]">날짜/요일</TableHead>
                 <TableHead>근무 유형</TableHead>
                 <TableHead>출근 시간</TableHead>
                 <TableHead>퇴근 시간</TableHead>
                 <TableHead>휴게(분)</TableHead>
-                <TableHead className="text-blue-600 font-bold">총 근로</TableHead>
+                <TableHead className="text-primary font-bold">총 근로</TableHead>
                 <TableHead className="text-orange-600 font-bold">연장</TableHead>
                 <TableHead className="text-purple-600 font-bold">야간</TableHead>
                 <TableHead className="text-red-600 font-bold">휴일</TableHead>
@@ -84,12 +84,12 @@ export default function ConsultantWorkRecordGrid({ companyId }: { companyId: str
             </TableHeader>
             <TableBody>
               {records.map((record) => (
-                <TableRow key={record.id} className={record.day === '일' ? 'bg-red-50/30' : record.day === '토' ? 'bg-blue-50/30' : ''}>
+                <TableRow key={record.id} className={record.day === '일' ? 'bg-red-50/30' : record.day === '토' ? 'bg-orange-50/30/30' : ''}>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <span className={`font-medium ${
                         record.day === '일' ? 'text-red-500' : 
-                        record.day === '토' ? 'text-blue-500' : ''
+                        record.day === '토' ? 'text-orange-500' : ''
                       }`}>
                         {record.date} ({record.day})
                       </span>
@@ -149,7 +149,7 @@ export default function ConsultantWorkRecordGrid({ companyId }: { companyId: str
                 </TableRow>
               ))}
               {/* 합계 행 */}
-              <TableRow className="bg-slate-100 dark:bg-slate-800 font-bold">
+              <TableRow className="bg-stone-100 dark:bg-stone-800 font-bold">
                 <TableCell colSpan={5} className="text-center">월 합계</TableCell>
                 <TableCell>36h</TableCell>
                 <TableCell className="text-orange-600">12h</TableCell>
@@ -162,7 +162,7 @@ export default function ConsultantWorkRecordGrid({ companyId }: { companyId: str
         </CardContent>
       </Card>
 
-      <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-700 flex items-start gap-2">
+      <div className="bg-orange-50/30 p-4 rounded-lg text-sm text-orange-700 flex items-start gap-2">
         <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
         <div>
           <p className="font-bold">전문가 검토 가이드</p>

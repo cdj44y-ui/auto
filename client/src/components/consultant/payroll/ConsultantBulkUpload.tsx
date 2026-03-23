@@ -50,10 +50,10 @@ export default function ConsultantBulkUpload({ companyId }: { companyId: string 
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* 업로드 영역 */}
-        <Card className="border-dashed border-2 border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+        <Card className="border-dashed border-2 border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/50">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center space-y-4">
-            <div className="p-4 bg-white dark:bg-slate-800 rounded-full shadow-sm">
-              <Upload className="w-8 h-8 text-indigo-600" />
+            <div className="p-4 bg-white dark:bg-stone-800 rounded-full shadow-sm">
+              <Upload className="w-8 h-8 text-primary" />
             </div>
             <div>
               <h3 className="text-lg font-bold">근무기록 엑셀 파일 업로드</h3>
@@ -72,10 +72,10 @@ export default function ConsultantBulkUpload({ companyId }: { companyId: string 
               {isUploading ? "분석 중..." : "파일 선택하기"}
             </Button>
             <div className="flex gap-4 text-xs text-muted-foreground pt-4">
-              <button className="flex items-center hover:text-indigo-600 transition-colors">
+              <button className="flex items-center hover:text-primary transition-colors">
                 <Download className="w-3 h-3 mr-1" /> 표준 양식 다운로드
               </button>
-              <button className="flex items-center hover:text-indigo-600 transition-colors">
+              <button className="flex items-center hover:text-primary transition-colors">
                 <FileText className="w-3 h-3 mr-1" /> 작성 가이드
               </button>
             </div>
@@ -109,7 +109,7 @@ export default function ConsultantBulkUpload({ companyId }: { companyId: string 
             {uploadResult && (
               <div className="space-y-6">
                 <div className="grid grid-cols-3 gap-4 text-center">
-                  <div className="p-3 bg-slate-50 rounded-lg">
+                  <div className="p-3 bg-stone-50 rounded-lg">
                     <p className="text-xs text-muted-foreground">총 데이터</p>
                     <p className="text-xl font-bold">{uploadResult.totalRows}건</p>
                   </div>
@@ -145,7 +145,7 @@ export default function ConsultantBulkUpload({ companyId }: { companyId: string 
                 )}
 
                 <div className="flex gap-2">
-                  <Button className="w-full bg-indigo-600 hover:bg-indigo-700" disabled={uploadResult.errorRows > 0}>
+                  <Button className="w-full bg-primary hover:bg-orange-800" disabled={uploadResult.errorRows > 0}>
                     <CheckCircle2 className="w-4 h-4 mr-2" /> 
                     {uploadResult.errorRows > 0 ? "오류 수정 필요" : "급여대장 반영하기"}
                   </Button>

@@ -101,7 +101,7 @@ export default function ExcelPayrollUpload() {
 
   return (
     <div className="space-y-6">
-      <Card className="border-none shadow-sm bg-slate-50">
+      <Card className="border-none shadow-sm bg-stone-50">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-2">
@@ -111,7 +111,7 @@ export default function ExcelPayrollUpload() {
               </h3>
               <p className="text-sm text-muted-foreground">
                 근무 기록이 담긴 엑셀 파일을 업로드하면, 통상시급과 근로기준법 로직을 적용해 급여를 자동으로 계산합니다.<br/>
-                <span className="text-blue-600 font-medium">* 주 15시간 미만 근무자는 주휴수당이 자동으로 제외됩니다.</span>
+                <span className="text-primary font-medium">* 주 15시간 미만 근무자는 주휴수당이 자동으로 제외됩니다.</span>
               </p>
             </div>
             <div className="flex gap-3">
@@ -168,7 +168,7 @@ export default function ExcelPayrollUpload() {
                     <TableCell className="text-right">{item.totalWorkHours}시간</TableCell>
                     <TableCell className="text-right tabular-nums">{item.hourlyRate.toLocaleString()}</TableCell>
                     <TableCell className="text-right tabular-nums">{item.baseSalary.toLocaleString()}</TableCell>
-                    <TableCell className={`text-right tabular-nums ${item.weeklyHolidayPay === 0 ? "text-red-500 font-medium" : "text-blue-600"}`}>
+                    <TableCell className={`text-right tabular-nums ${item.weeklyHolidayPay === 0 ? "text-red-500 font-medium" : "text-primary"}`}>
                       {item.weeklyHolidayPay.toLocaleString()}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">
@@ -191,7 +191,7 @@ export default function ExcelPayrollUpload() {
               </TableBody>
             </Table>
             <div className="flex justify-end mt-6">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button className="bg-primary hover:bg-orange-800 text-white">
                 급여 대장에 반영하기
               </Button>
             </div>

@@ -88,11 +88,11 @@ export default function NotificationSettings() {
 
       <div className="grid gap-6">
         {rules.map((rule) => (
-          <Card key={rule.id} className={`transition-all ${!rule.isActive ? 'opacity-60 bg-slate-50' : ''}`}>
+          <Card key={rule.id} className={`transition-all ${!rule.isActive ? 'opacity-60 bg-stone-50' : ''}`}>
             <CardHeader className="pb-4">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${rule.isActive ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-400'}`}>
+                  <div className={`p-2 rounded-lg ${rule.isActive ? 'bg-primary/10 text-primary' : 'bg-stone-100 text-stone-400'}`}>
                     <Clock className="h-5 w-5" />
                   </div>
                   <div>
@@ -145,7 +145,7 @@ export default function NotificationSettings() {
 
                 <div className="space-y-3">
                   <Label>메시지 템플릿 미리보기</Label>
-                  <div className="bg-slate-100 p-4 rounded-md text-sm text-slate-700 relative group">
+                  <div className="bg-stone-100 p-4 rounded-md text-sm text-stone-700 relative group">
                     <p className="whitespace-pre-wrap">{rule.template}</p>
                     <Button 
                       variant="ghost" 

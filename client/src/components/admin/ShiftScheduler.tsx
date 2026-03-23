@@ -15,9 +15,9 @@ import { toast } from "sonner";
 // Mock Data for Shift Types
 const SHIFT_TYPES = [
   { id: "D", name: "Day", time: "07:00 - 15:00", color: "bg-yellow-100 text-yellow-800 border-yellow-200" },
-  { id: "E", name: "Evening", time: "15:00 - 23:00", color: "bg-blue-100 text-blue-800 border-blue-200" },
+  { id: "E", name: "Evening", time: "15:00 - 23:00", color: "bg-orange-100/30 text-orange-800 border-orange-200/30" },
   { id: "N", name: "Night", time: "23:00 - 07:00", color: "bg-purple-100 text-purple-800 border-purple-200" },
-  { id: "O", name: "Off", time: "휴무", color: "bg-slate-100 text-slate-500 border-slate-200" },
+  { id: "O", name: "Off", time: "휴무", color: "bg-stone-100 text-stone-500 border-stone-200" },
 ];
 
 // Mock Data for Employees
@@ -120,11 +120,11 @@ export default function ShiftScheduler() {
       <Card>
         <CardContent className="p-0 overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 text-slate-500 border-b">
+            <thead className="bg-stone-50 text-stone-500 border-b">
               <tr>
                 <th className="px-4 py-3 font-medium w-[150px]">직원</th>
                 {days.map((day, i) => (
-                  <th key={day} className={`px-4 py-3 font-medium text-center ${day === '토' ? 'text-blue-500' : day === '일' ? 'text-red-500' : ''}`}>
+                  <th key={day} className={`px-4 py-3 font-medium text-center ${day === '토' ? 'text-orange-500' : day === '일' ? 'text-red-500' : ''}`}>
                     {dates[i]}일 ({day})
                   </th>
                 ))}
@@ -133,7 +133,7 @@ export default function ShiftScheduler() {
             </thead>
             <tbody className="divide-y">
               {EMPLOYEES.map((emp) => (
-                <tr key={emp.id} className="hover:bg-slate-50/50 transition-colors">
+                <tr key={emp.id} className="hover:bg-stone-50/50 transition-colors">
                   <td className="px-4 py-3">
                     <div className="font-medium">{emp.name}</div>
                     <div className="text-xs text-muted-foreground">{emp.team}</div>
@@ -148,7 +148,7 @@ export default function ShiftScheduler() {
                       </button>
                     </td>
                   ))}
-                  <td className="px-4 py-3 text-center font-medium text-slate-600">
+                  <td className="px-4 py-3 text-center font-medium text-stone-600">
                     {schedule[emp.id].filter(s => s !== 'O').length * 8}h
                   </td>
                 </tr>
@@ -174,7 +174,7 @@ export default function ShiftScheduler() {
             <CardTitle className="text-sm font-medium">Evening (석간) 근무자</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold text-primary">
               {Object.values(schedule).flat().filter(s => s === 'E').length}명
             </div>
           </CardContent>

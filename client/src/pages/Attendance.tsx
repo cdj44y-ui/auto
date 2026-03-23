@@ -116,20 +116,20 @@ export default function Attendance() {
               className="pl-10 rounded-xl bg-white border-none shadow-sm w-[160px]"
             />
           </div>
-          <Button variant="outline" className="rounded-xl bg-white border-none shadow-sm hover:bg-gray-50">
+          <Button variant="outline" className="rounded-xl bg-white border-none shadow-sm hover:bg-stone-50">
             <Search className="w-4 h-4 mr-2" /> 조회
           </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="bg-blue-50 border-blue-100">
+        <Card className="bg-orange-50/30 border-orange-200/30">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-blue-600">이번 달 총 근무시간</CardTitle>
+            <CardTitle className="text-sm font-medium text-primary">이번 달 총 근무시간</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-900">168.5 시간</div>
-            <p className="text-xs text-blue-600 mt-1">소정근로시간 준수율 98%</p>
+            <div className="text-2xl font-bold text-stone-800">168.5 시간</div>
+            <p className="text-xs text-primary mt-1">소정근로시간 준수율 98%</p>
           </CardContent>
         </Card>
         <Card className="bg-orange-50 border-orange-100">
@@ -156,7 +156,7 @@ export default function Attendance() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>근태 이력 상세</CardTitle>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground bg-slate-100 px-3 py-1 rounded-full">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground bg-stone-100 px-3 py-1 rounded-full">
               <Info className="w-3 h-3" />
               <span>모든 기록은 근로기준법 제42조에 따라 3년간 보관됩니다.</span>
             </div>
@@ -201,7 +201,7 @@ export default function Attendance() {
                             ? "bg-orange-100 text-orange-700 hover:bg-orange-100"
                             : record.status === "조퇴"
                             ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-100"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-100"
+                            : "bg-stone-100 text-stone-700 hover:bg-stone-100"
                         }
                       >
                         {record.status}

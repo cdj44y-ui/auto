@@ -113,7 +113,7 @@ export default function Workflow() {
                   <div key={req.id} className="flex items-center justify-between p-4 bg-secondary/30 rounded-xl border border-transparent hover:border-border transition-all">
                     <div className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        req.type === "연차" ? "bg-blue-100 text-blue-600" :
+                        req.type === "연차" ? "bg-orange-100/30 text-primary" :
                         req.type === "초과근무" ? "bg-orange-100 text-orange-600" : "bg-purple-100 text-purple-600"
                       }`}>
                         {req.type === "연차" ? <Calendar className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
@@ -147,7 +147,7 @@ export default function Workflow() {
                 {pendingApprovals.map((req) => (
                   <div key={req.id} className="flex items-center justify-between p-4 bg-white border border-border rounded-xl shadow-sm">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600">
+                      <div className="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center font-bold text-stone-600">
                         {req.applicant.charAt(0)}
                       </div>
                       <div>

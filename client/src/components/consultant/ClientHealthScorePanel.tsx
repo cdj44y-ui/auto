@@ -37,8 +37,8 @@ export default function ClientHealthScorePanel() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="border-none shadow-sm">
           <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-              <Building2 className="w-6 h-6 text-blue-500" />
+            <div className="w-12 h-12 rounded-xl bg-orange-50/30 dark:bg-stone-800/30 flex items-center justify-center">
+              <Building2 className="w-6 h-6 text-orange-500" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">관리 고객사</p>

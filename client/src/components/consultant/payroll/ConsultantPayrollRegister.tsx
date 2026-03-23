@@ -19,22 +19,22 @@ export default function ConsultantPayrollRegister({ companyId }: { companyId: st
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-slate-50 dark:bg-slate-900 border-none shadow-sm">
+        <Card className="bg-stone-50 dark:bg-stone-900 border-none shadow-sm">
           <CardContent className="p-6">
             <p className="text-sm font-medium text-muted-foreground mb-1">총 지급액 (세전)</p>
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100">₩ {totalAmount.toLocaleString()}</h3>
+            <h3 className="text-2xl font-bold text-stone-900 dark:text-stone-100">₩ {totalAmount.toLocaleString()}</h3>
           </CardContent>
         </Card>
-        <Card className="bg-slate-50 dark:bg-slate-900 border-none shadow-sm">
+        <Card className="bg-stone-50 dark:bg-stone-900 border-none shadow-sm">
           <CardContent className="p-6">
             <p className="text-sm font-medium text-muted-foreground mb-1">총 실지급액 (세후)</p>
-            <h3 className="text-2xl font-bold text-indigo-600">₩ {totalNetPay.toLocaleString()}</h3>
+            <h3 className="text-2xl font-bold text-primary">₩ {totalNetPay.toLocaleString()}</h3>
           </CardContent>
         </Card>
-        <Card className="bg-slate-50 dark:bg-slate-900 border-none shadow-sm">
+        <Card className="bg-stone-50 dark:bg-stone-900 border-none shadow-sm">
           <CardContent className="p-6">
             <p className="text-sm font-medium text-muted-foreground mb-1">정산 인원</p>
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{payrollData.length}명</h3>
+            <h3 className="text-2xl font-bold text-stone-900 dark:text-stone-100">{payrollData.length}명</h3>
           </CardContent>
         </Card>
       </div>
@@ -52,7 +52,7 @@ export default function ConsultantPayrollRegister({ companyId }: { companyId: st
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" /> 엑셀 다운로드
             </Button>
-            <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700">
+            <Button size="sm" className="bg-primary hover:bg-orange-800">
               <Send className="w-4 h-4 mr-2" /> 고객사 발송
             </Button>
           </div>
@@ -60,15 +60,15 @@ export default function ConsultantPayrollRegister({ companyId }: { companyId: st
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow className="bg-slate-50 dark:bg-slate-900">
+              <TableRow className="bg-stone-50 dark:bg-stone-900">
                 <TableHead>이름/부서</TableHead>
                 <TableHead className="text-right">기본급</TableHead>
                 <TableHead className="text-right">고정OT</TableHead>
                 <TableHead className="text-right">변동수당(연장/야간)</TableHead>
                 <TableHead className="text-right">식대/비과세</TableHead>
-                <TableHead className="text-right font-bold text-blue-600">지급총액</TableHead>
+                <TableHead className="text-right font-bold text-primary">지급총액</TableHead>
                 <TableHead className="text-right text-red-600">공제총액</TableHead>
-                <TableHead className="text-right font-bold text-indigo-600">실지급액</TableHead>
+                <TableHead className="text-right font-bold text-primary">실지급액</TableHead>
                 <TableHead className="text-center">상태</TableHead>
                 <TableHead className="text-center">명세서</TableHead>
               </TableRow>
@@ -84,7 +84,7 @@ export default function ConsultantPayrollRegister({ companyId }: { companyId: st
                   <TableCell className="text-right">{item.fixedOvertime.toLocaleString()}</TableCell>
                   <TableCell className="text-right">{(item.overtimePay + item.nightPay + item.holidayPay).toLocaleString()}</TableCell>
                   <TableCell className="text-right">{item.mealAllowance.toLocaleString()}</TableCell>
-                  <TableCell className="text-right font-bold text-blue-600">{item.totalPay.toLocaleString()}</TableCell>
+                  <TableCell className="text-right font-bold text-primary">{item.totalPay.toLocaleString()}</TableCell>
                   <TableCell className="text-right text-red-600">
                     <div className="flex flex-col items-end gap-1">
                       <span>{(item.tax + item.insurance).toLocaleString()}</span>
@@ -102,7 +102,7 @@ export default function ConsultantPayrollRegister({ companyId }: { companyId: st
                       />
                     </div>
                   </TableCell>
-                  <TableCell className="text-right font-bold text-indigo-600">{item.netPay.toLocaleString()}</TableCell>
+                  <TableCell className="text-right font-bold text-primary">{item.netPay.toLocaleString()}</TableCell>
                   <TableCell className="text-center">
                     <Badge variant={item.status === 'completed' ? 'default' : 'secondary'} className={item.status === 'completed' ? 'bg-green-100 text-green-700 hover:bg-green-100' : ''}>
                       {item.status === 'completed' ? '확정' : '검토중'}
@@ -110,7 +110,7 @@ export default function ConsultantPayrollRegister({ companyId }: { companyId: st
                   </TableCell>
                   <TableCell className="text-center">
                     <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <FileText className="w-4 h-4 text-slate-500" />
+                      <FileText className="w-4 h-4 text-stone-500" />
                     </Button>
                   </TableCell>
                 </TableRow>

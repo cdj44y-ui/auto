@@ -29,7 +29,7 @@ export default function SignupApproval() {
   const pendingCount = requests.filter(r => r.status === "pending").length;
 
   return (
-    <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
+    <Card className="border-none shadow-sm bg-white dark:bg-stone-900">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
@@ -41,13 +41,13 @@ export default function SignupApproval() {
             </CardTitle>
             <CardDescription>직원용 회원가입 신청 내역을 검토하고 승인합니다.</CardDescription>
           </div>
-          <UserCheck className="w-8 h-8 text-slate-200" />
+          <UserCheck className="w-8 h-8 text-stone-200" />
         </div>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow className="bg-slate-50 dark:bg-slate-800">
+            <TableRow className="bg-stone-50 dark:bg-stone-800">
               <TableHead>이름</TableHead>
               <TableHead>부서/직급</TableHead>
               <TableHead>연락처</TableHead>
@@ -93,7 +93,7 @@ export default function SignupApproval() {
                         <Button size="sm" variant="outline" className="text-red-600 hover:bg-red-50" onClick={() => handleReject(req.id, req.name)}>
                           <XCircle className="w-4 h-4 mr-1" /> 반려
                         </Button>
-                        <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700" onClick={() => handleApprove(req.id, req.name)}>
+                        <Button size="sm" className="bg-primary hover:bg-orange-800" onClick={() => handleApprove(req.id, req.name)}>
                           <CheckCircle2 className="w-4 h-4 mr-1" /> 승인
                         </Button>
                       </div>

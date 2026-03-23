@@ -46,9 +46,9 @@ export default function InsuranceReportingCenter() {
 
   const getStatusBadge = (status: ReportStatus) => {
     switch (status) {
-      case "draft": return <Badge variant="outline" className="text-slate-500">작성 중</Badge>;
+      case "draft": return <Badge variant="outline" className="text-stone-500">작성 중</Badge>;
       case "pending": return <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">접수 대기</Badge>;
-      case "submitted": return <Badge variant="secondary" className="bg-blue-100 text-blue-700">공단 전송됨</Badge>;
+      case "submitted": return <Badge variant="secondary" className="bg-orange-100/30 text-orange-700">공단 전송됨</Badge>;
       case "completed": return <Badge className="bg-green-100 text-green-700 hover:bg-green-200">처리 완료</Badge>;
       case "rejected": return <Badge variant="destructive">반려됨</Badge>;
     }
@@ -237,7 +237,7 @@ export default function InsuranceReportingCenter() {
               {reports.map((report) => (
                 <TableRow key={report.id}>
                   <TableCell>
-                    <Badge variant="outline" className={report.reportType === 'acquisition' ? 'text-blue-600 border-blue-200' : 'text-red-600 border-red-200'}>
+                    <Badge variant="outline" className={report.reportType === 'acquisition' ? 'text-primary border-orange-200/30' : 'text-red-600 border-red-200'}>
                       {report.reportType === 'acquisition' ? '취득' : '상실'}
                     </Badge>
                   </TableCell>

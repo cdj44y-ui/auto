@@ -90,10 +90,10 @@ export default function Payroll() {
 
         <TabsContent value="system">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="border-none shadow-sm bg-blue-50">
+            <Card className="border-none shadow-sm bg-orange-50/30">
               <CardContent className="p-6">
-                <p className="text-sm font-medium text-blue-600 mb-1">총 실지급액</p>
-                <h3 className="text-2xl font-bold text-blue-900">₩ {totalPayout.toLocaleString()}</h3>
+                <p className="text-sm font-medium text-primary mb-1">총 실지급액</p>
+                <h3 className="text-2xl font-bold text-stone-800">₩ {totalPayout.toLocaleString()}</h3>
               </CardContent>
             </Card>
             <Card className="border-none shadow-sm bg-green-50">

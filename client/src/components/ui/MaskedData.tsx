@@ -71,7 +71,7 @@ export function MaskedData({ value, type, label = '민감 정보', employeeName 
 
   return (
     <div className="flex items-center gap-2 group">
-      <span className={`font-mono ${isVisible ? 'text-slate-900 font-medium' : 'text-slate-500'}`}>
+      <span className={`font-mono ${isVisible ? 'text-stone-900 font-medium' : 'text-stone-500'}`}>
         {isVisible ? (type === 'salary' ? `${Number(value).toLocaleString()} 원` : value) : getMaskedValue()}
       </span>
       
@@ -86,11 +86,11 @@ export function MaskedData({ value, type, label = '민감 정보', employeeName 
               disabled={isLoading}
             >
               {isLoading ? (
-                <div className="h-3 w-3 animate-spin rounded-full border-2 border-slate-500 border-t-transparent" />
+                <div className="h-3 w-3 animate-spin rounded-full border-2 border-stone-500 border-t-transparent" />
               ) : isVisible ? (
-                <EyeOff className="h-3.5 w-3.5 text-slate-500" />
+                <EyeOff className="h-3.5 w-3.5 text-stone-500" />
               ) : (
-                <Lock className="h-3.5 w-3.5 text-slate-400" />
+                <Lock className="h-3.5 w-3.5 text-stone-400" />
               )}
             </Button>
           </TooltipTrigger>

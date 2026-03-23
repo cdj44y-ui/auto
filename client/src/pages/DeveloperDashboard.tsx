@@ -24,14 +24,14 @@ function DeveloperLayout({ children }: { children: React.ReactNode }) {
   const { logout } = useAuth();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50">
-      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur">
+    <div className="min-h-screen bg-stone-950 text-stone-50">
+      <header className="border-b border-stone-800 bg-stone-900/50 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Terminal className="w-6 h-6 text-purple-500" />
             <span className="font-mono font-bold text-lg">System Master Console</span>
           </div>
-          <Button variant="ghost" size="sm" onClick={logout} className="text-slate-400 hover:text-white hover:bg-slate-800">
+          <Button variant="ghost" size="sm" onClick={logout} className="text-stone-400 hover:text-white hover:bg-stone-800">
             <LogOut className="w-4 h-4 mr-2" /> Exit Console
           </Button>
         </div>
@@ -64,62 +64,62 @@ export default function DeveloperDashboard() {
   return (
     <DeveloperLayout>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-slate-900 border-slate-800 text-slate-50">
+        <Card className="bg-stone-900 border-stone-800 text-stone-50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-400">Total Companies</CardTitle>
+            <CardTitle className="text-sm font-medium text-stone-400">Total Companies</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">1,248</div>
             <p className="text-xs text-green-500 mt-1">+12% from last month</p>
           </CardContent>
         </Card>
-        <Card className="bg-slate-900 border-slate-800 text-slate-50">
+        <Card className="bg-stone-900 border-stone-800 text-stone-50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-400">Active Users</CardTitle>
+            <CardTitle className="text-sm font-medium text-stone-400">Active Users</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">45,231</div>
             <p className="text-xs text-green-500 mt-1">+5.4% active now</p>
           </CardContent>
         </Card>
-        <Card className="bg-slate-900 border-slate-800 text-slate-50">
+        <Card className="bg-stone-900 border-stone-800 text-stone-50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-400">System Load</CardTitle>
+            <CardTitle className="text-sm font-medium text-stone-400">System Load</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-500">42%</div>
-            <p className="text-xs text-slate-500 mt-1">CPU Usage</p>
+            <p className="text-xs text-stone-500 mt-1">CPU Usage</p>
           </CardContent>
         </Card>
-        <Card className="bg-slate-900 border-slate-800 text-slate-50">
+        <Card className="bg-stone-900 border-stone-800 text-stone-50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-400">Error Rate</CardTitle>
+            <CardTitle className="text-sm font-medium text-stone-400">Error Rate</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-500">0.01%</div>
-            <p className="text-xs text-slate-500 mt-1">Last 24 hours</p>
+            <p className="text-xs text-stone-500 mt-1">Last 24 hours</p>
           </CardContent>
         </Card>
       </div>
 
       <Tabs defaultValue="companies" className="space-y-6">
-        <TabsList className="bg-slate-900 border border-slate-800">
-          <TabsTrigger value="companies" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">회사 승인 관리</TabsTrigger>
-          <TabsTrigger value="consultants" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">자문사 권한 관리</TabsTrigger>
-          <TabsTrigger value="system" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">시스템 모니터링</TabsTrigger>
-          <TabsTrigger value="logs" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">오류 로그</TabsTrigger>
+        <TabsList className="bg-stone-900 border border-stone-800">
+          <TabsTrigger value="companies" className="data-[state=active]:bg-stone-800 data-[state=active]:text-white">회사 승인 관리</TabsTrigger>
+          <TabsTrigger value="consultants" className="data-[state=active]:bg-stone-800 data-[state=active]:text-white">자문사 권한 관리</TabsTrigger>
+          <TabsTrigger value="system" className="data-[state=active]:bg-stone-800 data-[state=active]:text-white">시스템 모니터링</TabsTrigger>
+          <TabsTrigger value="logs" className="data-[state=active]:bg-stone-800 data-[state=active]:text-white">오류 로그</TabsTrigger>
         </TabsList>
 
         <TabsContent value="companies">
-          <Card className="bg-slate-900 border-slate-800 text-slate-50">
+          <Card className="bg-stone-900 border-stone-800 text-stone-50">
             <CardHeader>
               <CardTitle>회사 가입 승인 대기</CardTitle>
-              <CardDescription className="text-slate-400">신규 가입 요청한 회사의 승인 여부를 결정합니다.</CardDescription>
+              <CardDescription className="text-stone-400">신규 가입 요청한 회사의 승인 여부를 결정합니다.</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {companies.map((company) => (
-                  <div key={company.id} className="flex items-center justify-between p-4 border border-slate-800 rounded-lg bg-slate-950/50">
+                  <div key={company.id} className="flex items-center justify-between p-4 border border-stone-800 rounded-lg bg-stone-950/50">
                     <div className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                         company.status === 'active' ? 'bg-green-900/30 text-green-500' :
@@ -139,7 +139,7 @@ export default function DeveloperDashboard() {
                             {company.status.toUpperCase()}
                           </Badge>
                         </div>
-                        <p className="text-sm text-slate-400">사용자 {company.users}명 • {company.plan} 플랜</p>
+                        <p className="text-sm text-stone-400">사용자 {company.users}명 • {company.plan} 플랜</p>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -162,14 +162,14 @@ export default function DeveloperDashboard() {
         </TabsContent>
 
         <TabsContent value="consultants">
-          <Card className="bg-slate-900 border-slate-800 text-slate-50">
+          <Card className="bg-stone-900 border-stone-800 text-stone-50">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
                   <CardTitle>자문사(Consultant) 계정 관리</CardTitle>
-                  <CardDescription className="text-slate-400">노무법인 및 세무사 파트너 계정을 생성하고 권한을 부여합니다.</CardDescription>
+                  <CardDescription className="text-stone-400">노무법인 및 세무사 파트너 계정을 생성하고 권한을 부여합니다.</CardDescription>
                 </div>
-                <Button className="bg-indigo-600 hover:bg-indigo-700">
+                <Button className="bg-primary hover:bg-orange-800">
                   <UserPlus className="w-4 h-4 mr-2" /> 신규 자문사 등록
                 </Button>
               </div>
@@ -181,14 +181,14 @@ export default function DeveloperDashboard() {
                   { id: 2, name: "세무회계 더함", rep: "김세무", clients: 8, status: "active" },
                   { id: 3, name: "HR컨설팅 그룹", rep: "이컨설", clients: 0, status: "pending" },
                 ].map((consultant) => (
-                  <div key={consultant.id} className="flex items-center justify-between p-4 border border-slate-800 rounded-lg bg-slate-950/50">
+                  <div key={consultant.id} className="flex items-center justify-between p-4 border border-stone-800 rounded-lg bg-stone-950/50">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-indigo-900/30 rounded-full flex items-center justify-center">
-                        <ShieldCheck className="w-5 h-5 text-indigo-400" />
+                      <div className="w-10 h-10 bg-stone-900/30 rounded-full flex items-center justify-center">
+                        <ShieldCheck className="w-5 h-5 text-orange-400" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-slate-200">{consultant.name}</h3>
-                        <p className="text-sm text-slate-400">대표: {consultant.rep} | 관리 고객사: {consultant.clients}개</p>
+                        <h3 className="font-bold text-stone-200">{consultant.name}</h3>
+                        <p className="text-sm text-stone-400">대표: {consultant.rep} | 관리 고객사: {consultant.clients}개</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -197,7 +197,7 @@ export default function DeveloperDashboard() {
                       ) : (
                         <Badge className="bg-yellow-900/30 text-yellow-400 hover:bg-yellow-900/30 border-yellow-900">승인 대기</Badge>
                       )}
-                      <Button variant="outline" size="sm" className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white">권한 설정</Button>
+                      <Button variant="outline" size="sm" className="border-stone-700 text-stone-300 hover:bg-stone-800 hover:text-white">권한 설정</Button>
                     </div>
                   </div>
                 ))}
@@ -208,10 +208,10 @@ export default function DeveloperDashboard() {
 
         <TabsContent value="system">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-slate-900 border-slate-800 text-slate-50">
+            <Card className="bg-stone-900 border-stone-800 text-stone-50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Server className="w-5 h-5 text-blue-500" /> API Server Status
+                  <Server className="w-5 h-5 text-orange-500" /> API Server Status
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -231,7 +231,7 @@ export default function DeveloperDashboard() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-slate-900 border-slate-800 text-slate-50">
+            <Card className="bg-stone-900 border-stone-800 text-stone-50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Database className="w-5 h-5 text-purple-500" /> Database Metrics
@@ -244,7 +244,7 @@ export default function DeveloperDashboard() {
                       <span>Connection Pool</span>
                       <span>85/100</span>
                     </div>
-                    <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-2 bg-stone-800 rounded-full overflow-hidden">
                       <div className="h-full bg-purple-500 w-[85%]"></div>
                     </div>
                   </div>
@@ -253,8 +253,8 @@ export default function DeveloperDashboard() {
                       <span>Storage Usage</span>
                       <span>1.2TB / 5TB</span>
                     </div>
-                    <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-500 w-[24%]"></div>
+                    <div className="h-2 bg-stone-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-orange-50/300 w-[24%]"></div>
                     </div>
                   </div>
                 </div>

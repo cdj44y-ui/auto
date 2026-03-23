@@ -68,7 +68,7 @@ export default function SeveranceAndTransfer() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calculator className="w-5 h-5 text-blue-600" />
+            <Calculator className="w-5 h-5 text-primary" />
             퇴직금 예상 조회
           </CardTitle>
           <CardDescription>입사일과 퇴사 예정일을 입력하여 예상 퇴직금을 산출합니다.</CardDescription>
@@ -95,9 +95,9 @@ export default function SeveranceAndTransfer() {
           </div>
           
           {severancePay !== null && (
-            <div className="p-4 bg-slate-50 rounded-lg text-center border">
+            <div className="p-4 bg-stone-50 rounded-lg text-center border">
               <p className="text-sm text-muted-foreground mb-1">예상 퇴직금 (세전)</p>
-              <p className="text-2xl font-bold text-blue-700">₩ {severancePay.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-orange-700">₩ {severancePay.toLocaleString()}</p>
             </div>
           )}
 
@@ -123,36 +123,36 @@ export default function SeveranceAndTransfer() {
             </TabsList>
             
             <TabsContent value="shinhan" className="space-y-4">
-              <div className="p-4 bg-slate-50 rounded-lg border text-sm text-muted-foreground">
-                <p className="font-medium text-slate-900 mb-2">신한은행 대량 이체 규격</p>
+              <div className="p-4 bg-stone-50 rounded-lg border text-sm text-muted-foreground">
+                <p className="font-medium text-stone-900 mb-2">신한은행 대량 이체 규격</p>
                 <ul className="list-disc list-inside space-y-1">
                   <li>파일 형식: Text (.txt)</li>
                   <li>구분자: 콤마(,) 또는 탭</li>
                   <li>인코딩: EUC-KR 권장</li>
                 </ul>
               </div>
-              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={() => downloadTransferFile("shinhan")}>
+              <Button className="w-full bg-primary hover:bg-orange-800" onClick={() => downloadTransferFile("shinhan")}>
                 <Download className="w-4 h-4 mr-2" /> 이체 파일 다운로드
               </Button>
             </TabsContent>
 
             <TabsContent value="woori" className="space-y-4">
-              <div className="p-4 bg-slate-50 rounded-lg border text-sm text-muted-foreground">
-                <p className="font-medium text-slate-900 mb-2">우리은행 대량 이체 규격</p>
+              <div className="p-4 bg-stone-50 rounded-lg border text-sm text-muted-foreground">
+                <p className="font-medium text-stone-900 mb-2">우리은행 대량 이체 규격</p>
                 <ul className="list-disc list-inside space-y-1">
                   <li>파일 형식: Excel (.xls, .xlsx)</li>
                   <li>헤더: 예금주, 계좌번호, 금액 필수</li>
                   <li>암호화: 선택 사항</li>
                 </ul>
               </div>
-              <Button className="w-full bg-blue-500 hover:bg-blue-600" onClick={() => downloadTransferFile("woori")}>
+              <Button className="w-full bg-orange-50/300 hover:bg-primary" onClick={() => downloadTransferFile("woori")}>
                 <Download className="w-4 h-4 mr-2" /> 이체 파일 다운로드
               </Button>
             </TabsContent>
 
             <TabsContent value="kb" className="space-y-4">
-              <div className="p-4 bg-slate-50 rounded-lg border text-sm text-muted-foreground">
-                <p className="font-medium text-slate-900 mb-2">국민은행 대량 이체 규격</p>
+              <div className="p-4 bg-stone-50 rounded-lg border text-sm text-muted-foreground">
+                <p className="font-medium text-stone-900 mb-2">국민은행 대량 이체 규격</p>
                 <ul className="list-disc list-inside space-y-1">
                   <li>파일 형식: Text (.txt)</li>
                   <li>전문 양식: 고정 길이 방식</li>

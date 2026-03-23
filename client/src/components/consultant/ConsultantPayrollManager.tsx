@@ -53,13 +53,13 @@ export default function ConsultantPayrollManager() {
           {managedCompanies.map((company) => (
             <Card 
               key={company.id} 
-              className="cursor-pointer hover:border-indigo-500 transition-all hover:shadow-md group"
+              className="cursor-pointer hover:border-primary transition-all hover:shadow-md group"
               onClick={() => setSelectedCompanyId(company.id)}
             >
               <CardHeader className="pb-4">
                 <div className="flex justify-between items-start">
-                  <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/40 transition-colors">
-                    <Building2 className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                  <div className="p-2 bg-orange-50/30 dark:bg-stone-900/20 rounded-lg group-hover:bg-orange-100/30 dark:group-hover:bg-stone-900/40 transition-colors">
+                    <Building2 className="w-6 h-6 text-primary dark:text-orange-400" />
                   </div>
                   {company.status === 'warning' && (
                     <Badge variant="destructive">확인 필요</Badge>
@@ -74,7 +74,7 @@ export default function ConsultantPayrollManager() {
                     <Users className="w-4 h-4" />
                     <span>직원 {company.employees}명</span>
                   </div>
-                  <div className="flex items-center gap-1 text-indigo-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                     <span>관리하기</span>
                     <ArrowRight className="w-4 h-4" />
                   </div>
@@ -90,10 +90,10 @@ export default function ConsultantPayrollManager() {
   return (
     <div className="space-y-6">
       {/* 상단 헤더: 회사 정보 및 변경 */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-slate-900 p-6 rounded-xl border shadow-sm">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-stone-900 p-6 rounded-xl border shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
-            <Building2 className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+          <div className="p-3 bg-orange-100/30 dark:bg-stone-900/30 rounded-xl">
+            <Building2 className="w-8 h-8 text-primary dark:text-orange-400" />
           </div>
           <div>
             <h2 className="text-2xl font-bold flex items-center gap-2">
@@ -104,7 +104,7 @@ export default function ConsultantPayrollManager() {
             </h2>
             <p className="text-muted-foreground flex items-center gap-2 text-sm mt-1">
               <Users className="w-4 h-4" /> 총 직원 {selectedCompany?.employees}명
-              <span className="text-slate-300">|</span>
+              <span className="text-stone-300">|</span>
               2026년 1월 귀속분 작업 중
             </p>
           </div>
@@ -113,7 +113,7 @@ export default function ConsultantPayrollManager() {
           <Button variant="outline" onClick={() => setSelectedCompanyId(null)}>
             다른 회사 선택
           </Button>
-          <Button className="bg-indigo-600 hover:bg-indigo-700">
+          <Button className="bg-primary hover:bg-orange-800">
             <Calculator className="w-4 h-4 mr-2" /> 급여 마감 및 확정
           </Button>
         </div>
@@ -121,20 +121,20 @@ export default function ConsultantPayrollManager() {
 
       {/* 메인 작업 영역 */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 lg:w-[800px] bg-white dark:bg-slate-900 h-12 p-1">
-          <TabsTrigger value="settings" className="data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 h-10">
+        <TabsList className="grid w-full grid-cols-4 lg:w-[800px] bg-white dark:bg-stone-900 h-12 p-1">
+          <TabsTrigger value="settings" className="data-[state=active]:bg-orange-50/30 data-[state=active]:text-orange-700 h-10">
             <Settings className="w-4 h-4 mr-2" /> 급여/계약 설정
           </TabsTrigger>
-          <TabsTrigger value="records" className="data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 h-10">
+          <TabsTrigger value="records" className="data-[state=active]:bg-orange-50/30 data-[state=active]:text-orange-700 h-10">
             <CalendarClock className="w-4 h-4 mr-2" /> 근무기록 관리
           </TabsTrigger>
-          <TabsTrigger value="register" className="data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 h-10">
+          <TabsTrigger value="register" className="data-[state=active]:bg-orange-50/30 data-[state=active]:text-orange-700 h-10">
             <Calculator className="w-4 h-4 mr-2" /> 급여대장 산출
           </TabsTrigger>
-          <TabsTrigger value="upload" className="data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 h-10">
+          <TabsTrigger value="upload" className="data-[state=active]:bg-orange-50/30 data-[state=active]:text-orange-700 h-10">
             <FileSpreadsheet className="w-4 h-4 mr-2" /> 엑셀 일괄처리
           </TabsTrigger>
-          <TabsTrigger value="rates" className="data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 h-10">
+          <TabsTrigger value="rates" className="data-[state=active]:bg-orange-50/30 data-[state=active]:text-orange-700 h-10">
             <Settings className="w-4 h-4 mr-2" /> 4대보험 요율
           </TabsTrigger>
         </TabsList>

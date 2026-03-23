@@ -81,35 +81,35 @@ export default function ConsultationChat() {
   };
 
   return (
-    <div className="flex h-[600px] border rounded-lg overflow-hidden bg-white dark:bg-slate-950 dark:border-slate-800">
+    <div className="flex h-[600px] border rounded-lg overflow-hidden bg-white dark:bg-stone-950 dark:border-stone-800">
       {/* 채팅방 목록 (사이드바) */}
-      <div className="w-80 border-r dark:border-slate-800 flex flex-col">
-        <div className="p-4 border-b dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
-          <h3 className="font-bold text-lg dark:text-slate-100">상담 목록</h3>
+      <div className="w-80 border-r dark:border-stone-800 flex flex-col">
+        <div className="p-4 border-b dark:border-stone-800 bg-stone-50 dark:bg-stone-900">
+          <h3 className="font-bold text-lg dark:text-stone-100">상담 목록</h3>
         </div>
         <ScrollArea className="flex-1">
           {chatRooms.map((room) => (
             <div
               key={room.id}
               onClick={() => setActiveRoom(room.id)}
-              className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors ${
-                activeRoom === room.id ? "bg-indigo-50 dark:bg-indigo-900/20" : ""
+              className={`p-4 flex items-center gap-3 cursor-pointer hover:bg-stone-100 dark:hover:bg-stone-900 transition-colors ${
+                activeRoom === room.id ? "bg-orange-50/30 dark:bg-stone-900/20" : ""
               }`}
             >
               <div className="relative">
                 <Avatar>
-                  <AvatarFallback className="bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300">{room.avatar}</AvatarFallback>
+                  <AvatarFallback className="bg-orange-100/30 text-primary dark:bg-stone-900 dark:text-orange-300">{room.avatar}</AvatarFallback>
                 </Avatar>
                 {room.status === "online" && (
-                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-950 rounded-full"></span>
+                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-stone-950 rounded-full"></span>
                 )}
               </div>
               <div className="flex-1 overflow-hidden">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="font-medium truncate dark:text-slate-200">{room.name}</span>
-                  <span className="text-xs text-slate-500">{room.company}</span>
+                  <span className="font-medium truncate dark:text-stone-200">{room.name}</span>
+                  <span className="text-xs text-stone-500">{room.company}</span>
                 </div>
-                <p className="text-sm text-slate-500 truncate">{room.lastMessage}</p>
+                <p className="text-sm text-stone-500 truncate">{room.lastMessage}</p>
               </div>
               {room.unreadCount > 0 && (
                 <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
@@ -124,27 +124,27 @@ export default function ConsultationChat() {
       {/* 채팅 영역 */}
       <div className="flex-1 flex flex-col">
         {/* 채팅 헤더 */}
-        <div className="h-16 border-b dark:border-slate-800 flex items-center justify-between px-6 bg-white dark:bg-slate-900">
+        <div className="h-16 border-b dark:border-stone-800 flex items-center justify-between px-6 bg-white dark:bg-stone-900">
           <div className="flex items-center gap-3">
             <Avatar>
-              <AvatarFallback className="bg-indigo-100 text-indigo-600">K</AvatarFallback>
+              <AvatarFallback className="bg-orange-100/30 text-primary">K</AvatarFallback>
             </Avatar>
             <div>
-              <h3 className="font-bold dark:text-slate-100">김인사 팀장</h3>
+              <h3 className="font-bold dark:text-stone-100">김인사 팀장</h3>
               <p className="text-xs text-green-600 flex items-center gap-1">
                 <span className="w-2 h-2 bg-green-500 rounded-full"></span> 온라인
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon"><Phone className="w-5 h-5 text-slate-500" /></Button>
-            <Button variant="ghost" size="icon"><Video className="w-5 h-5 text-slate-500" /></Button>
-            <Button variant="ghost" size="icon"><MoreVertical className="w-5 h-5 text-slate-500" /></Button>
+            <Button variant="ghost" size="icon"><Phone className="w-5 h-5 text-stone-500" /></Button>
+            <Button variant="ghost" size="icon"><Video className="w-5 h-5 text-stone-500" /></Button>
+            <Button variant="ghost" size="icon"><MoreVertical className="w-5 h-5 text-stone-500" /></Button>
           </div>
         </div>
 
         {/* 메시지 리스트 */}
-        <div className="flex-1 p-4 overflow-y-auto bg-slate-50 dark:bg-slate-950" ref={scrollRef}>
+        <div className="flex-1 p-4 overflow-y-auto bg-stone-50 dark:bg-stone-950" ref={scrollRef}>
           <div className="space-y-4">
             {messages.map((msg) => (
               <div
@@ -154,13 +154,13 @@ export default function ConsultationChat() {
                 <div
                   className={`max-w-[70%] rounded-2xl px-4 py-2 shadow-sm ${
                     msg.sender === "me"
-                      ? "bg-indigo-600 text-white rounded-tr-none"
-                      : "bg-white dark:bg-slate-800 dark:text-slate-100 border dark:border-slate-700 rounded-tl-none"
+                      ? "bg-primary text-white rounded-tr-none"
+                      : "bg-white dark:bg-stone-800 dark:text-stone-100 border dark:border-stone-700 rounded-tl-none"
                   }`}
                 >
                   <p className="text-sm">{msg.text}</p>
                   <div className={`text-[10px] mt-1 flex items-center gap-1 ${
-                    msg.sender === "me" ? "text-indigo-200 justify-end" : "text-slate-400"
+                    msg.sender === "me" ? "text-orange-200 justify-end" : "text-stone-400"
                   }`}>
                     <span>{msg.timestamp}</span>
                     {msg.sender === "me" && (
@@ -174,9 +174,9 @@ export default function ConsultationChat() {
         </div>
 
         {/* 입력 영역 */}
-        <div className="p-4 bg-white dark:bg-slate-900 border-t dark:border-slate-800">
+        <div className="p-4 bg-white dark:bg-stone-900 border-t dark:border-stone-800">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="text-slate-500">
+            <Button variant="ghost" size="icon" className="text-stone-500">
               <Paperclip className="w-5 h-5" />
             </Button>
             <Input
@@ -184,9 +184,9 @@ export default function ConsultationChat() {
               onChange={(e) => setInputText(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
               placeholder="메시지를 입력하세요..."
-              className="flex-1 bg-slate-50 dark:bg-slate-800 border-none focus-visible:ring-1 focus-visible:ring-indigo-500"
+              className="flex-1 bg-stone-50 dark:bg-stone-800 border-none focus-visible:ring-1 focus-visible:ring-primary500"
             />
-            <Button onClick={handleSendMessage} className="bg-indigo-600 hover:bg-indigo-700">
+            <Button onClick={handleSendMessage} className="bg-primary hover:bg-orange-800">
               <Send className="w-4 h-4" />
             </Button>
           </div>

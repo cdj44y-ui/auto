@@ -28,7 +28,7 @@ function StepTypeSelection({ onNext, data, updateData }: WizardStepProps) {
           onValueChange={(val) => updateData('type', val)}
           className="grid grid-cols-1 md:grid-cols-2 gap-4"
         >
-          <div className={`flex items-start space-x-3 p-4 border rounded-lg cursor-pointer transition-all ${data.type === FlexibleWorkType.STAGGERED_COMMUTE ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'hover:bg-slate-50 dark:hover:bg-slate-900'}`}>
+          <div className={`flex items-start space-x-3 p-4 border rounded-lg cursor-pointer transition-all ${data.type === FlexibleWorkType.STAGGERED_COMMUTE ? 'border-primary bg-orange-50/30 dark:bg-stone-900/20' : 'hover:bg-stone-50 dark:hover:bg-stone-900'}`}>
             <RadioGroupItem value={FlexibleWorkType.STAGGERED_COMMUTE} id="staggered" className="mt-1" />
             <div className="grid gap-1.5 cursor-pointer" onClick={() => updateData('type', FlexibleWorkType.STAGGERED_COMMUTE)}>
               <Label htmlFor="staggered" className="font-bold cursor-pointer">시차출퇴근제</Label>
@@ -38,7 +38,7 @@ function StepTypeSelection({ onNext, data, updateData }: WizardStepProps) {
             </div>
           </div>
 
-          <div className={`flex items-start space-x-3 p-4 border rounded-lg cursor-pointer transition-all ${data.type === FlexibleWorkType.SELECTIVE_WORKING_HOURS ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'hover:bg-slate-50 dark:hover:bg-slate-900'}`}>
+          <div className={`flex items-start space-x-3 p-4 border rounded-lg cursor-pointer transition-all ${data.type === FlexibleWorkType.SELECTIVE_WORKING_HOURS ? 'border-primary bg-orange-50/30 dark:bg-stone-900/20' : 'hover:bg-stone-50 dark:hover:bg-stone-900'}`}>
             <RadioGroupItem value={FlexibleWorkType.SELECTIVE_WORKING_HOURS} id="selective" className="mt-1" />
             <div className="grid gap-1.5 cursor-pointer" onClick={() => updateData('type', FlexibleWorkType.SELECTIVE_WORKING_HOURS)}>
               <Label htmlFor="selective" className="font-bold cursor-pointer">선택적 근로시간제</Label>
@@ -80,7 +80,7 @@ function StepSchedule({ onNext, onBack, data, updateData }: WizardStepProps) {
       </div>
 
       {data.type === FlexibleWorkType.STAGGERED_COMMUTE && (
-        <div className="space-y-4 border p-4 rounded-lg bg-slate-50 dark:bg-slate-900">
+        <div className="space-y-4 border p-4 rounded-lg bg-stone-50 dark:bg-stone-900">
           <Label>근무조 선택</Label>
           <Select value={data.shiftId} onValueChange={(val) => updateData('shiftId', val)}>
             <SelectTrigger>
@@ -93,7 +93,7 @@ function StepSchedule({ onNext, onBack, data, updateData }: WizardStepProps) {
             </SelectContent>
           </Select>
           {data.shiftId && (
-            <div className="text-sm text-blue-600 dark:text-blue-400 flex items-center gap-2">
+            <div className="text-sm text-primary dark:text-orange-400 flex items-center gap-2">
               <Clock className="w-4 h-4" />
               선택하신 근무조는 휴게시간 1시간을 포함하여 하루 9시간 체류합니다.
             </div>
@@ -102,7 +102,7 @@ function StepSchedule({ onNext, onBack, data, updateData }: WizardStepProps) {
       )}
 
       {data.type === FlexibleWorkType.SELECTIVE_WORKING_HOURS && (
-        <div className="space-y-4 border p-4 rounded-lg bg-slate-50 dark:bg-slate-900">
+        <div className="space-y-4 border p-4 rounded-lg bg-stone-50 dark:bg-stone-900">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>희망 출근시간</Label>
@@ -156,44 +156,44 @@ function StepReview({ onBack, data }: WizardStepProps) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg space-y-4">
-        <h3 className="font-bold text-lg border-b pb-2 dark:border-slate-800">신청 내용 요약</h3>
+      <div className="bg-stone-50 dark:bg-stone-900 p-6 rounded-lg space-y-4">
+        <h3 className="font-bold text-lg border-b pb-2 dark:border-stone-800">신청 내용 요약</h3>
         
         <div className="grid grid-cols-3 gap-4 text-sm">
           <div className="text-muted-foreground">신청 유형</div>
-          <div className="col-span-2 font-medium dark:text-slate-200">
+          <div className="col-span-2 font-medium dark:text-stone-200">
             {data.type === FlexibleWorkType.STAGGERED_COMMUTE ? "시차출퇴근제" : "선택적 근로시간제"}
           </div>
 
           <div className="text-muted-foreground">적용 기간</div>
-          <div className="col-span-2 font-medium dark:text-slate-200">
+          <div className="col-span-2 font-medium dark:text-stone-200">
             {data.startDate} ~ {data.endDate}
           </div>
 
           {data.type === FlexibleWorkType.STAGGERED_COMMUTE && (
             <>
               <div className="text-muted-foreground">선택 근무조</div>
-              <div className="col-span-2 font-medium dark:text-slate-200">{data.shiftId}조</div>
+              <div className="col-span-2 font-medium dark:text-stone-200">{data.shiftId}조</div>
             </>
           )}
 
           {data.type === FlexibleWorkType.SELECTIVE_WORKING_HOURS && (
             <>
               <div className="text-muted-foreground">희망 근무시간</div>
-              <div className="col-span-2 font-medium dark:text-slate-200">
+              <div className="col-span-2 font-medium dark:text-stone-200">
                 {data.startTime} ~ {data.endTime}
               </div>
             </>
           )}
 
           <div className="text-muted-foreground">신청 사유</div>
-          <div className="col-span-2 font-medium dark:text-slate-200 whitespace-pre-wrap">
+          <div className="col-span-2 font-medium dark:text-stone-200 whitespace-pre-wrap">
             {data.reason}
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 p-4 border border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800 rounded-lg text-sm text-blue-800 dark:text-blue-300">
+      <div className="flex items-center gap-2 p-4 border border-orange-200/30 bg-orange-50/30 dark:bg-stone-800/30 dark:border-stone-700 rounded-lg text-sm text-orange-800 dark:text-orange-300">
         <Check className="w-5 h-5 flex-shrink-0" />
         <p>
           위 내용으로 유연근무제를 신청하며, 회사의 유연근무 운영 규정을 준수할 것을 서약합니다.
@@ -205,7 +205,7 @@ function StepReview({ onBack, data }: WizardStepProps) {
         <Button variant="outline" onClick={onBack}>
           <ChevronLeft className="w-4 h-4 mr-2" /> 이전 단계
         </Button>
-        <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={handleSubmit}>
+        <Button className="bg-primary hover:bg-orange-800" onClick={handleSubmit}>
           신청서 제출하기
         </Button>
       </div>
@@ -245,17 +245,17 @@ export default function FlexibleWorkApplicationWizard() {
         <div className="flex items-center justify-between mb-8 px-4">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex flex-col items-center relative z-10">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${step >= s ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-500 dark:bg-slate-800'}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${step >= s ? 'bg-primary text-white' : 'bg-stone-200 text-stone-500 dark:bg-stone-800'}`}>
                 {s}
               </div>
-              <span className={`text-xs mt-2 ${step >= s ? 'text-indigo-600 font-medium' : 'text-slate-400'}`}>
+              <span className={`text-xs mt-2 ${step >= s ? 'text-primary font-medium' : 'text-stone-400'}`}>
                 {s === 1 ? "유형 선택" : s === 2 ? "스케줄 설정" : "최종 검토"}
               </span>
             </div>
           ))}
-          <div className="absolute top-[105px] left-[15%] w-[70%] h-[2px] bg-slate-200 dark:bg-slate-800 -z-0">
+          <div className="absolute top-[105px] left-[15%] w-[70%] h-[2px] bg-stone-200 dark:bg-stone-800 -z-0">
             <div 
-              className="h-full bg-indigo-600 transition-all duration-300" 
+              className="h-full bg-primary transition-all duration-300" 
               style={{ width: `${((step - 1) / 2) * 100}%` }}
             />
           </div>

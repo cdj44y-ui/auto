@@ -26,7 +26,7 @@ export default function VirtualPayrollTable({ data, height = 500 }: VirtualPayro
         style={{ height: height }}
         data={data}
         fixedHeaderContent={() => (
-          <tr className="bg-slate-50 h-10 text-xs font-medium text-muted-foreground border-b">
+          <tr className="bg-stone-50 h-10 text-xs font-medium text-muted-foreground border-b">
             <th className="w-[100px] px-4 text-left">이름</th>
             <th className="w-[120px] px-4 text-left">부서</th>
             <th className="w-[120px] px-4 text-right">기본급</th>
@@ -42,12 +42,12 @@ export default function VirtualPayrollTable({ data, height = 500 }: VirtualPayro
             <td className="px-4 py-3 border-b font-medium truncate">{item.name}</td>
             <td className="px-4 py-3 border-b text-muted-foreground truncate">{item.department}</td>
             <td className="px-4 py-3 border-b text-right tabular-nums">{item.baseSalary.toLocaleString()}</td>
-            <td className="px-4 py-3 border-b text-right tabular-nums text-blue-600">+{item.allowances.toLocaleString()}</td>
+            <td className="px-4 py-3 border-b text-right tabular-nums text-primary">+{item.allowances.toLocaleString()}</td>
             <td className="px-4 py-3 border-b text-right tabular-nums text-red-500">-{item.deductions.toLocaleString()}</td>
             <td className="px-4 py-3 border-b text-right tabular-nums font-bold">{item.netPay.toLocaleString()}</td>
             <td className="px-4 py-3 border-b text-center">
               <Badge variant="secondary" className={
-                item.status === "sent" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
+                item.status === "sent" ? "bg-green-100 text-green-700" : "bg-stone-100 text-stone-700"
               }>
                 {item.status === "sent" ? "발송됨" : "대기중"}
               </Badge>

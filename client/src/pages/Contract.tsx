@@ -194,7 +194,7 @@ export default function Contract() {
             
             {/* 편집 모드일 때만 보이는 입력 폼 (계약서 하단에 배치하거나 모달로 띄울 수 있음) */}
             {isEditing && (
-              <div className="mt-8 p-6 bg-slate-50 rounded-xl border border-slate-200">
+              <div className="mt-8 p-6 bg-stone-50 rounded-xl border border-stone-200">
                 <h3 className="font-bold text-lg mb-4">계약 내용 수정</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -223,7 +223,7 @@ export default function Contract() {
                   </div>
                 </div>
                 
-                <div className="mt-6 pt-6 border-t border-slate-200">
+                <div className="mt-6 pt-6 border-t border-stone-200">
                   <h4 className="font-bold mb-4">급여 상세 설정 (포괄임금 역산)</h4>
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="space-y-2">
@@ -252,7 +252,7 @@ export default function Contract() {
                   <Button onClick={() => {
                     setContractData({...contractData, calculationMethod: "comprehensive"});
                     handleCalculateSalary();
-                  }} className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700">
+                  }} className="w-full mt-4 bg-primary hover:bg-orange-800">
                     <DollarSign className="w-4 h-4 mr-2" /> 급여 재계산 및 적용
                   </Button>
                 </div>
@@ -311,15 +311,15 @@ export default function Contract() {
             </CardContent>
           </Card>
 
-          <Card className="border-none shadow-sm bg-blue-50/50">
+          <Card className="border-none shadow-sm bg-orange-50/30/50">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+                <div className="w-8 h-8 rounded-full bg-orange-100/30 flex items-center justify-center text-primary shrink-0">
                   <Check className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-blue-900 mb-1">법적 효력 안내</h4>
-                  <p className="text-sm text-blue-700 leading-relaxed">
+                  <h4 className="font-semibold text-stone-800 mb-1">법적 효력 안내</h4>
+                  <p className="text-sm text-orange-700 leading-relaxed">
                     본 전자 근로계약서는 근로기준법 제17조에 의거하여 서면 계약과 동일한 법적 효력을 가집니다. 서명 완료 후 PDF 사본이 이메일로 발송됩니다.
                   </p>
                 </div>

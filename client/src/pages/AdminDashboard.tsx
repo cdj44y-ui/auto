@@ -61,9 +61,9 @@ const ROLE_INFO: Record<string, { label: string; color: string; icon: React.Elem
   super_admin: { label: "최고관리자", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400", icon: Shield },
   consultant: { label: "노무사", color: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400", icon: Briefcase },
   company_admin: { label: "회사관리자", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400", icon: Shield },
-  company_hr: { label: "인사담당", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400", icon: Users },
+  company_hr: { label: "인사담당", color: "bg-orange-100/30 text-orange-700 dark:bg-stone-800/30 dark:text-orange-400", icon: Users },
   company_finance: { label: "재무담당", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400", icon: DollarSign },
-  employee: { label: "직원", color: "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400", icon: Briefcase },
+  employee: { label: "직원", color: "bg-stone-100 text-stone-700 dark:bg-stone-900/30 dark:text-stone-400", icon: Briefcase },
 };
 
 export default function AdminDashboard() {
@@ -84,13 +84,13 @@ export default function AdminDashboard() {
   const RoleIcon = roleInfo.icon;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950 transition-colors duration-200">
       {/* 헤더 */}
-      <header className="bg-white dark:bg-slate-900 border-b dark:border-slate-800 sticky top-0 z-10">
+      <header className="bg-white dark:bg-stone-900 border-b dark:border-stone-800 sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <LayoutDashboard className="w-6 h-6 text-indigo-600" />
-            <span className="font-bold text-lg dark:text-slate-100">관리자 대시보드</span>
+            <LayoutDashboard className="w-6 h-6 text-primary" />
+            <span className="font-bold text-lg dark:text-stone-100">관리자 대시보드</span>
           </div>
           
           <div className="flex items-center gap-4">
@@ -99,7 +99,7 @@ export default function AdminDashboard() {
                 <RoleIcon className="w-3 h-3" />
                 {roleInfo.label}
               </Badge>
-              <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              <span className="text-sm font-medium text-stone-600 dark:text-stone-300">
                 {user?.name || "사용자"}
               </span>
             </div>
@@ -109,12 +109,12 @@ export default function AdminDashboard() {
             </Button>
 
             <Button variant="ghost" size="icon" className="relative" onClick={() => toast.info("알림 기능은 준비 중입니다.")}>
-              <Bell className="w-5 h-5 text-slate-500" />
+              <Bell className="w-5 h-5 text-stone-500" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
             </Button>
 
             <Button variant="ghost" size="icon" onClick={logout} title="로그아웃">
-              <LogOut className="w-5 h-5 text-slate-500" />
+              <LogOut className="w-5 h-5 text-stone-500" />
             </Button>
           </div>
         </div>
@@ -122,7 +122,7 @@ export default function AdminDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="flex w-full overflow-x-auto bg-white dark:bg-slate-900 h-auto p-1 gap-1 no-scrollbar">
+          <TabsList className="flex w-full overflow-x-auto bg-white dark:bg-stone-900 h-auto p-1 gap-1 no-scrollbar">
             {visibleTabs.map(tab => (
               <TabsTrigger 
                 key={tab.id} 
@@ -136,30 +136,30 @@ export default function AdminDashboard() {
 
           <TabsContent value="dashboard" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="bg-white dark:bg-slate-900 border-none shadow-sm">
+              <Card className="bg-white dark:bg-stone-900 border-none shadow-sm">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">총 직원 수</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold dark:text-slate-100">142명</div>
+                  <div className="text-2xl font-bold dark:text-stone-100">142명</div>
                   <p className="text-xs text-green-500 mt-1">+2명 (전월 대비)</p>
                 </CardContent>
               </Card>
-              <Card className="bg-white dark:bg-slate-900 border-none shadow-sm">
+              <Card className="bg-white dark:bg-stone-900 border-none shadow-sm">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">오늘 출근율</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold dark:text-slate-100">94.5%</div>
+                  <div className="text-2xl font-bold dark:text-stone-100">94.5%</div>
                   <p className="text-xs text-muted-foreground mt-1">휴가 5명, 출장 3명</p>
                 </CardContent>
               </Card>
-              <Card className="bg-white dark:bg-slate-900 border-none shadow-sm">
+              <Card className="bg-white dark:bg-stone-900 border-none shadow-sm">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">이번 달 급여 지급액</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold dark:text-slate-100">₩452,000,000</div>
+                  <div className="text-2xl font-bold dark:text-stone-100">₩452,000,000</div>
                   <p className="text-xs text-muted-foreground mt-1">지급 예정일: 25일</p>
                 </CardContent>
               </Card>
@@ -179,14 +179,14 @@ export default function AdminDashboard() {
                       { name: "이영희", dept: "디자인팀", type: "결근", time: "-", date: "2026-01-25" },
                       { name: "박지민", dept: "마케팅팀", type: "조퇴", time: "16:00", date: "2026-01-24" },
                     ].map((item, i) => (
-                      <div key={i} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                      <div key={i} className="flex items-center justify-between p-3 bg-stone-50 dark:bg-stone-900 rounded-lg">
                         <div className="flex items-center gap-3">
                           <div className={`w-2 h-2 rounded-full ${
                             item.type === '지각' ? 'bg-orange-500' : 
                             item.type === '결근' ? 'bg-red-500' : 'bg-yellow-500'
                           }`} />
                           <div>
-                            <p className="font-medium text-sm dark:text-slate-200">{item.name} ({item.dept})</p>
+                            <p className="font-medium text-sm dark:text-stone-200">{item.name} ({item.dept})</p>
                             <p className="text-xs text-muted-foreground">{item.date}</p>
                           </div>
                         </div>
@@ -208,13 +208,13 @@ export default function AdminDashboard() {
 
             {/* Role-based access notice */}
             {userRole !== 'super_admin' && (
-              <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+              <Card className="bg-orange-50/30 dark:bg-stone-800/30 border-orange-200/30 dark:border-stone-700">
                 <CardContent className="py-4">
                   <div className="flex items-start gap-3">
-                    <RoleIcon className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <RoleIcon className="w-5 h-5 text-primary mt-0.5" />
                     <div>
-                      <p className="font-medium text-blue-800 dark:text-blue-200">권한 안내</p>
-                      <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                      <p className="font-medium text-orange-800 dark:text-orange-200">권한 안내</p>
+                      <p className="text-sm text-orange-700 dark:text-orange-300 mt-1">
                         현재 <strong>{roleInfo.label}</strong> 권한으로 로그인되어 있습니다. 
                         {userRole === 'company_hr' && " 직원 관리, 근태 관리, 휴가 관리 메뉴에 접근할 수 있습니다."}
                         {userRole === 'company_finance' && " 급여 관리, 주 52시간 관리 메뉴에 접근할 수 있습니다."}

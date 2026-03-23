@@ -60,7 +60,7 @@ export default function EmployeeSignup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-stone-950 p-4">
       <Card className="w-full max-w-md border-none shadow-lg">
         <CardHeader>
           <div className="flex items-center gap-2 mb-2">
@@ -164,7 +164,7 @@ export default function EmployeeSignup() {
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 mt-4">
+              <Button type="submit" className="w-full bg-primary hover:bg-orange-800 mt-4">
                 <UserPlus className="w-4 h-4 mr-2" /> 가입 신청하기
               </Button>
             </form>
@@ -183,9 +183,9 @@ export default function EmployeeSignup() {
                 </p>
               </div>
 
-              <div className="bg-slate-100 dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div className="bg-stone-100 dark:bg-stone-800 p-6 rounded-lg border border-stone-200 dark:border-stone-700">
                 <p className="text-sm text-muted-foreground mb-1">발급된 사번</p>
-                <p className="text-3xl font-mono font-bold text-indigo-600 tracking-wider">{generatedId}</p>
+                <p className="text-3xl font-mono font-bold text-primary tracking-wider">{generatedId}</p>
               </div>
 
               <div className="text-xs text-muted-foreground bg-yellow-50 p-3 rounded text-left">

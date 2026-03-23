@@ -49,9 +49,9 @@ const MOCK_EVENTS: LeaveEvent[] = [
 ];
 
 const LeaveTypeColors: Record<LeaveType, string> = {
-  annual: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800",
-  half_am: "bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800",
-  half_pm: "bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800",
+  annual: "bg-orange-100/30 text-orange-700 border-orange-200/30 dark:bg-stone-800/30 dark:text-orange-300 dark:border-stone-700",
+  half_am: "bg-orange-100/30 text-orange-700 border-orange-200/30 dark:bg-stone-900/30 dark:text-orange-300 dark:border-stone-700",
+  half_pm: "bg-orange-100/30 text-orange-700 border-orange-200/30 dark:bg-stone-900/30 dark:text-orange-300 dark:border-stone-700",
   sick: "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800",
   vacation: "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800",
   remote: "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800",
@@ -100,7 +100,7 @@ export default function TeamLeaveCalendar({ isAdmin = false }: { isAdmin?: boole
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div className="space-y-1">
             <CardTitle className="text-2xl font-bold flex items-center gap-2">
-              <CalendarIcon className="w-6 h-6 text-indigo-600" />
+              <CalendarIcon className="w-6 h-6 text-primary" />
               {isAdmin ? "전사 휴가 캘린더" : "팀 휴가 캘린더"}
             </CardTitle>
             <CardDescription>
@@ -119,19 +119,19 @@ export default function TeamLeaveCalendar({ isAdmin = false }: { isAdmin?: boole
         </CardHeader>
         <CardContent>
           {/* Filters */}
-          <div className="flex flex-col md:flex-row gap-3 mb-6 bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border">
+          <div className="flex flex-col md:flex-row gap-3 mb-6 bg-stone-50 dark:bg-stone-900 p-3 rounded-lg border">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input 
                 placeholder="직원 이름 검색..." 
-                className="pl-9 bg-white dark:bg-slate-950" 
+                className="pl-9 bg-white dark:bg-stone-950" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <div className="w-full md:w-[180px]">
               <Select value={selectedDept} onValueChange={setSelectedDept}>
-                <SelectTrigger className="bg-white dark:bg-slate-950">
+                <SelectTrigger className="bg-white dark:bg-stone-950">
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4 text-muted-foreground" />
                     <SelectValue placeholder="부서 선택" />
@@ -151,7 +151,7 @@ export default function TeamLeaveCalendar({ isAdmin = false }: { isAdmin?: boole
           {/* Weekday Headers */}
           <div className="grid grid-cols-7 mb-2">
             {['일', '월', '화', '수', '목', '금', '토'].map((day, i) => (
-              <div key={day} className={`text-center text-sm font-medium py-2 ${i === 0 ? 'text-red-500' : i === 6 ? 'text-blue-500' : 'text-muted-foreground'}`}>
+              <div key={day} className={`text-center text-sm font-medium py-2 ${i === 0 ? 'text-red-500' : i === 6 ? 'text-orange-500' : 'text-muted-foreground'}`}>
                 {day}
               </div>
             ))}
@@ -169,9 +169,9 @@ export default function TeamLeaveCalendar({ isAdmin = false }: { isAdmin?: boole
                   key={day.toString()}
                   className={`
                     min-h-[100px] p-2 border rounded-lg transition-colors cursor-pointer
-                    ${isCurrentMonth ? 'bg-white dark:bg-slate-900' : 'bg-slate-50 dark:bg-slate-950 text-muted-foreground'}
-                    ${isTodayDate ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}
-                    ${selectedDate && isSameDay(day, selectedDate) ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/10' : 'border-slate-100 dark:border-slate-800 hover:border-indigo-200'}
+                    ${isCurrentMonth ? 'bg-white dark:bg-stone-900' : 'bg-stone-50 dark:bg-stone-950 text-muted-foreground'}
+                    ${isTodayDate ? 'ring-2 ring-primary500 ring-offset-2' : ''}
+                    ${selectedDate && isSameDay(day, selectedDate) ? 'border-primary bg-orange-50/30 dark:bg-stone-900/10' : 'border-stone-100 dark:border-stone-800 hover:border-orange-200/30'}
                   `}
                   onClick={() => setSelectedDate(day)}
                 >
@@ -229,7 +229,7 @@ export default function TeamLeaveCalendar({ isAdmin = false }: { isAdmin?: boole
             <div className="space-y-4">
               {getEventsForDay(selectedDate).length > 0 ? (
                 getEventsForDay(selectedDate).map((event) => (
-                  <div key={event.id} className="flex items-start gap-3 p-3 rounded-lg border bg-slate-50 dark:bg-slate-900">
+                  <div key={event.id} className="flex items-start gap-3 p-3 rounded-lg border bg-stone-50 dark:bg-stone-900">
                     <Avatar className="w-8 h-8">
                       <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${event.userId}`} />
                       <AvatarFallback>{event.userName[0]}</AvatarFallback>

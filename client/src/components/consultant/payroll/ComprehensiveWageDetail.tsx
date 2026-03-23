@@ -25,11 +25,11 @@ export default function ComprehensiveWageDetail({
   const totalSalary = baseSalary + overtimeAllowance + nightAllowance + holidayAllowance;
 
   return (
-    <Card className="border-none shadow-sm bg-slate-50 dark:bg-slate-900">
+    <Card className="border-none shadow-sm bg-stone-50 dark:bg-stone-900">
       <CardHeader className="pb-2">
         <CardTitle className="text-base font-bold flex justify-between items-center">
           <span>포괄임금 상세 구성표</span>
-          <span className="text-lg text-indigo-600">총액: {totalSalary.toLocaleString()}원</span>
+          <span className="text-lg text-primary">총액: {totalSalary.toLocaleString()}원</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -53,12 +53,12 @@ export default function ComprehensiveWageDetail({
             </TableRow>
             
             <TableRow>
-              <TableCell className="font-medium text-blue-600">연장근로수당</TableCell>
+              <TableCell className="font-medium text-primary">연장근로수당</TableCell>
               <TableCell className="text-right">{fixedOvertimeHours}시간</TableCell>
               <TableCell className="text-right text-xs text-muted-foreground">
                 {baseHourlyRate.toLocaleString()}원 × {fixedOvertimeHours} × 1.5
               </TableCell>
-              <TableCell className="text-right font-bold text-blue-600">{overtimeAllowance.toLocaleString()}</TableCell>
+              <TableCell className="text-right font-bold text-primary">{overtimeAllowance.toLocaleString()}</TableCell>
             </TableRow>
 
             <TableRow>
@@ -79,7 +79,7 @@ export default function ComprehensiveWageDetail({
               <TableCell className="text-right font-bold text-orange-600">{holidayAllowance.toLocaleString()}</TableCell>
             </TableRow>
 
-            <TableRow className="bg-slate-100 dark:bg-slate-800 font-bold">
+            <TableRow className="bg-stone-100 dark:bg-stone-800 font-bold">
               <TableCell colSpan={3} className="text-center">합계</TableCell>
               <TableCell className="text-right">{totalSalary.toLocaleString()}</TableCell>
             </TableRow>

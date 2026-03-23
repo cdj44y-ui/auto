@@ -76,10 +76,10 @@ export default function ManualWorkLogCalculator() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 space-y-6">
-        <Card className="border-none shadow-sm bg-slate-50">
+        <Card className="border-none shadow-sm bg-stone-50">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <CalendarIcon className="w-5 h-5 text-blue-600" />
+              <CalendarIcon className="w-5 h-5 text-primary" />
               일별 근무 기록 입력
             </CardTitle>
           </CardHeader>
@@ -117,7 +117,7 @@ export default function ManualWorkLogCalculator() {
                   onChange={(e) => setNewLog({...newLog, breakTime: Number(e.target.value)})}
                 />
               </div>
-              <Button onClick={handleAddLog} className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button onClick={handleAddLog} className="bg-primary hover:bg-orange-800 text-white">
                 <Plus className="w-4 h-4" /> 추가
               </Button>
             </div>
@@ -164,7 +164,7 @@ export default function ManualWorkLogCalculator() {
 
       <div className="space-y-6">
         <Card className="border-none shadow-sm sticky top-6">
-          <CardHeader className="bg-gray-50 border-b">
+          <CardHeader className="bg-stone-50 border-b">
             <CardTitle className="text-lg flex items-center gap-2">
               <Calculator className="w-5 h-5" />
               실시간 급여 계산
@@ -189,7 +189,7 @@ export default function ManualWorkLogCalculator() {
               
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">주 평균 근무</span>
-                <span className={`font-bold ${isWeeklyHolidayEligible ? "text-blue-600" : "text-red-500"}`}>
+                <span className={`font-bold ${isWeeklyHolidayEligible ? "text-primary" : "text-red-500"}`}>
                   약 {weeklyHours.toFixed(1)} 시간
                 </span>
               </div>
@@ -205,7 +205,7 @@ export default function ManualWorkLogCalculator() {
               )}
 
               {isWeeklyHolidayEligible && (
-                <div className="bg-blue-50 text-blue-600 p-3 rounded-lg text-sm flex items-start gap-2">
+                <div className="bg-orange-50/30 text-primary p-3 rounded-lg text-sm flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
                   <div>
                     <strong>주휴수당 적용 대상</strong><br/>
@@ -219,7 +219,7 @@ export default function ManualWorkLogCalculator() {
                   <span>기본급</span>
                   <span>{baseSalary.toLocaleString()} 원</span>
                 </div>
-                <div className="flex justify-between text-blue-600">
+                <div className="flex justify-between text-primary">
                   <span>주휴수당 (예상)</span>
                   <span>+{weeklyHolidayPay.toLocaleString()} 원</span>
                 </div>
@@ -230,7 +230,7 @@ export default function ManualWorkLogCalculator() {
               </div>
             </div>
 
-            <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white h-12 text-lg">
+            <Button className="w-full bg-stone-900 hover:bg-stone-800 text-white h-12 text-lg">
               급여 대장에 저장하기
             </Button>
           </CardContent>
