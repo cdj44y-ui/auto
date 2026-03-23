@@ -1,15 +1,44 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
+
+/**
+ * P-01/P-02: RBAC + Tenant Isolation 테스트
+ * DB 호출을 모킹하여 미들웨어 로직만 검증
+ */
+
+// Mock db module before importing routers
+vi.mock("./db", () => ({
+  getDb: vi.fn().mockResolvedValue({}),
+  getAllEmployees: vi.fn().mockResolvedValue([
+    { id: 1, name: "테스트직원", department: "개발팀", clientId: 1 },
+  ]),
+  getPayrollByPeriod: vi.fn().mockResolvedValue([
+    { id: 1, employeeId: 1, period: "202601", baseSalary: 3000000 },
+  ]),
+  getPayrollByEmployee: vi.fn().mockResolvedValue([]),
+  getEmployeeById: vi.fn().mockResolvedValue(null),
+  createEmployee: vi.fn().mockResolvedValue(1),
+  updateEmployee: vi.fn().mockResolvedValue(undefined),
+  deleteEmployee: vi.fn().mockResolvedValue(undefined),
+  createEmployeesBulk: vi.fn().mockResolvedValue(0),
+  checkDbHealth: vi.fn().mockResolvedValue({ connected: true }),
+  getClientHealthScores: vi.fn().mockResolvedValue([]),
+  getAuditLogs: vi.fn().mockResolvedValue([]),
+  createPayrollRecord: vi.fn().mockResolvedValue(1),
+  getNotifications: vi.fn().mockResolvedValue([]),
+  getAllClients: vi.fn().mockResolvedValue([]),
+  getAllConsultations: vi.fn().mockResolvedValue([]),
+}));
+
+// Mock audit log
+vi.mock("./middleware/audit", () => ({
+  writeAuditLog: vi.fn().mockResolvedValue(undefined),
+}));
+
 import { appRouter } from "./routers";
 import type { TrpcContext } from "./_core/context";
 
 type AuthenticatedUser = NonNullable<TrpcContext["user"]>;
 
-/**
- * P-01: 6단계 권한 체계 테스트용 Mock Context
- * super_admin/consultant: clientId 불필요 (전체 접근)
- * company_*: clientId 필수 (테넌트 격리)
- * employee: clientId 필수
- */
 function createMockContext(
   role: 'super_admin' | 'consultant' | 'company_admin' | 'company_hr' | 'company_finance' | 'employee',
   clientId?: number | null
@@ -129,6 +158,8 @@ describe("Tenant Isolation (P-02)", () => {
   it("consultant bypasses tenant check (no clientId needed)", async () => {
     const ctx = createMockContext("consultant");
     const caller = appRouter.createCaller(ctx);
+    // consultant has level 80, hrProcedure requires level >= 40 (company_hr)
+    // consultant(80) >= company_hr(40) → passes
     await expect(caller.employee.list()).resolves.toBeDefined();
   });
 });

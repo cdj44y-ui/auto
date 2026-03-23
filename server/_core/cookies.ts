@@ -21,28 +21,22 @@ function isSecureRequest(req: Request) {
   return protoList.some(proto => proto.trim().toLowerCase() === "https");
 }
 
+/**
+ * P-02-SEC: 쿠키 보안 강화
+ * - HTTP에서는 SameSite=lax (CSRF 방어)
+ * - HTTPS에서는 SameSite=none + Secure (크로스 도메인 허용)
+ * - maxAge: 8시간 (세션 타임아웃)
+ */
 export function getSessionCookieOptions(
   req: Request
-): Pick<CookieOptions, "domain" | "httpOnly" | "path" | "sameSite" | "secure"> {
-  // const hostname = req.hostname;
-  // const shouldSetDomain =
-  //   hostname &&
-  //   !LOCAL_HOSTS.has(hostname) &&
-  //   !isIpAddress(hostname) &&
-  //   hostname !== "127.0.0.1" &&
-  //   hostname !== "::1";
-
-  // const domain =
-  //   shouldSetDomain && !hostname.startsWith(".")
-  //     ? `.${hostname}`
-  //     : shouldSetDomain
-  //       ? hostname
-  //       : undefined;
+): Pick<CookieOptions, "domain" | "httpOnly" | "path" | "sameSite" | "secure" | "maxAge"> {
+  const secure = isSecureRequest(req);
 
   return {
     httpOnly: true,
     path: "/",
-    sameSite: "none",
-    secure: isSecureRequest(req),
+    sameSite: secure ? "none" : "lax",  // HTTP에서는 lax (CSRF 방어)
+    secure,
+    maxAge: 8 * 60 * 60 * 1000, // 8시간
   };
 }

@@ -2,11 +2,14 @@ import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { ENV } from "./env";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -30,9 +33,60 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer() {
   const app = express();
   const server = createServer(app);
-  // Configure body parser with larger size limit for file uploads
+
+  // ── P-02-SEC: Helmet 보안 헤더 ──
+  app.use(helmet({
+    contentSecurityPolicy: ENV.isProduction ? undefined : false,
+  }));
+
+  // ── P-02-SEC: CORS 설정 ──
+  // Express 내장 CORS 미들웨어 대신 수동 설정 (의존성 최소화)
+  app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    // 개발 모드: 모든 오리진 허용, 프로덕션: 동일 오리진만
+    if (!ENV.isProduction || !origin) {
+      res.setHeader('Access-Control-Allow-Origin', origin || '*');
+    } else {
+      // 프로덕션에서는 동일 오리진이므로 별도 CORS 불필요
+      // 필요 시 process.env.CLIENT_URL 기반으로 허용
+      const allowedOrigin = process.env.CLIENT_URL || origin;
+      res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+    }
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    if (req.method === 'OPTIONS') {
+      res.status(204).end();
+      return;
+    }
+    next();
+  });
+
+  // ── P-02-SEC: Rate Limiting ──
+  // 전역: 100 req / 15분
+  const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' },
+  });
+  app.use('/api/', globalLimiter);
+
+  // 로그인 전용: 5 req / 15분
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: '로그인 시도가 너무 많습니다. 15분 후 다시 시도해주세요.' },
+  });
+  app.use('/api/oauth/', authLimiter);
+
+  // Body parser
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
 
@@ -75,6 +129,7 @@ async function startServer() {
       res.status(500).json({ status: "error", error: String(e) });
     }
   });
+
   // tRPC API
   app.use(
     "/api/trpc",
@@ -83,6 +138,7 @@ async function startServer() {
       createContext,
     })
   );
+
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);

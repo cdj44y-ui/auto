@@ -138,3 +138,13 @@
 - [x] STEP 4: 페이지별 수정 (24개 페이지)
 - [x] STEP 5: 커스텀 컴포넌트 수정 (StatusBadge, DataTable, NotificationCenter 등)
 - [x] STEP 6-7: shadcn/ui 확인 + 다크모드 검증
+
+## 보안 강화 (P-01~P-02 보안 프롬프트)
+
+- [x] P-01-SEC: 환경변수 시작 시 검증 (requireEnv + JWT_SECRET 최소 32자)
+- [x] P-01-SEC: tenantProcedure clientFilter 모든 DB 쿼리에 적용 보강
+- [x] P-02-SEC: Express 보안 미들웨어 (helmet + cors + rate-limit)
+- [x] P-02-SEC: 쿠키 SameSite 수정 (HTTP에서 lax)
+- [x] P-02-SEC: AuthContext 실체화 (서버 세션 기반, 개발모드에서만 mockUser)
+- [x] P-02-SEC: OAuth state 암호화 (nonce 기반)
+- [x] P-02-SEC: UnifiedLogin 데모 역할 선택 개발모드 전용 (import.meta.env.DEV)

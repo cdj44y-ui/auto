@@ -195,8 +195,8 @@ export default function UnifiedLogin() {
                 </Button>
               </form>
 
-              {/* 데모용 역할 선택기 (개발/테스트 편의성) */}
-              <div className="mt-8 pt-6 border-t">
+              {/* P-02-SEC: 데모용 역할 선택기 — 개발 모드에서만 노출 */}
+              {import.meta.env.DEV && <div className="mt-8 pt-6 border-t">
                 <p className="text-xs text-center text-muted-foreground mb-4">
                   [테스트용] 로그인할 역할을 선택하세요 (자동 입력)
                 </p>
@@ -256,7 +256,7 @@ export default function UnifiedLogin() {
                     <span className="text-[10px]">직원</span>
                   </Button>
                 </div>
-              </div>
+              </div>}
             </CardContent>
             <CardFooter className="flex justify-center border-t bg-stone-50/50 py-4">
               <p className="text-xs text-muted-foreground">
