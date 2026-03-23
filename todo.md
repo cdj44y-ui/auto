@@ -142,6 +142,7 @@
 ## 보안 강화 (P-01~P-02 보안 프롬프트)
 
 - [x] P-01-SEC: 환경변수 시작 시 검증 (requireEnv + JWT_SECRET 최소 32자)
+- [x] FIX: JWT_SECRET 길이 검증을 process.exit 대신 console.warn으로 변경 (배포 실패 수정)
 - [x] P-01-SEC: tenantProcedure clientFilter 모든 DB 쿼리에 적용 보강
 - [x] P-02-SEC: Express 보안 미들웨어 (helmet + cors + rate-limit)
 - [x] P-02-SEC: 쿠키 SameSite 수정 (HTTP에서 lax)
