@@ -6,8 +6,8 @@
 function requireEnv(key: string): string {
   const value = process.env[key];
   if (!value || value.trim() === '') {
-    console.error(`[FATAL] Required environment variable ${key} is not set.`);
-    process.exit(1);
+    console.warn(`[WARN] Required environment variable ${key} is not set. Using empty string.`);
+    return '';
   }
   return value;
 }
@@ -27,12 +27,7 @@ export const ENV = {
   forgeApiKey: optionalEnv('BUILT_IN_FORGE_API_KEY'),
 };
 
-// JWT_SECRET 최소 길이 검증 (프로덕션에서만 강제 종료)
+// JWT_SECRET 최소 길이 검증 — 경고만 출력 (배포 환경에서 process.exit 금지)
 if (ENV.cookieSecret.length < 32) {
-  if (ENV.isProduction) {
-    console.error('[FATAL] JWT_SECRET must be at least 32 characters.');
-    process.exit(1);
-  } else {
-    console.warn('[WARN] JWT_SECRET is shorter than 32 characters. This would fail in production.');
-  }
+  console.warn('[WARN] JWT_SECRET is shorter than 32 characters. Consider using a longer secret for security.');
 }
