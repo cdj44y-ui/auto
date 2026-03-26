@@ -34,6 +34,9 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
+  // ── Trust proxy for production (behind reverse proxy / load balancer) ──
+  app.set('trust proxy', 1);
+
   // ── P-02-SEC: Helmet 보안 헤더 ──
   app.use(helmet({
     contentSecurityPolicy: ENV.isProduction ? undefined : false,

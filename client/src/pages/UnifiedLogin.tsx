@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
 import { useBranding } from "@/contexts/BrandingContext";
+import { getLoginUrl } from "@/const";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Lock, Mail, User, ShieldCheck, Briefcase, Building2, DollarSign, Users, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
@@ -18,32 +18,35 @@ export default function UnifiedLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   
-  // 데모용 역할 선택 상태 (실제 운영 시에는 제거하거나 관리자용 백도어로 숨김)
+  // 데모용 역할 선택 상태 (개발 모드 전용)
   const [selectedDemoRole, setSelectedDemoRole] = useState<UserRole>("employee");
+
+  const isDev = import.meta.env.DEV;
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email || !password) {
-      toast.error("이메일과 비밀번호를 입력해주세요.");
-      return;
-    }
 
-    // 실제 인증 로직 대신 데모용 역할 로그인 호출
-    // 실제 구현 시에는 서버에 email/password를 보내고 토큰과 역할을 받아와야 함
-    login(selectedDemoRole);
+    if (isDev) {
+      // 개발 모드: 데모 역할 로그인
+      if (!email || !password) {
+        toast.error("이메일과 비밀번호를 입력해주세요.");
+        return;
+      }
+      login(selectedDemoRole);
+    } else {
+      // 프로덕션: Manus OAuth 리다이렉트
+      window.location.href = getLoginUrl();
+    }
   };
 
   const handleDemoRoleSelect = (role: UserRole) => {
     setSelectedDemoRole(role);
-    // 역할에 따른 데모 계정 자동 입력
     if (role === "employee") setEmail("employee@company.com");
     else if (role === "super_admin") setEmail("admin@company.com");
     else if (role === "consultant") setEmail("consultant@partner.com");
     else if (role === "company_admin") setEmail("companyadmin@company.com");
     else if (role === "company_hr") setEmail("hr@company.com");
     else if (role === "company_finance") setEmail("finance@company.com");
-    
     setPassword("password123");
   };
 
@@ -127,136 +130,154 @@ export default function UnifiedLogin() {
             <CardHeader className="space-y-1 pb-6">
               <CardTitle className="text-2xl font-bold text-center">로그인</CardTitle>
               <CardDescription className="text-center">
-                이메일과 비밀번호를 입력해주세요
+                {isDev ? "이메일과 비밀번호를 입력해주세요" : "Manus 계정으로 로그인합니다"}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">이메일</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      id="email" 
-                      placeholder="name@company.com" 
-                      type="email"
-                      className="pl-10"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+              {isDev ? (
+                /* 개발 모드: 이메일/비밀번호 폼 + 데모 역할 선택 */
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">이메일</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        id="email" 
+                        placeholder="name@company.com" 
+                        type="email"
+                        className="pl-10"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="password">비밀번호</Label>
+                      <Button variant="link" className="p-0 h-auto text-xs font-normal" type="button" onClick={() => toast.info("관리자에게 비밀번호 초기화를 요청하세요.")}>
+                        비밀번호 찾기
+                      </Button>
+                    </div>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        id="password" 
+                        type={showPassword ? "text" : "password"}
+                        className="pl-10 pr-10"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="remember" 
+                      checked={rememberMe}
+                      onCheckedChange={(checked) => setRememberMe(checked as boolean)}
                     />
+                    <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
+                      로그인 상태 유지
+                    </Label>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password">비밀번호</Label>
-                    <Button variant="link" className="p-0 h-auto text-xs font-normal" type="button" onClick={() => toast.info("관리자에게 비밀번호 초기화를 요청하세요.")}>
-                      비밀번호 찾기
-                    </Button>
-                  </div>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      id="password" 
-                      type={showPassword ? "text" : "password"}
-                      className="pl-10 pr-10"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="remember" 
-                    checked={rememberMe}
-                    onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                  />
-                  <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
-                    로그인 상태 유지
-                  </Label>
-                </div>
 
-                <Button type="submit" className="w-full h-11 text-base" disabled={isLoading}>
-                  {isLoading ? "로그인 중..." : "로그인"}
-                  {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
-                </Button>
-              </form>
+                  <Button type="submit" className="w-full h-11 text-base" disabled={isLoading}>
+                    {isLoading ? "로그인 중..." : "로그인"}
+                    {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
+                  </Button>
 
-              {/* P-02-SEC: 데모용 역할 선택기 — 개발 모드에서만 노출 */}
-              {import.meta.env.DEV && <div className="mt-8 pt-6 border-t">
-                <p className="text-xs text-center text-muted-foreground mb-4">
-                  [테스트용] 로그인할 역할을 선택하세요 (자동 입력)
-                </p>
-                <div className="grid grid-cols-3 gap-2">
+                  {/* 데모 역할 선택기 — 개발 모드 전용 */}
+                  <div className="mt-4 pt-4 border-t">
+                    <p className="text-xs text-center text-muted-foreground mb-4">
+                      [테스트용] 로그인할 역할을 선택하세요 (자동 입력)
+                    </p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button 
+                        variant={selectedDemoRole === "super_admin" ? "default" : "outline"} 
+                        size="sm" type="button"
+                        className="h-auto py-2 flex flex-col gap-1"
+                        onClick={() => handleDemoRoleSelect("super_admin")}
+                      >
+                        <ShieldCheck className="h-4 w-4" />
+                        <span className="text-[10px]">최고관리자</span>
+                      </Button>
+                      <Button 
+                        variant={selectedDemoRole === "consultant" ? "default" : "outline"} 
+                        size="sm" type="button"
+                        className="h-auto py-2 flex flex-col gap-1"
+                        onClick={() => handleDemoRoleSelect("consultant")}
+                      >
+                        <Briefcase className="h-4 w-4" />
+                        <span className="text-[10px]">노무사</span>
+                      </Button>
+                      <Button 
+                        variant={selectedDemoRole === "company_admin" ? "default" : "outline"} 
+                        size="sm" type="button"
+                        className="h-auto py-2 flex flex-col gap-1"
+                        onClick={() => handleDemoRoleSelect("company_admin")}
+                      >
+                        <Building2 className="h-4 w-4" />
+                        <span className="text-[10px]">회사관리자</span>
+                      </Button>
+                      <Button 
+                        variant={selectedDemoRole === "company_hr" ? "default" : "outline"} 
+                        size="sm" type="button"
+                        className="h-auto py-2 flex flex-col gap-1"
+                        onClick={() => handleDemoRoleSelect("company_hr")}
+                      >
+                        <Users className="h-4 w-4" />
+                        <span className="text-[10px]">인사담당</span>
+                      </Button>
+                      <Button 
+                        variant={selectedDemoRole === "company_finance" ? "default" : "outline"} 
+                        size="sm" type="button"
+                        className="h-auto py-2 flex flex-col gap-1"
+                        onClick={() => handleDemoRoleSelect("company_finance")}
+                      >
+                        <DollarSign className="h-4 w-4" />
+                        <span className="text-[10px]">재무담당</span>
+                      </Button>
+                      <Button 
+                        variant={selectedDemoRole === "employee" ? "default" : "outline"} 
+                        size="sm" type="button"
+                        className="h-auto py-2 flex flex-col gap-1"
+                        onClick={() => handleDemoRoleSelect("employee")}
+                      >
+                        <User className="h-4 w-4" />
+                        <span className="text-[10px]">직원</span>
+                      </Button>
+                    </div>
+                  </div>
+                </form>
+              ) : (
+                /* 프로덕션: OAuth 로그인 버튼 */
+                <div className="space-y-4">
                   <Button 
-                    variant={selectedDemoRole === "super_admin" ? "default" : "outline"} 
-                    size="sm" 
-                    className="h-auto py-2 flex flex-col gap-1"
-                    onClick={() => handleDemoRoleSelect("super_admin")}
+                    onClick={handleLogin} 
+                    className="w-full h-12 text-base"
+                    disabled={isLoading}
                   >
-                    <ShieldCheck className="h-4 w-4" />
-                    <span className="text-[10px]">최고관리자</span>
+                    {isLoading ? "로그인 중..." : "Manus 계정으로 로그인"}
+                    {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
                   </Button>
-                  <Button 
-                    variant={selectedDemoRole === "consultant" ? "default" : "outline"} 
-                    size="sm" 
-                    className="h-auto py-2 flex flex-col gap-1"
-                    onClick={() => handleDemoRoleSelect("consultant")}
-                  >
-                    <Briefcase className="h-4 w-4" />
-                    <span className="text-[10px]">노무사</span>
-                  </Button>
-                  <Button 
-                    variant={selectedDemoRole === "company_admin" ? "default" : "outline"} 
-                    size="sm" 
-                    className="h-auto py-2 flex flex-col gap-1"
-                    onClick={() => handleDemoRoleSelect("company_admin")}
-                  >
-                    <Building2 className="h-4 w-4" />
-                    <span className="text-[10px]">회사관리자</span>
-                  </Button>
-                  <Button 
-                    variant={selectedDemoRole === "company_hr" ? "default" : "outline"} 
-                    size="sm" 
-                    className="h-auto py-2 flex flex-col gap-1"
-                    onClick={() => handleDemoRoleSelect("company_hr")}
-                  >
-                    <Users className="h-4 w-4" />
-                    <span className="text-[10px]">인사담당</span>
-                  </Button>
-                  <Button 
-                    variant={selectedDemoRole === "company_finance" ? "default" : "outline"} 
-                    size="sm" 
-                    className="h-auto py-2 flex flex-col gap-1"
-                    onClick={() => handleDemoRoleSelect("company_finance")}
-                  >
-                    <DollarSign className="h-4 w-4" />
-                    <span className="text-[10px]">재무담당</span>
-                  </Button>
-                  <Button 
-                    variant={selectedDemoRole === "employee" ? "default" : "outline"} 
-                    size="sm" 
-                    className="h-auto py-2 flex flex-col gap-1"
-                    onClick={() => handleDemoRoleSelect("employee")}
-                  >
-                    <User className="h-4 w-4" />
-                    <span className="text-[10px]">직원</span>
-                  </Button>
+                  <p className="text-xs text-center text-muted-foreground">
+                    Manus 계정이 없으시면 로그인 화면에서 회원가입할 수 있습니다.
+                  </p>
                 </div>
-              </div>}
+              )}
             </CardContent>
             <CardFooter className="flex justify-center border-t bg-stone-50/50 py-4">
               <p className="text-xs text-muted-foreground">

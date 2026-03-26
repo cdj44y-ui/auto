@@ -6,9 +6,10 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { BrandingProvider } from "./contexts/BrandingContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { Loader2 } from "lucide-react";
 
 // Pages
 import Home from "./pages/Home";
@@ -31,6 +32,40 @@ import ClientsPage from "./pages/ClientsPage";
 import ConsultationsPage from "./pages/ConsultationsPage";
 
 /**
+ * 역할별 대시보드 라우팅 맵
+ */
+const DASHBOARD_ROUTES: Record<string, string> = {
+  super_admin: "/admin-dashboard",
+  consultant: "/consultant-dashboard",
+  company_admin: "/admin-dashboard",
+  company_hr: "/admin-dashboard",
+  company_finance: "/admin-dashboard",
+  employee: "/employee-dashboard",
+};
+
+/**
+ * 루트 경로 핸들러: 인증 상태에 따라 적절한 페이지로 리다이렉트
+ */
+function RootRedirect() {
+  const { isAuthenticated, isLoading, role } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (isAuthenticated && role) {
+    const target = DASHBOARD_ROUTES[role] || "/employee-dashboard";
+    return <Redirect to={target} />;
+  }
+
+  return <Redirect to="/login" />;
+}
+
+/**
  * P-01: 6단계 권한 체계에 맞는 라우트 접근 제어
  * super_admin(100) > consultant(80) > company_admin(60) > company_hr(40) > company_finance(30) > employee(10)
  */
@@ -42,8 +77,9 @@ function Router() {
       <Route path="/login" component={UnifiedLogin} />
       <Route path="/employee-signup" component={EmployeeSignup} />
       
+      {/* 루트: 인증 상태에 따라 대시보드 또는 로그인으로 리다이렉트 */}
       <Route path="/">
-        <Redirect to="/login" />
+        <RootRedirect />
       </Route>
 
       {/* 직원 전용 대시보드 */}

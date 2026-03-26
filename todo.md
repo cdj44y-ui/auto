@@ -148,3 +148,7 @@
 - [x] P-02-SEC: AuthContext 실체화 (서버 세션 기반, 개발모드에서만 mockUser)
 - [x] P-02-SEC: OAuth state 암호화 (nonce 기반)
 - [x] P-02-SEC: UnifiedLogin 데모 역할 선택 개발모드 전용 (import.meta.env.DEV)
+
+## 버그 수정
+
+- [x] BUG: 로그인 수정 — 프로덕션 OAuth 리다이렉트 + RootRedirect + trust proxy
